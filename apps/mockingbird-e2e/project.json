@@ -1,0 +1,9 @@
+{
+  "name": "mockingbird-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/mockingbird-e2e/src",
+  "tags": [],
+  "implicitDependencies": ["mockingbird"],
+  "// targets": "to see all targets run: nx show project mockingbird-e2e --web",
+  "targets": {}
+}
