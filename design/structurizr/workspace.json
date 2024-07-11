@@ -1,0 +1,436 @@
+{
+  "configuration" : { },
+  "description" : "Description",
+  "documentation" : { },
+  "id" : 1,
+  "lastModifiedAgent" : "structurizr-javascript",
+  "lastModifiedDate" : "2024-07-11T02:19:17Z",
+  "model" : {
+    "people" : [ {
+      "description" : "A person that creates and uses shopping lists",
+      "id" : "1",
+      "location" : "Unspecified",
+      "name" : "Shopper",
+      "properties" : {
+        "structurizr.dsl.identifier" : "shopper"
+      },
+      "relationships" : [ {
+        "description" : "Uses",
+        "destinationId" : "4",
+        "id" : "18",
+        "properties" : {
+          "structurizr.dsl.identifier" : "f8a287b6-58c8-410d-8b47-424e134953a2"
+        },
+        "sourceId" : "1",
+        "tags" : "Relationship"
+      } ],
+      "tags" : "Element,Person"
+    }, {
+      "description" : "An administrator of the systyem",
+      "id" : "2",
+      "location" : "Unspecified",
+      "name" : "Admin",
+      "properties" : {
+        "structurizr.dsl.identifier" : "admin"
+      },
+      "relationships" : [ {
+        "description" : "Uses",
+        "destinationId" : "4",
+        "id" : "19",
+        "properties" : {
+          "structurizr.dsl.identifier" : "d53dd64e-b0a0-4c9e-9b7e-1981d6223bad"
+        },
+        "sourceId" : "2",
+        "tags" : "Relationship"
+      } ],
+      "tags" : "Element,Person"
+    } ],
+    "softwareSystems" : [ {
+      "documentation" : { },
+      "id" : "3",
+      "location" : "Unspecified",
+      "name" : "Remote Authentication System",
+      "properties" : {
+        "structurizr.dsl.identifier" : "authsystem"
+      },
+      "tags" : "Element,Software System"
+    }, {
+      "containers" : [ {
+        "components" : [ {
+          "documentation" : { },
+          "id" : "6",
+          "name" : "SQL",
+          "properties" : {
+            "structurizr.dsl.identifier" : "2291b8dc-79b9-489c-bafe-c6af47a6e719"
+          },
+          "tags" : "Element,Component"
+        } ],
+        "description" : "Holds all data for the system",
+        "documentation" : { },
+        "id" : "5",
+        "name" : "Database",
+        "properties" : {
+          "structurizr.dsl.identifier" : "database"
+        },
+        "tags" : "Element,Container"
+      }, {
+        "components" : [ {
+          "description" : "Provide a REST API for interacting with system",
+          "documentation" : { },
+          "id" : "8",
+          "name" : "RESTAPI",
+          "properties" : {
+            "structurizr.dsl.identifier" : "restapi"
+          },
+          "tags" : "Element,Component"
+        } ],
+        "description" : "Hosts Web applications",
+        "documentation" : { },
+        "id" : "7",
+        "name" : "Web Server",
+        "properties" : {
+          "structurizr.dsl.identifier" : "webserver"
+        },
+        "relationships" : [ {
+          "description" : "Serves SPA application",
+          "destinationId" : "9",
+          "id" : "21",
+          "properties" : {
+            "structurizr.dsl.identifier" : "f711b4f0-046e-4b91-af16-675b9e0bb318"
+          },
+          "sourceId" : "7",
+          "tags" : "Relationship"
+        } ],
+        "tags" : "Element,Container"
+      }, {
+        "components" : [ {
+          "description" : "Manage set of Users",
+          "documentation" : { },
+          "id" : "10",
+          "name" : "UserManager",
+          "properties" : {
+            "structurizr.dsl.identifier" : "usersmanager"
+          },
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Manage set of Stores",
+          "documentation" : { },
+          "id" : "11",
+          "name" : "StoreManager",
+          "properties" : {
+            "structurizr.dsl.identifier" : "storesmanager"
+          },
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Manage set of Products",
+          "documentation" : { },
+          "id" : "12",
+          "name" : "ProductManager",
+          "properties" : {
+            "structurizr.dsl.identifier" : "productsmanager"
+          },
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Manage set of Shopping Lists",
+          "documentation" : { },
+          "id" : "13",
+          "name" : "ListsManager",
+          "properties" : {
+            "structurizr.dsl.identifier" : "listsmanager"
+          },
+          "tags" : "Element,Component"
+        } ],
+        "description" : "Web based application for managing data and users",
+        "documentation" : { },
+        "id" : "9",
+        "name" : "AdminApp",
+        "properties" : {
+          "structurizr.dsl.identifier" : "adminapp"
+        },
+        "relationships" : [ {
+          "description" : "Makes API calls to",
+          "destinationId" : "3",
+          "id" : "22",
+          "properties" : {
+            "structurizr.dsl.identifier" : "2b7d0f3f-f54d-45d2-af93-2873fb0f2bd4"
+          },
+          "sourceId" : "9",
+          "tags" : "Relationship"
+        } ],
+        "tags" : "Element,Container"
+      }, {
+        "components" : [ {
+          "description" : "Sign in a user",
+          "documentation" : { },
+          "id" : "15",
+          "name" : "Login",
+          "properties" : {
+            "structurizr.dsl.identifier" : "login"
+          },
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Manage list of shopping lists for this user",
+          "documentation" : { },
+          "id" : "16",
+          "name" : "ShoppingListsManager",
+          "properties" : {
+            "structurizr.dsl.identifier" : "shoppinglistsmanager"
+          },
+          "tags" : "Element,Component"
+        }, {
+          "documentation" : { },
+          "id" : "17",
+          "name" : "ShoppingList",
+          "properties" : {
+            "structurizr.dsl.identifier" : "shoppinglist"
+          },
+          "tags" : "Element,Component"
+        } ],
+        "description" : "Mobile application for user interaction with shopping lists",
+        "documentation" : { },
+        "id" : "14",
+        "name" : "MobileApp",
+        "properties" : {
+          "structurizr.dsl.identifier" : "mobileapp"
+        },
+        "relationships" : [ {
+          "description" : "Makes API calls to",
+          "destinationId" : "3",
+          "id" : "23",
+          "properties" : {
+            "structurizr.dsl.identifier" : "98d2088d-c5ad-46f9-a665-52790af8842d"
+          },
+          "sourceId" : "14",
+          "tags" : "Relationship"
+        }, {
+          "destinationId" : "8",
+          "id" : "24",
+          "properties" : {
+            "structurizr.dsl.identifier" : "cc9827fb-c311-44cd-8986-20da68a0dd43"
+          },
+          "sourceId" : "14",
+          "tags" : "Relationship"
+        }, {
+          "destinationId" : "7",
+          "id" : "25",
+          "linkedRelationshipId" : "24",
+          "sourceId" : "14"
+        }, {
+          "destinationId" : "3",
+          "id" : "26",
+          "properties" : {
+            "structurizr.dsl.identifier" : "064b2c96-4eb9-48a7-b98a-f975827b98a9"
+          },
+          "sourceId" : "14",
+          "tags" : "Relationship"
+        } ],
+        "tags" : "Element,Container"
+      } ],
+      "documentation" : { },
+      "id" : "4",
+      "location" : "Unspecified",
+      "name" : "The Shop'N Grocery List",
+      "properties" : {
+        "structurizr.dsl.identifier" : "shopn"
+      },
+      "relationships" : [ {
+        "description" : "Uses for authenticating a User",
+        "destinationId" : "3",
+        "id" : "20",
+        "properties" : {
+          "structurizr.dsl.identifier" : "b097bf62-d7a3-42f6-b87f-63c37ec07f3c"
+        },
+        "sourceId" : "4",
+        "tags" : "Relationship"
+      } ],
+      "tags" : "Element,Software System"
+    } ]
+  },
+  "name" : "Name",
+  "properties" : {
+    "structurizr.dsl" : "d29ya3NwYWNlIHsKCiAgICBtb2RlbCB7CiAgICAgICAgc2hvcHBlciA9IHBlcnNvbiAiU2hvcHBlciIgIkEgcGVyc29uIHRoYXQgY3JlYXRlcyBhbmQgdXNlcyBzaG9wcGluZyBsaXN0cyIKICAgICAgICBhZG1pbiA9IHBlcnNvbiAiQWRtaW4iICJBbiBhZG1pbmlzdHJhdG9yIG9mIHRoZSBzeXN0eWVtIgoKICAgICAgICBhdXRoU3lzdGVtID0gc29mdHdhcmVTeXN0ZW0gIlJlbW90ZSBBdXRoZW50aWNhdGlvbiBTeXN0ZW0iCgogICAgICAgIHNob3BuID0gc29mdHdhcmVTeXN0ZW0gIlRoZSBTaG9wJ04gR3JvY2VyeSBMaXN0IiB7CiAgICAgICAgICAgIGRhdGFiYXNlID0gY29udGFpbmVyICJEYXRhYmFzZSIgIkhvbGRzIGFsbCBkYXRhIGZvciB0aGUgc3lzdGVtIiB7CiAgICAgICAgICAgICAgY29tcG9uZW50IFNRTAogICAgICAgICAgICB9CgogICAgICAgICAgICB3ZWJTZXJ2ZXIgPSBjb250YWluZXIgIldlYiBTZXJ2ZXIiICJIb3N0cyBXZWIgYXBwbGljYXRpb25zIiB7CiAgICAgICAgICAgICAgcmVzdEFQSSA9IGNvbXBvbmVudCBSRVNUQVBJICJQcm92aWRlIGEgUkVTVCBBUEkgZm9yIGludGVyYWN0aW5nIHdpdGggc3lzdGVtIgoKICAgICAgICAgICAgfQoKICAgICAgICAgICAgYWRtaW5BcHAgPSBjb250YWluZXIgQWRtaW5BcHAgIldlYiBiYXNlZCBhcHBsaWNhdGlvbiBmb3IgbWFuYWdpbmcgZGF0YSBhbmQgdXNlcnMiIHsKICAgICAgICAgICAgICAgIHVzZXJzTWFuYWdlciA9IGNvbXBvbmVudCBVc2VyTWFuYWdlciAiTWFuYWdlIHNldCBvZiBVc2VycyIKICAgICAgICAgICAgICAgIHN0b3Jlc01hbmFnZXIgPSBjb21wb25lbnQgU3RvcmVNYW5hZ2VyICJNYW5hZ2Ugc2V0IG9mIFN0b3JlcyIKICAgICAgICAgICAgICAgIHByb2R1Y3RzTWFuYWdlciA9IGNvbXBvbmVudCBQcm9kdWN0TWFuYWdlciAiTWFuYWdlIHNldCBvZiBQcm9kdWN0cyIKICAgICAgICAgICAgICAgIGxpc3RzTWFuYWdlciA9IGNvbXBvbmVudCBMaXN0c01hbmFnZXIgIk1hbmFnZSBzZXQgb2YgU2hvcHBpbmcgTGlzdHMiCiAgICAgICAgICAgIH0KCgogICAgICAgICAgICBtb2JpbGVBcHAgPSBjb250YWluZXIgTW9iaWxlQXBwICJNb2JpbGUgYXBwbGljYXRpb24gZm9yIHVzZXIgaW50ZXJhY3Rpb24gd2l0aCBzaG9wcGluZyBsaXN0cyIgewogICAgICAgICAgICAgIGxvZ2luID0gY29tcG9uZW50IExvZ2luICJTaWduIGluIGEgdXNlciIKICAgICAgICAgICAgICBzaG9wcGluZ0xpc3RzTWFuYWdlciA9IGNvbXBvbmVudCBTaG9wcGluZ0xpc3RzTWFuYWdlciAiTWFuYWdlIGxpc3Qgb2Ygc2hvcHBpbmcgbGlzdHMgZm9yIHRoaXMgdXNlciIKICAgICAgICAgICAgICBzaG9wcGluZ0xpc3QgPSBjb21wb25lbnQgU2hvcHBpbmdMaXN0CiAgICAgICAgICAgIH0KICAgICAgICB9CgogICAgICAgIC8vIEFkbWluaXN0cmF0aW9uIGFwcGxpY2F0aW9uCiAgICAgICAgc2hvcHBlciAtPiBzaG9wbiAiVXNlcyIKICAgICAgICBhZG1pbiAtPiBzaG9wbiAiVXNlcyIKICAgICAgICBzaG9wbiAtPiBhdXRoU3lzdGVtICJVc2VzIGZvciBhdXRoZW50aWNhdGluZyBhIFVzZXIiCgogICAgICAgIHdlYlNlcnZlciAtPiBhZG1pbkFwcCAiU2VydmVzIFNQQSBhcHBsaWNhdGlvbiIKCgogICAgICAgIGFkbWluQXBwIC0+IGF1dGhTeXN0ZW0gIk1ha2VzIEFQSSBjYWxscyB0byIKCgogICAgICAgIC8vIE1vYmlsZSBhcHBsaWNhdGlvbgogICAgICAgIG1vYmlsZUFwcCAtPiBhdXRoU3lzdGVtICJNYWtlcyBBUEkgY2FsbHMgdG8iCiAgICAgICAgbW9iaWxlQXBwIC0+IHJlc3RBUEkKICAgICAgICBtb2JpbGVBcHAgLT4gYXV0aFN5c3RlbQoKCiAgICB9CgogICAgdmlld3MgewogICAgICAgIHN5c3RlbUNvbnRleHQgc2hvcG4gIlNob3BOIiB7CiAgICAgICAgICAgIGluY2x1ZGUgKgogICAgICAgICAgICBhdXRvTGF5b3V0CiAgICAgICAgfQoKICAgICAgICBjb250YWluZXIgc2hvcG4gewogICAgICAgICAgICBpbmNsdWRlICoKICAgICAgICAgICAgYXV0b0xheW91dAogICAgICAgIH0KCiAgICAgICAgY29tcG9uZW50IGFkbWluQXBwIHsKICAgICAgICAgICAgaW5jbHVkZSAqCiAgICAgICAgICAgIGF1dG9MYXlvdXQKICAgICAgICB9CgogICAgICAgIGNvbXBvbmVudCBtb2JpbGVBcHAgewogICAgICAgICAgICBpbmNsdWRlICoKICAgICAgICAgICAgYXV0b0xheW91dAogICAgICAgIH0KCgogICAgICAgIHRoZW1lIGRlZmF1bHQKCiAgICAgICAgc3R5bGVzIHsKCiAgICAgICAgICAgIGVsZW1lbnQgIlNvZnR3YXJlIFN5c3RlbSIgewogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjMTE2OGJkCiAgICAgICAgICAgICAgICBjb2xvciAjZmZmZmZmCiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiUGVyc29uIiB7CiAgICAgICAgICAgICAgICBzaGFwZSBwZXJzb24KICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIzA4NDI3YgogICAgICAgICAgICAgICAgY29sb3IgI2ZmZmZmZgogICAgICAgICAgICB9CgogICAgICAgICAgICBlbGVtZW50ICJFeHRlcm5hbCIgewogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjOTk5OTk5CiAgICAgICAgICAgICAgICBjb2xvciAjZmZmZmZmCiAgICAgICAgICAgIH0KCiAgICAgICAgICAgZWxlbWVudCAiRGF0YWJhc2UiIHsKICAgICAgICAgICAgICAgIHNoYXBlIEN5bGluZGVyCiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIGVsZW1lbnQgIkJyb3dzZXIiIHsKICAgICAgICAgICAgICAgIHNoYXBlIFdlYkJyb3dzZXIKICAgICAgICAgICAgfQogICAgICAgIH0KICAgIH0KCn0K"
+  },
+  "views" : {
+    "componentViews" : [ {
+      "automaticLayout" : {
+        "applied" : false,
+        "edgeSeparation" : 0,
+        "implementation" : "Graphviz",
+        "nodeSeparation" : 300,
+        "rankDirection" : "TopBottom",
+        "rankSeparation" : 300,
+        "vertices" : false
+      },
+      "containerId" : "9",
+      "elements" : [ {
+        "id" : "10",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "11",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "12",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "13",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "externalContainerBoundariesVisible" : false,
+      "generatedKey" : true,
+      "key" : "Component-001",
+      "order" : 3
+    }, {
+      "automaticLayout" : {
+        "applied" : false,
+        "edgeSeparation" : 0,
+        "implementation" : "Graphviz",
+        "nodeSeparation" : 300,
+        "rankDirection" : "TopBottom",
+        "rankSeparation" : 300,
+        "vertices" : false
+      },
+      "containerId" : "14",
+      "elements" : [ {
+        "id" : "15",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "16",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "17",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "externalContainerBoundariesVisible" : false,
+      "generatedKey" : true,
+      "key" : "Component-002",
+      "order" : 4
+    } ],
+    "configuration" : {
+      "branding" : { },
+      "lastSavedView" : "ShopN",
+      "metadataSymbols" : "SquareBrackets",
+      "styles" : {
+        "elements" : [ {
+          "background" : "#1168bd",
+          "color" : "#ffffff",
+          "tag" : "Software System"
+        }, {
+          "background" : "#08427b",
+          "color" : "#ffffff",
+          "shape" : "Person",
+          "tag" : "Person"
+        }, {
+          "background" : "#999999",
+          "color" : "#ffffff",
+          "tag" : "External"
+        }, {
+          "shape" : "Cylinder",
+          "tag" : "Database"
+        }, {
+          "shape" : "WebBrowser",
+          "tag" : "Browser"
+        } ]
+      },
+      "terminology" : { },
+      "themes" : [ "https://static.structurizr.com/themes/default/theme.json" ]
+    },
+    "containerViews" : [ {
+      "automaticLayout" : {
+        "applied" : false,
+        "edgeSeparation" : 0,
+        "implementation" : "Graphviz",
+        "nodeSeparation" : 300,
+        "rankDirection" : "TopBottom",
+        "rankSeparation" : 300,
+        "vertices" : false
+      },
+      "elements" : [ {
+        "id" : "3",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "5",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "7",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "9",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "14",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "externalSoftwareSystemBoundariesVisible" : false,
+      "generatedKey" : true,
+      "key" : "Container-001",
+      "order" : 2,
+      "relationships" : [ {
+        "id" : "21"
+      }, {
+        "id" : "22"
+      }, {
+        "id" : "23"
+      }, {
+        "id" : "25"
+      }, {
+        "id" : "26"
+      } ],
+      "softwareSystemId" : "4"
+    } ],
+    "systemContextViews" : [ {
+      "automaticLayout" : {
+        "applied" : true,
+        "edgeSeparation" : 0,
+        "implementation" : "Graphviz",
+        "nodeSeparation" : 300,
+        "rankDirection" : "TopBottom",
+        "rankSeparation" : 300,
+        "vertices" : false
+      },
+      "dimensions" : {
+        "height" : 2000,
+        "width" : 1500
+      },
+      "elements" : [ {
+        "id" : "1",
+        "x" : 200,
+        "y" : 199
+      }, {
+        "id" : "2",
+        "x" : 900,
+        "y" : 199
+      }, {
+        "id" : "3",
+        "x" : 525,
+        "y" : 1499
+      }, {
+        "id" : "4",
+        "x" : 525,
+        "y" : 899
+      } ],
+      "enterpriseBoundaryVisible" : true,
+      "key" : "ShopN",
+      "order" : 1,
+      "relationships" : [ {
+        "id" : "18"
+      }, {
+        "id" : "19"
+      }, {
+        "id" : "20"
+      } ],
+      "softwareSystemId" : "4"
+    } ]
+  }
+}
