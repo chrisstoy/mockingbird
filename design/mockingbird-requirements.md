@@ -32,4 +32,25 @@ Basic social media app that will allow users to post stories and comment on othe
 
 # System Components
 
--
+- Database
+
+```
+  tables {
+
+      users {
+        id
+        // defined by auth system
+        friends
+      }
+
+      posts {
+        id                  // uuid
+        createdAt           // date/time post was created
+        posterId            // user that created this post
+        responseToPostId    // id of post this is a response to
+        content             // content of post (markdown?)
+        likeCount          // number of times this post has been liked
+        dislikeCount       // number of times this post has been disliked
+      }
+  }
+```
