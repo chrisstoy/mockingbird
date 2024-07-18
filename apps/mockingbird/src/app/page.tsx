@@ -1,5 +1,3 @@
-import Image from 'next/image';
-
 export default function Index() {
   return (
     <div>
@@ -9,12 +7,6 @@ export default function Index() {
             <h1>
               <span> Hello there, </span>
               Welcome To Mockingbird 👋
-              <Image
-                src="/mockingbird-white.png"
-                alt="Mockingbird Logo"
-                width={72}
-                height={72}
-              />
             </h1>
           </div>
         </div>
