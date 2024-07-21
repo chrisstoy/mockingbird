@@ -1,18 +1,20 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
-import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { ConfirmSignOutDialog } from '@/_components/ConfirmSignOutDialog';
+import { useSession } from 'next-auth/react';
+import { handleSignIn } from '@/auth/helpers';
 
 export function UserButton() {
+  const { data: session } = useSession();
   const [showSignout, setShowSignout] = useState(false);
   const router = useRouter();
 
-  const userName = 'Not Logged In';
-  const email = '';
-  const imageSrc = '';
+  const userName = session?.user?.name ?? 'Not Logged In';
+  const email = session?.user?.email ?? '';
+  const imageSrc = session?.user?.image ?? '/generic-user-icon.jpg';
 
   return (
     <div className="dropdown dropdown-end">
@@ -34,19 +36,27 @@ export function UserButton() {
           </span>
           <hr className="m-1"></hr>
         </div>
-        <li>
-          <span
-            onClick={() => {
-              (document.activeElement as HTMLElement | undefined)?.blur();
-              router.push('/profile');
-            }}
-          >
-            Profile
-          </span>
-        </li>
-        <li>
-          <span onClick={() => setShowSignout(true)}>Sign Out</span>
-        </li>
+        {session?.user ? (
+          <>
+            <li>
+              <span
+                onClick={() => {
+                  (document.activeElement as HTMLElement | undefined)?.blur();
+                  router.push('/profile');
+                }}
+              >
+                Profile
+              </span>
+            </li>
+            <li>
+              <span onClick={() => setShowSignout(true)}>Sign Out</span>
+            </li>
+          </>
+        ) : (
+          <li>
+            <span onClick={() => handleSignIn()}>Sign In</span>
+          </li>
+        )}
       </ul>
       {showSignout && (
         <ConfirmSignOutDialog

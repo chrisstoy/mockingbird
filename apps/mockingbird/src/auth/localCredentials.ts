@@ -1,10 +1,25 @@
-import NextAuth from 'next-auth';
-import GitHub from 'next-auth/providers/github';
 import Credentials from 'next-auth/providers/credentials';
 
-const authorize = async (
+const credentialsConfig = {
+  name: 'Credentials',
+  credentials: {
+    username: {
+      label: 'Username',
+      type: 'text',
+      placeholder: 'jsmith',
+    },
+    password: {
+      label: 'Password',
+      type: 'password',
+    },
+  },
+  authorize,
+};
+
+async function authorize(
   credentials: Partial<Record<'username' | 'password', unknown>>
-) => {
+) {
+  // TODO: lookup users in local database.  This is just for testing
   const users = [
     {
       id: 'test-user-1',
@@ -28,25 +43,6 @@ const authorize = async (
       user.password === credentials.password
   );
   return user ? { id: user.id, name: user.name, email: user.email } : null;
-};
+}
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
-  providers: [
-    GitHub,
-    Credentials({
-      name: 'Credentials',
-      credentials: {
-        username: {
-          label: 'Username',
-          type: 'text',
-          placeholder: 'jsmith',
-        },
-        password: {
-          label: 'Password',
-          type: 'password',
-        },
-      },
-      authorize,
-    }),
-  ],
-});
+export default Credentials(credentialsConfig);
