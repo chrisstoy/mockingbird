@@ -1,14 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
-// import { useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-// import { ConfirmSignOutDialog } from '~/_components/ConfirmSignOutDialog';
+import { ConfirmSignOutDialog } from '@/_components/ConfirmSignOutDialog';
 
 export function UserButton() {
   const [showSignout, setShowSignout] = useState(false);
-  // const { data: session } = useSession();
   const router = useRouter();
 
   const userName = 'Not Logged In';
@@ -49,11 +48,11 @@ export function UserButton() {
           <span onClick={() => setShowSignout(true)}>Sign Out</span>
         </li>
       </ul>
-      {/* {showSignout && (
+      {showSignout && (
         <ConfirmSignOutDialog
           onClosed={() => setShowSignout(false)}
         ></ConfirmSignOutDialog>
-      )} */}
+      )}
     </div>
   );
 }

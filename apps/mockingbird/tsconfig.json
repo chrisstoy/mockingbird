@@ -19,7 +19,12 @@
     "types": [
       "jest",
       "node"
-    ]
+    ],
+    "paths": {
+      "@/*": [
+        "./apps/mockingbird/src/*"
+      ]
+    }
   },
   "include": [
     "**/*.ts",
@@ -36,5 +41,5 @@
     "jest.config.ts",
     "**/*.spec.ts",
     "**/*.test.ts"
-  ]
+  ],
 }

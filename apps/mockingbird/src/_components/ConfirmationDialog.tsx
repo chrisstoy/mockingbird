@@ -1,0 +1,49 @@
+'use client';
+import { useEffect, useRef } from 'react';
+import {
+  DialogActions,
+  DialogBody,
+  DialogHeader,
+  DialogProps,
+} from './DialogBase';
+import React from 'react';
+
+export type ConfirmationDialogResult = 'ok' | 'cancel';
+
+type Props = DialogProps<ConfirmationDialogResult>;
+
+export function ConfirmationDialog({
+  title,
+  defaultResult,
+  children: body,
+  buttons,
+  onClosed,
+}: Props) {
+  const dialogRef = useRef<HTMLDialogElement>(null);
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    dialog?.showModal();
+
+    return () => {
+      dialog?.close();
+    };
+  }, []);
+
+  return (
+    <dialog
+      ref={dialogRef}
+      className="bg-transparent bg-base-100 open:animate-fade-in open:backdrop:animate-fade-in"
+    >
+      <div className="card card-bordered shadow-xl bg-base-100">
+        <DialogHeader title={title} onClosed={onClosed}></DialogHeader>
+        <DialogBody>{body}</DialogBody>
+        <DialogActions
+          buttons={buttons}
+          onClosed={onClosed}
+          defaultResult={defaultResult}
+        ></DialogActions>
+      </div>
+    </dialog>
+  );
+}
