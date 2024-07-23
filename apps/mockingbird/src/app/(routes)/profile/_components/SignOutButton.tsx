@@ -7,7 +7,7 @@ export function SignOutButton() {
 
   return (
     <>
-      <button className="btn btn-primary" onClick={() => setShowSignout(true)}>
+      <button className="btn btn-warning" onClick={() => setShowSignout(true)}>
         Sign Out
       </button>
 

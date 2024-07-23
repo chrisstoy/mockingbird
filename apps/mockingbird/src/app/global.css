@@ -12,18 +12,8 @@ html {
   scroll-behavior: smooth;
 }
 
-:root {
-  --mockingbird-grey: #90877f;
-  --mockingbird-white: #d0cfd6;
-  --mockingbird-black: #0b0b0d;
-  --mockingbird-brown: #746051;
-}
 
 body {
-  font-family: inherit;
-  line-height: inherit;
-  background-color: var(--mockingbird-grey);
   height: 100vh;
-  color: var(--mockingbird-white);
   margin: 0;
 }
