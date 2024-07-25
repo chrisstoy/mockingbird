@@ -27,8 +27,12 @@ export default async function RootLayout({
       <body>
         <ErrorBoundary fallbackRender={renderError}>
           <SessionProvider session={session}>
-            <Header></Header>
-            <div className="container justify-center flex">{children}</div>
+            <div className="flex flex-col h-dvh">
+              <Header></Header>
+              <div className="overflow-y-auto">
+                <div className="container justify-center flex">{children}</div>
+              </div>
+            </div>
           </SessionProvider>
         </ErrorBoundary>
       </body>

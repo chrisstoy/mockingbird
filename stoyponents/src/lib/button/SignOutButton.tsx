@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { ConfirmSignOutDialog } from '@/_components/ConfirmSignOutDialog';
+import { ConfirmSignOutDialog } from '../dialog/ConfirmSignOutDialog';
 
 export function SignOutButton() {
   const [showSignout, setShowSignout] = useState(false);

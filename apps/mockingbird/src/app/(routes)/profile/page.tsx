@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { SignOutButton } from './_components/SignOutButton';
+import { SignOutButton } from '@mockingbird/stoyponents';
 import { auth } from '@/auth';
 
 export default async function UserProfilePage() {

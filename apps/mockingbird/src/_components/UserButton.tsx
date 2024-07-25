@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { ConfirmSignOutDialog } from '@/_components/ConfirmSignOutDialog';
+import { ConfirmSignOutDialog } from '@mockingbird/stoyponents';
 import { useSession } from 'next-auth/react';
 import { handleSignIn } from '@/auth/helpers';
 

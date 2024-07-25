@@ -21,6 +21,9 @@
       "node"
     ],
     "paths": {
+      "@mockingbird/stoyponents": [
+        "stoyponents/src/index.ts"
+      ],
       "@/*": [
         "./apps/mockingbird/src/*"
       ]
@@ -34,7 +37,9 @@
     "../../apps/mockingbird/.next/types/**/*.ts",
     "../../dist/apps/mockingbird/.next/types/**/*.ts",
     "next-env.d.ts",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "../../stoyponents/src/lib/button/UserButton.tsx",
+    "../../stoyponents/src/lib/button/SignOutButton.tsx"
   ],
   "exclude": [
     "node_modules",
