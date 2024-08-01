@@ -6,10 +6,14 @@ export const BASE_PATH = '/api/auth';
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [GitHub, LocalCredentials],
-  // callbacks: {
-  //   authorized: async ({ auth }) => {
-  //     // Logged in users are authenticated, otherwise redirect to login page
-  //     return !!auth;
-  //   },
-  // },
+  callbacks: {
+    async session({ session, token, user }) {
+      session.user.id = token?.sub || user?.id;
+      return Promise.resolve(session);
+    },
+    // authorized: async ({ auth }) => {
+    //   // Logged in users are authenticated, otherwise redirect to login page
+    //   return !!auth;
+    // },
+  },
 });

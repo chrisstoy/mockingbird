@@ -1,9 +1,8 @@
-import { verifySignedIn } from '@/_services/verifySignedIn';
-import './global.css';
-import { ErrorBoundary } from 'react-error-boundary';
-import { auth } from '@/auth';
 import { Header } from '@/_components/Header';
+import { auth } from '@/auth';
 import { SessionProvider } from 'next-auth/react';
+import { ErrorBoundary } from 'react-error-boundary';
+import './global.css';
 
 async function renderError({ error }: { error: Error }) {
   'use server';

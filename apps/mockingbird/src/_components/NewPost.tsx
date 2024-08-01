@@ -1,21 +1,36 @@
 'use client';
 import Image from 'next/image';
+import { useMemo, useState } from 'react';
 import { PostEditorDialog } from './PostEditorDialog';
-import { useState } from 'react';
-import { ConfirmSignOutDialog } from '@mockingbird/stoyponents';
+import { createPost } from '@/_services/post';
+import { User } from 'next-auth';
 
 type Props = {
-  firstName: string;
-  userImageSrc: string;
+  user: User | undefined;
   apiKey: string | undefined;
 };
-export function NewPost({ firstName, userImageSrc, apiKey }: Props) {
+export function NewPost({ user, apiKey }: Props) {
   const [showEditor, setShowEditor] = useState(false);
 
-  function handleCreatePost(content: string) {
+  const firstName = useMemo(
+    () => user?.name?.split(' ')[0] ?? 'Anonymous',
+    [user]
+  );
+
+  const userImage = useMemo(
+    () => user?.image ?? '/generic-user-icon.jpg',
+    [user]
+  );
+
+  async function handleCreatePost(content: string) {
     setShowEditor(false);
 
-    console.log(`Create a post with content: ${content}`);
+    if (!user || !user.id) {
+      return;
+    }
+
+    const result = await createPost(user.id, content);
+    console.log(`Create a post with content: ${JSON.stringify(result)}`);
   }
 
   function handleShowEditor() {
@@ -26,19 +41,17 @@ export function NewPost({ firstName, userImageSrc, apiKey }: Props) {
     <div className="card bg-base-100 shadow-xl">
       <div className="card-body">
         <div className="flex flex-row">
-          <div>
-            <div className="avatar">
-              <div className="rounded-full">
-                <Image
-                  src={userImageSrc}
-                  alt="Profile Picture"
-                  width={42}
-                  height={42}
-                ></Image>
-              </div>
+          <div className="avatar">
+            <div className="rounded-full">
+              <Image
+                src={userImage}
+                alt="Profile Picture"
+                width={42}
+                height={42}
+              ></Image>
             </div>
           </div>
-          <div className="w-full ml-2">
+          <div className="flex flex-grow flex-col ml-2 justify-center">
             <button
               className="btn btn-block no-animation content-center justify-start text-primary"
               onClick={handleShowEditor}

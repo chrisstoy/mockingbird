@@ -1,8 +1,11 @@
-import { Post } from './post';
+import { Post } from '@/_services/post';
+import { randomUUID } from 'crypto';
+import { revalidateTag } from 'next/cache';
+import { NextRequest, NextResponse } from 'next/server';
 
-export const mockFeed: Post[] = [
+const feed: Post[] = [
   {
-    id: '1',
+    id: randomUUID(),
     createdAt: new Date(),
     posterId: 'test-user-1',
     content:
@@ -11,7 +14,7 @@ export const mockFeed: Post[] = [
     dislikeCount: 0,
   },
   {
-    id: '2',
+    id: randomUUID(),
     createdAt: new Date(),
     posterId: 'test-user-2',
     content:
@@ -20,3 +23,27 @@ export const mockFeed: Post[] = [
     dislikeCount: 0,
   },
 ];
+
+export async function GET(request: NextRequest) {
+  return NextResponse.json(feed, { status: 200 });
+}
+
+export async function POST(request: Request) {
+  const body = await request.json();
+
+  // TODO - validate body using zod
+
+  const post = {
+    id: randomUUID(),
+    createdAt: new Date(),
+    posterId: body.posterId,
+    content: body.content,
+    likeCount: 0,
+    dislikeCount: 0,
+  };
+  feed.push(post);
+
+  revalidateTag('feed');
+
+  return NextResponse.json({ postId: post.id }, { status: 201 });
+}

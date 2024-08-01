@@ -1,6 +1,6 @@
 'use client';
 import { Editor } from '@tinymce/tinymce-react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import {
   DialogActions,
   DialogHeader,

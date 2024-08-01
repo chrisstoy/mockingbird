@@ -1,12 +1,21 @@
-import { mockFeed } from '../_services/feedService';
+import { Post } from '@/_services/post';
 import { SummaryPost } from './SummaryPost';
+import { useMemo } from 'react';
 
-export async function FeedList() {
-  const postsInFeed = mockFeed;
+type Props = {
+  feed: Post[];
+};
+export async function FeedList({ feed }: Props) {
+  const sortedFeed = useMemo(() => {
+    return feed.sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+  }, [feed]);
 
   return (
     <ul className="list-none max-w-2xl">
-      {postsInFeed.map((post) => (
+      {sortedFeed.map((post) => (
         <li className="m-2" key={post.id}>
           <SummaryPost post={post} />
         </li>
