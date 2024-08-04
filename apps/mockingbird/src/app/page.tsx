@@ -3,10 +3,11 @@ import { NewPost } from '@/_components/NewPost';
 import { getFeed } from '@/_services/feed';
 import { Post } from '@/_services/post';
 import { auth } from '@/auth';
+import { env } from '@/../env.mjs';
 
 export default async function AppPage() {
   const session = await auth();
-  const tinyMCEApiKey = process.env.TINYMCE_API_KEY;
+  const tinyMCEApiKey = env.TINYMCE_API_KEY;
 
   const feed: Post[] = await getFeed();
 
