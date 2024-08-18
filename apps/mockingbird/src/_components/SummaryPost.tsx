@@ -1,5 +1,5 @@
-import { Post } from '@/_services/post';
-import { auth } from '@/auth';
+import { getUser } from '@/_services/users';
+import { Post } from '@/_types/post';
 import {
   ChatBubbleLeftEllipsisIcon,
   HandThumbDownIcon,
@@ -12,10 +12,10 @@ type Props = {
 };
 
 export async function SummaryPost({ post }: Props) {
-  const session = await auth();
+  const poster = await getUser(post.posterId);
 
-  const userName = session?.user?.name ?? 'Guy McFearson';
-  const imageSrc = session?.user?.image ?? '/generic-user-icon.jpg';
+  const userName = poster?.name ?? 'Unknown';
+  const imageSrc = poster?.image ?? '/generic-user-icon.jpg';
 
   return (
     <div className="card bg-base-100 shadow-xl">

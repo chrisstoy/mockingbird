@@ -14,5 +14,10 @@ export async function createPost(
       content,
     }),
   });
+
+  if (!response.ok) {
+    throw new Error('Failed to create post');
+  }
+
   return response.json();
 }

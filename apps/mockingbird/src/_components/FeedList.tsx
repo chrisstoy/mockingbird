@@ -1,4 +1,4 @@
-import { Post } from '@/_services/post';
+import { Post } from '@/_types/post';
 import { SummaryPost } from './SummaryPost';
 import { useMemo } from 'react';
 

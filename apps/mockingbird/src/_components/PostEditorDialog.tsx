@@ -6,7 +6,7 @@ import {
   DialogHeader,
   DialogButton,
 } from '@mockingbird/stoyponents';
-import { Post } from '@/_services/post';
+import { Post } from '@/_types/post';
 
 const initOptions = {
   plugins: [],
