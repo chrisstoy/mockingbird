@@ -9,16 +9,17 @@ export const BASE_PATH = '/api/auth';
 
 const nextAuth = NextAuth({
   adapter: PrismaAdapter(prisma),
-  session: { strategy: 'jwt' },
+  pages: {
+    signIn: '/auth/signin',
+  },
+  session: {
+    strategy: 'jwt',
+  },
   callbacks: {
     async session({ session, token, user }) {
       session.user.id = token?.sub || user?.id;
       return Promise.resolve(session);
     },
-    // authorized: async ({ auth }) => {
-    //   // Logged in users are authenticated, otherwise redirect to login page
-    //   return !!auth;
-    // },
   },
   ...authConfig,
 });

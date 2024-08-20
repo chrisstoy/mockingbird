@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { SignOutButton } from '@mockingbird/stoyponents';
-import { auth } from '@/auth';
+import { auth } from '@/app/auth';
 
 export default async function UserProfilePage() {
   const session = await auth();

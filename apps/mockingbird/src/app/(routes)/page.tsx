@@ -2,7 +2,7 @@ import { FeedList } from '@/_components/FeedList';
 import { NewPost } from '@/_components/NewPost';
 import { getFeed } from '@/_services/feed';
 import { Post } from '@/_types/post';
-import { auth } from '@/auth';
+import { auth } from '@/app/auth';
 import { env } from '@/../env.mjs';
 
 export default async function AppPage() {

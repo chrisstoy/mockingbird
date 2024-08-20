@@ -1,5 +1,4 @@
-import { Header } from '@/_components/Header';
-import { auth } from '@/auth';
+import { auth } from '@/app/auth';
 import { SessionProvider } from 'next-auth/react';
 import { ErrorBoundary } from 'react-error-boundary';
 import './global.css';
@@ -26,12 +25,7 @@ export default async function RootLayout({
       <body>
         <ErrorBoundary fallbackRender={renderError}>
           <SessionProvider session={session}>
-            <div className="flex flex-col h-dvh">
-              <Header></Header>
-              <div className="overflow-y-auto flex justify-center">
-                <div className="container justify-center flex">{children}</div>
-              </div>
-            </div>
+            <div className="flex flex-col h-dvh">{children}</div>
           </SessionProvider>
         </ErrorBoundary>
       </body>

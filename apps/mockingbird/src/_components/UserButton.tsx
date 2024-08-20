@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { ConfirmSignOutDialog } from '@mockingbird/stoyponents';
 import { useSession } from 'next-auth/react';
-import { handleSignIn } from '@/auth/helpers';
+import { handleSignIn } from '@/app/auth/helpers';
 
 export function UserButton() {
   const { data: session } = useSession();

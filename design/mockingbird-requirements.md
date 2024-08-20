@@ -7,11 +7,17 @@ Basic social media app that will allow users to post stories and comment on othe
 ### Posts
 
 - A Post must consist of up to 1024 characters of text and/or a single image.
-- A Post might contain an hyperlink to any website
-- A Post might contain a link to an existing Post
-- A Post might contain any number of Comments, where each Comment is itself a Post
+- A Post could contain an hyperlink to any website
+- A Post could contain a link to an existing Post
+- A Post could contain any number of Comments, where each Comment is itself a Post
 - A Post must display the name of the Poster and the poster's Avatar
 - A User should be able to quickly like or dislike a Post
+- A Post could support Hashtags
+
+### Hashtags
+
+- A User should be able to search for Posts that contain a specified Hashtag
+-
 
 ### Users
 
@@ -29,6 +35,13 @@ Basic social media app that will allow users to post stories and comment on othe
 - The Feed must display a list of Posts
 - The Feed must provide a way to filter which Posts are displayed
 - The Feed must provide a way for the current User to create a new Post
+
+### Friends
+
+- A User must be able to request to become a Friend with another User
+- A User must be able to accept or reject a Friend request
+- A User must be able to remove an existing Friend.
+-
 
 # System Components
 
