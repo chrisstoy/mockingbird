@@ -1,6 +1,6 @@
 import { Header } from '@/_components/Header';
 
-export default async function RootLayout({
+export default async function RoutesLayout({
   children,
 }: {
   children: React.ReactNode;

@@ -2,6 +2,7 @@ import { auth } from '@/app/auth';
 import { SessionProvider } from 'next-auth/react';
 import { ErrorBoundary } from 'react-error-boundary';
 import './global.css';
+import { Suspense } from 'react';
 
 async function renderError({ error }: { error: Error }) {
   'use server';
@@ -25,7 +26,14 @@ export default async function RootLayout({
       <body>
         <ErrorBoundary fallbackRender={renderError}>
           <SessionProvider session={session}>
-            <div className="flex flex-col h-dvh">{children}</div>
+            <div className="flex flex-col h-dvh">
+              <Suspense
+                fallback={
+                  <span className="loading loading-ball loading-lg"></span>
+                }
+              ></Suspense>
+              {children}
+            </div>
           </SessionProvider>
         </ErrorBoundary>
       </body>
