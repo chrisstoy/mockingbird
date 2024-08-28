@@ -1,7 +1,7 @@
 'use client';
-import { signIn } from 'next-auth/react';
 import { useState } from 'react';
-import { SigninButton } from './_components/SigninButton';
+import { SignInButton } from './_components/SignInButton';
+import { signIn } from 'next-auth/react';
 
 export default function SignInPage() {
   const providers = [
@@ -31,7 +31,7 @@ export default function SignInPage() {
           <h2 className="text-xl text-center mb-5">Sign in with...</h2>
           <div className="card-actions flex flex-col items-center">
             {providers.map(({ id, name, iconSrc }) => (
-              <SigninButton
+              <SignInButton
                 key={id}
                 id={id}
                 name={name}

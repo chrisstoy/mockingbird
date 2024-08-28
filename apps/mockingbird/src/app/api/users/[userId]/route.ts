@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { prisma } from '@/_services/db';
+import logger from '@/_server/logger';
 
 type Params = {
   userId: string;
@@ -8,6 +9,8 @@ type Params = {
 
 export async function GET(request: NextRequest, context: { params: Params }) {
   const userId = context.params.userId;
+
+  logger.info(`GET /api/users/${userId}`);
 
   const user = await prisma.user.findFirst({
     where: {

@@ -8,7 +8,7 @@ interface Props {
   onSignIn: (serviceId: string) => void;
 }
 
-export function SigninButton({ id, name, imageSrc, onSignIn }: Props) {
+export function SignInButton({ id, name, imageSrc, onSignIn }: Props) {
   async function handleSignin() {
     onSignIn(id);
   }

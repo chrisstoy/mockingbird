@@ -1,20 +1,36 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
+import {
+  ConfirmationDialogResult,
+  ConfirmSignOutDialog,
+} from '@mockingbird/stoyponents';
+import { signIn, signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { ConfirmSignOutDialog } from '@mockingbird/stoyponents';
-import { useSession } from 'next-auth/react';
-import { handleSignIn } from '@/app/auth/helpers';
 
 export function UserButton() {
   const { data: session } = useSession();
-  const [showSignout, setShowSignout] = useState(false);
   const router = useRouter();
+
+  const [showSignout, setShowSignout] = useState(false);
 
   const userName = session?.user?.name ?? 'Not Logged In';
   const email = session?.user?.email ?? '';
   const imageSrc = session?.user?.image ?? '/generic-user-icon.jpg';
+
+  function handleSignOutResponse(
+    result?: ConfirmationDialogResult | undefined
+  ) {
+    setShowSignout(false);
+    if (result === 'ok') {
+      signOut();
+    }
+  }
+
+  function handleSignIn() {
+    signIn(undefined, { callbackUrl: '/' });
+  }
 
   return (
     <div className="dropdown dropdown-end">
@@ -54,13 +70,13 @@ export function UserButton() {
           </>
         ) : (
           <li>
-            <span onClick={() => handleSignIn()}>Sign In</span>
+            <span onClick={handleSignIn}>Sign In</span>
           </li>
         )}
       </ul>
       {showSignout && (
         <ConfirmSignOutDialog
-          onClosed={() => setShowSignout(false)}
+          onClosed={handleSignOutResponse}
         ></ConfirmSignOutDialog>
       )}
     </div>

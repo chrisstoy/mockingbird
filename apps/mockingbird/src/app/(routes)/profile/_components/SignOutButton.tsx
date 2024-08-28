@@ -1,9 +1,23 @@
 'use client';
+
+import {
+  ConfirmationDialogResult,
+  ConfirmSignOutDialog,
+} from '@mockingbird/stoyponents';
+import { signOut } from 'next-auth/react';
 import { useState } from 'react';
-import { ConfirmSignOutDialog } from '../dialog/ConfirmSignOutDialog';
 
 export function SignOutButton() {
   const [showSignout, setShowSignout] = useState(false);
+
+  function handleSignOutResponse(
+    result?: ConfirmationDialogResult | undefined
+  ) {
+    setShowSignout(false);
+    if (result === 'ok') {
+      signOut();
+    }
+  }
 
   return (
     <>
@@ -13,7 +27,7 @@ export function SignOutButton() {
 
       {showSignout && (
         <ConfirmSignOutDialog
-          onClosed={() => setShowSignout(false)}
+          onClosed={handleSignOutResponse}
         ></ConfirmSignOutDialog>
       )}
     </>

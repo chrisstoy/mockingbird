@@ -39,7 +39,7 @@
     "next-env.d.ts",
     ".next/types/**/*.ts",
     "../../stoyponents/src/lib/button/UserButton.tsx",
-    "../../stoyponents/src/lib/button/SignOutButton.tsx"
+    "src/app/(routes)/profile/_components/SignOutButton.tsx"
   ],
   "exclude": [
     "node_modules",

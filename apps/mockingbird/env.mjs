@@ -9,6 +9,11 @@ export const env = createEnv({
   server: {
     NODE_ENV: z.enum(['development', 'test', 'production']),
 
+    LOG_LEVEL: z
+      .enum(['error', 'warn', 'info', 'debug', 'trace'])
+      .default('info'),
+    LOG_DIR: z.string().default('./logs'),
+
     AUTH_SECRET:
       process.env.NODE_ENV === 'production'
         ? z.string().min(1)
