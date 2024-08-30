@@ -34,12 +34,8 @@
     "**/*.tsx",
     "**/*.js",
     "**/*.jsx",
-    "../../apps/mockingbird/.next/types/**/*.ts",
-    "../../dist/apps/mockingbird/.next/types/**/*.ts",
     "next-env.d.ts",
     ".next/types/**/*.ts",
-    "../../stoyponents/src/lib/button/UserButton.tsx",
-    "src/app/(routes)/profile/_components/SignOutButton.tsx"
   ],
   "exclude": [
     "node_modules",

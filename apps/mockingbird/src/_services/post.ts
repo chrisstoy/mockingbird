@@ -16,7 +16,9 @@ export async function createPost(
   });
 
   if (!response.ok) {
-    throw new Error('Failed to create post');
+    console.error(
+      `Failed to create post: ${response.status}: ${response.statusText}`
+    );
   }
 
   return response.json();

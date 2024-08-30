@@ -23,7 +23,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <body>
+      <body className="bg-neutral">
         <ErrorBoundary fallbackRender={renderError}>
           <SessionProvider session={session}>
             <div className="flex flex-col h-dvh">
