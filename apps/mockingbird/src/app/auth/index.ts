@@ -2,7 +2,6 @@ import NextAuth from 'next-auth';
 import authConfig from './auth.config';
 import { PrismaClient } from '@prisma/client';
 import { PrismaAdapter } from '@auth/prisma-adapter';
-import { NextResponse } from 'next/server';
 
 const prisma = new PrismaClient();
 
@@ -19,7 +18,11 @@ const nextAuth = NextAuth({
   },
   callbacks: {
     // see https://arc.net/l/quote/xmzhdhor
-    jwt({ token, user }) {
+    jwt({ token, account, user }) {
+      if (account) {
+        token.accessToken = account.access_token;
+        token.id = user?.id;
+      }
       // if (user) token.role = user.role;
       return token;
     },

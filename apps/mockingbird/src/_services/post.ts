@@ -1,11 +1,11 @@
 import { Post } from '@/_types/post';
-import { API_URL } from '@/../env.mjs';
+import { apiUrlFor } from './api';
 
 export async function createPost(
   userId: string,
   content: string
 ): Promise<Post> {
-  const response = await fetch(`${API_URL}/feed`, {
+  const response = await fetch(await apiUrlFor(`/feed`), {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

@@ -1,7 +1,7 @@
-import { API_URL } from '@/../env.mjs';
+import { apiUrlFor } from './api';
 
 export async function getFeed() {
-  const response = await fetch(`${API_URL}/feed`, {
+  const response = await fetch(await apiUrlFor('/feed'), {
     next: { tags: ['feed'] },
   });
   const posts = await response.json();

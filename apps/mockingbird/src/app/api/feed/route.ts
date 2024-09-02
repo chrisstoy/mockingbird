@@ -5,11 +5,19 @@ import { Post } from '@prisma/client';
 import { prisma } from '@/_services/db';
 import logger from '@/_server/logger';
 import { z } from 'zod';
+import { auth } from '@/app/auth';
 
 const feed = new Array<Post>();
 
 export async function GET(request: NextRequest) {
-  logger.info('GET /api/feed');
+  // get the feed for current user
+
+  const session = await auth();
+
+  const userId = session?.user?.id;
+
+  logger.info(`Getting feed for userId: ${userId}`);
+
   const posts = await prisma.post.findMany({
     orderBy: {
       createdAt: 'desc',

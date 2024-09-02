@@ -14,15 +14,20 @@ export const env = createEnv({
       .default('info'),
     LOG_DIR: z.string().default('./logs'),
 
-    API_HOST: z.string().url(),
-    API_PATH: z.string().min(1),
+    DATABASE_URL: z.string().url(),
+
+    TINYMCE_API_KEY: z.string().min(1),
 
     AUTH_SECRET:
       process.env.NODE_ENV === 'production'
         ? z.string().min(1)
         : z.string().min(1).optional(),
+
     AUTH_GITHUB_ID: z.string().min(1),
     AUTH_GITHUB_SECRET: z.string().min(1),
+
+    AUTH_GOOGLE_ID: z.string().min(1),
+    AUTH_GOOGLE_SECRET: z.string().min(1),
   },
 
   /**
@@ -30,9 +35,7 @@ export const env = createEnv({
    * isn't built with invalid env vars. To expose them to the client, prefix them with
    * `NEXT_PUBLIC_`.
    */
-  client: {
-    TINYMCE_API_KEY: z.string().min(1),
-  },
+  client: {},
 
   /**
    * You can't destruct `process.env` as a regular object in the Next.js edge runtimes (e.g.
@@ -51,5 +54,3 @@ export const env = createEnv({
    */
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
 });
-
-export const API_URL = `${env.API_HOST}${env.API_PATH}`;
