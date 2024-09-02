@@ -10,11 +10,11 @@ export default function SignInPage() {
       name: 'GitHub',
       iconSrc: 'https://authjs.dev/img/providers/github.svg',
     },
-    // {
-    //   id: 'google',
-    //   name: 'Google',
-    //   iconSrc: 'https://authjs.dev/img/providers/google.svg',
-    // },
+    {
+      id: 'google',
+      name: 'Google',
+      iconSrc: 'https://authjs.dev/img/providers/google.svg',
+    },
   ];
 
   const [selectedProvider, setSelectedProvider] = useState<string>('');

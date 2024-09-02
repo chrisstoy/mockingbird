@@ -14,6 +14,9 @@ export const env = createEnv({
       .default('info'),
     LOG_DIR: z.string().default('./logs'),
 
+    API_HOST: z.string().url(),
+    API_PATH: z.string().min(1),
+
     AUTH_SECRET:
       process.env.NODE_ENV === 'production'
         ? z.string().min(1)
@@ -48,3 +51,5 @@ export const env = createEnv({
    */
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
 });
+
+export const API_URL = `${env.API_HOST}${env.API_PATH}`;

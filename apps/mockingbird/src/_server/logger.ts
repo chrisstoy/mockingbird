@@ -1,6 +1,6 @@
-import winston from 'winston';
+import { env } from '@/../env.mjs';
 import { join } from 'path';
-import { env } from 'apps/mockingbird/env.mjs';
+import winston from 'winston';
 
 const { combine, errors, json, timestamp } = winston.format;
 
