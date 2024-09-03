@@ -88,4 +88,13 @@ model Post {
   responses Post[] @relation("Responses")
 }
 
+model Friends {
+  userId   String  @id // user who makes the friend request
+  friendId String // user to be friends with
+  accepted Boolean // true if the friendship is accepted
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 // #endregion

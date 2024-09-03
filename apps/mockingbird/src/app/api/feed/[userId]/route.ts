@@ -5,20 +5,30 @@ import { Post } from '@prisma/client';
 import { prisma } from '@/_services/db';
 import logger from '@/_server/logger';
 import { z } from 'zod';
-import { auth } from '@/app/auth';
 
-const feed = new Array<Post>();
-
-export async function GET(request: NextRequest) {
-  // get the feed for current user
-
-  const session = await auth();
-
-  const userId = session?.user?.id;
+export async function GET(request: NextRequest, context: { params: Params }) {
+  const userId = context.params.userId;
 
   logger.info(`Getting feed for userId: ${userId}`);
 
+  // the user's feed consists of all top-level posts by the user
+  // as well as all top-level posts by the user's friends.
+  const friends = await prisma.friends.findMany({
+    where: {
+      userId,
+      accepted: true,
+    },
+    select: {
+      friendId: true,
+    },
+  });
+
+  const friendIds = [userId, ...friends.map(({ friendId }) => friendId)];
+
   const posts = await prisma.post.findMany({
+    where: {
+      posterId: { in: friendIds },
+    },
     orderBy: {
       createdAt: 'desc',
     },
@@ -43,8 +53,6 @@ export async function POST(request: Request) {
         content,
       },
     });
-
-    feed.push(post);
 
     revalidateTag('feed');
 
