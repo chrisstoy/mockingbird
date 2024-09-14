@@ -42,6 +42,9 @@ const nextAuth = NextAuth({
       // }
 
       // Logged in users are authenticated, otherwise redirect to login page
+      if (request.nextUrl.pathname === '/auth/create-account') {
+        return true;
+      }
       return !!auth;
     },
   },

@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { UserButton } from './UserButton';
+import { UserButton } from './UserButton.client';
 import Link from 'next/link';
 
 export function Header() {

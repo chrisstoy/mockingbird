@@ -1,10 +1,13 @@
 import { revalidateTag } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 
-import { Post } from '@prisma/client';
-import { prisma } from '@/_services/db';
 import logger from '@/_server/logger';
+import { prisma } from '@/_services/db';
 import { z } from 'zod';
+
+type Params = {
+  userId: string;
+};
 
 export async function GET(request: NextRequest, context: { params: Params }) {
   const userId = context.params.userId;
@@ -41,11 +44,15 @@ const postSchema = z.object({
   content: z.string().min(1),
 });
 
-export async function POST(request: Request) {
+export async function POST(request: Request, context: { params: Params }) {
   const rawBody = await request.json();
+  const userId = context.params.userId;
 
   try {
     const { posterId, content } = postSchema.parse(rawBody);
+    if (userId !== posterId) {
+      throw new Error('posterId and userId must match');
+    }
 
     const post = await prisma.post.create({
       data: {

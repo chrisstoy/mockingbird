@@ -7,7 +7,7 @@ export default async function UserProfilePage() {
 
   const userName = session?.user?.name ?? 'Unknown';
   const email = session?.user?.email;
-  const imageSrc = session?.user?.image ?? '';
+  const imageSrc = session?.user?.image ?? '/generic-user-icon.jpg';
 
   return (
     <div className="hero  bg-base-100">

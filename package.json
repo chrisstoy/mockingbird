@@ -7,13 +7,17 @@
   "dependencies": {
     "@auth/prisma-adapter": "^2.4.2",
     "@heroicons/react": "^2.1.5",
+    "@hookform/resolvers": "^3.9.0",
     "@prisma/client": "^5.18.0",
     "@tinymce/tinymce-react": "^5.1.1",
+    "@types/bcrypt": "^5.0.2",
+    "argon2": "^0.41.1",
     "next": "14.2.3",
     "next-auth": "^5.0.0-beta.19",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-error-boundary": "^4.0.13",
+    "react-hook-form": "^7.53.0",
     "tslib": "^2.3.0",
     "winston": "^3.14.2",
     "winston-daily-rotate-file": "^5.0.0"

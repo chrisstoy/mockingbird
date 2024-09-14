@@ -23,7 +23,8 @@ model User {
   updatedAt DateTime @updatedAt
 
   // Mockingbird specific references
-  Post Post[]
+  Post    Post[]
+  Friends Friends[]
 }
 
 model Account {
@@ -70,6 +71,19 @@ model VerificationToken {
 
 // #endregion
 
+// #region Authentication and Authorization
+model Passwords {
+  userId   String @unique
+  password String
+
+  expiresAt DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// #endregion
+
 // #region Mockingbird
 model Post {
   id               String  @id @default(cuid())
@@ -89,12 +103,15 @@ model Post {
 }
 
 model Friends {
-  userId   String  @id // user who makes the friend request
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId   String // user who makes the friend request
   friendId String // user to be friends with
   accepted Boolean // true if the friendship is accepted
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 // #endregion

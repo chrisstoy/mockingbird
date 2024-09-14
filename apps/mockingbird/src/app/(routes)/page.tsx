@@ -1,6 +1,6 @@
 import { env } from '@/../env.mjs';
 import { FeedList } from '@/_components/FeedList';
-import { NewPost } from '@/_components/NewPost';
+import { NewPost } from '@/_components/NewPost.client';
 import { getFeedForUser } from '@/_services/feed';
 import { Post } from '@/_types/post';
 import { auth } from '@/app/auth';

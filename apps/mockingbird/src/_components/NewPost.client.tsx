@@ -1,7 +1,7 @@
 'use client';
 import Image from 'next/image';
 import { useMemo, useState } from 'react';
-import { PostEditorDialog } from './PostEditorDialog';
+import { PostEditorDialog } from './PostEditorDialog.client';
 import { createPost } from '@/_services/post';
 import { User } from 'next-auth';
 
