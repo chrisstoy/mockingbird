@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import { PostEditorDialog } from './PostEditorDialog.client';
 import { createPost } from '@/_services/post';
 import { User } from 'next-auth';
+import { useRouter } from 'next/navigation';
 
 type Props = {
   user: User | undefined;
@@ -11,6 +12,8 @@ type Props = {
 };
 export function NewPost({ user, apiKey }: Props) {
   const [showEditor, setShowEditor] = useState(false);
+
+  const router = useRouter();
 
   const firstName = useMemo(
     () => user?.name?.split(' ')[0] ?? 'Anonymous',
@@ -31,6 +34,7 @@ export function NewPost({ user, apiKey }: Props) {
 
     const result = await createPost(user.id, content);
     console.log(`Create a post with content: ${JSON.stringify(result)}`);
+    router.refresh();
   }
 
   function handleShowEditor() {
