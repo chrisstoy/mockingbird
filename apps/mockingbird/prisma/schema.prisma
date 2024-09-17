@@ -111,7 +111,7 @@ model Friends {
   friendId String // user to be friends with
   accepted Boolean // true if the friendship is accepted
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id])
 }
 
 // #endregion

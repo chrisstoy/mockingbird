@@ -19,6 +19,13 @@ export async function GET(request: NextRequest, context: { params: Params }) {
     },
   });
 
+  if (!user) {
+    return NextResponse.json(
+      { statusText: `User '${userId}' does not exist` },
+      { status: 404 }
+    );
+  }
+
   const userToReturn = user
     ? {
         id: user.id,

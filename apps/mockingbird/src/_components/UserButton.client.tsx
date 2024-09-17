@@ -9,6 +9,22 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
+function MenuItem({ title, onClick }: { title: string; onClick: () => void }) {
+  return (
+    <li>
+      <span
+        className="w-full"
+        onClick={() => {
+          (document.activeElement as HTMLElement | undefined)?.blur();
+          onClick();
+        }}
+      >
+        {title}
+      </span>
+    </li>
+  );
+}
+
 export function UserButton() {
   const { data: session } = useSession();
   const router = useRouter();
@@ -54,24 +70,13 @@ export function UserButton() {
         </div>
         {session?.user ? (
           <>
-            <li>
-              <span
-                onClick={() => {
-                  (document.activeElement as HTMLElement | undefined)?.blur();
-                  router.push('/profile');
-                }}
-              >
-                Profile
-              </span>
-            </li>
-            <li>
-              <span onClick={() => setShowSignout(true)}>Sign Out</span>
-            </li>
+            <MenuItem title="Friends" onClick={() => router.push('/friends')} />
+            <MenuItem title="Profile" onClick={() => router.push('/profile')} />
+            <hr className="m-1"></hr>
+            <MenuItem title="Sign Out" onClick={() => setShowSignout(true)} />
           </>
         ) : (
-          <li>
-            <span onClick={handleSignIn}>Sign In</span>
-          </li>
+          <MenuItem title="Sign In" onClick={handleSignIn} />
         )}
       </ul>
       {showSignout && (
