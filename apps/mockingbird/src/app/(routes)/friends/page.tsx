@@ -14,10 +14,15 @@ export default async function FriendsPage() {
     );
   }
 
-  const friends = await getFriendsForUser(session.user.id);
+  const { friends, pendingFriends } = await getFriendsForUser(session.user.id);
 
   return (
     <div>
+      <h1>Pending Friends</h1>
+      {pendingFriends.map((friend) => (
+        <Friend key={friend.id} friendId={friend.id} />
+      ))}
+
       <h1>Friends</h1>
       {friends.map((friend) => (
         <Friend key={friend.id} friendId={friend.id} />

@@ -1,5 +1,6 @@
 import { User } from 'next-auth';
 import { apiUrlFor } from './api';
+import { Friend } from '@/_types/friends';
 
 export async function getUser(id: string) {
   try {
@@ -15,14 +16,16 @@ export async function getUser(id: string) {
 export async function getFriendsForUser(id: string) {
   try {
     const response = await fetch(await apiUrlFor(`/users/${id}/friends`));
-    const friends = (await response.json()) as Array<{
-      id: string;
-      name: string;
-      image: string;
-    }>;
+    const friends = (await response.json()) as {
+      friends: Friend[];
+      pendingFriends: Friend[];
+    };
     return friends;
   } catch (error) {
     console.error(error);
-    return [];
+    return {
+      friends: [],
+      pendingFriends: [],
+    };
   }
 }
