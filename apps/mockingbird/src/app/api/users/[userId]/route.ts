@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { prisma } from '@/_services/db';
+import { prisma } from '@/_server/db';
 import logger from '@/_server/logger';
 import { CreateUser } from '@/_types/schemas';
 

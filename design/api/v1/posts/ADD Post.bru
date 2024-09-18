@@ -1,0 +1,18 @@
+meta {
+  name: ADD Post
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{host}}/posts
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "posterId": "cm1750szo00001ocb5aog8ley",
+    "content": "This is a test post from Bruno."
+  }
+}

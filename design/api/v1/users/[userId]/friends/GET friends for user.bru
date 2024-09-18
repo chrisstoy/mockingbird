@@ -1,0 +1,15 @@
+meta {
+  name: GET friends for user
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{host}}/users/:userId/friends
+  body: none
+  auth: none
+}
+
+params:path {
+  userId: cm1750szo00001ocb5aog8ley
+}
