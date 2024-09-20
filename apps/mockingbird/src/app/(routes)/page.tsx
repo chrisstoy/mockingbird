@@ -14,7 +14,7 @@ export default async function AppPage() {
     : [];
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col flex-auto">
       <NewPost user={session?.user} apiKey={tinyMCEApiKey}></NewPost>
       <FeedList feed={feed}></FeedList>
     </div>

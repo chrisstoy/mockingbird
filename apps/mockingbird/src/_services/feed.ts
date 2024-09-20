@@ -1,6 +1,10 @@
-import logger from '@/_server/logger';
-import { apiUrlFor } from './api';
+import baseLogger from '@/_server/logger';
 import { signIn } from '@/app/auth';
+import { apiUrlFor } from './api';
+
+const logger = baseLogger.child({
+  service: 'feed',
+});
 
 export async function getFeedForUser(userId: string) {
   try {

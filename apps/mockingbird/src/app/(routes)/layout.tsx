@@ -6,11 +6,11 @@ export default async function RoutesLayout({
   children: React.ReactNode;
 }) {
   return (
-    <>
+    <div className="h-full flex flex-col">
       <Header></Header>
-      <div className="overflow-y-auto flex justify-center">
-        <div className="container justify-center flex">{children}</div>
+      <div className="justify-center flex flex-auto overflow-y-auto">
+        <div className="container max-w-2xl">{children}</div>
       </div>
-    </>
+    </div>
   );
 }

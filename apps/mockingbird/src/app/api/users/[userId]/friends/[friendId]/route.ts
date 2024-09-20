@@ -1,7 +1,11 @@
 import { prisma } from '@/_server/db';
-import logger from '@/_server/logger';
+import baseLogger from '@/_server/logger';
 import { Params } from 'next/dist/shared/lib/router/utils/route-matcher';
 import { NextResponse } from 'next/server';
+
+const logger = baseLogger.child({
+  service: 'api:users:user:friends:friend',
+});
 
 /** add a friend */
 export async function PUT(request: Request, context: { params: Params }) {

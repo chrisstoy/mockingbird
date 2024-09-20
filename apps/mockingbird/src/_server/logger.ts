@@ -10,7 +10,7 @@ const createLogFileName = () => {
   return `mockingbird-${env.NODE_ENV}-${dateString}.log`;
 };
 
-const logger = winston.createLogger({
+const baseLogger = winston.createLogger({
   level: env.LOG_LEVEL,
   format: combine(timestamp(), json(), errors({ stack: true })),
   transports: [
@@ -21,4 +21,4 @@ const logger = winston.createLogger({
   ],
 });
 
-export default logger;
+export default baseLogger;

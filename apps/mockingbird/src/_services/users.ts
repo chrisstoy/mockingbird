@@ -1,6 +1,6 @@
 import { User } from 'next-auth';
 import { apiUrlFor } from './api';
-import { Friend } from '@/_types/friends';
+import { UserInfo } from '@/_types/users';
 
 export async function getUser(id: string) {
   try {
@@ -13,19 +13,51 @@ export async function getUser(id: string) {
   }
 }
 
+interface FriendsForUser {
+  friends: UserInfo[];
+  pendingFriends: UserInfo[];
+  friendRequests: UserInfo[];
+}
+
 export async function getFriendsForUser(id: string) {
   try {
     const response = await fetch(await apiUrlFor(`/users/${id}/friends`));
-    const friends = (await response.json()) as {
-      friends: Friend[];
-      pendingFriends: Friend[];
+    const { friends, pendingFriends, friendRequests } =
+      (await response.json()) as FriendsForUser;
+
+    const result: FriendsForUser = {
+      friends: friends.map((friend) => ({
+        ...friend,
+        friendStatus: 'accepted',
+      })),
+      pendingFriends: pendingFriends.map((friend) => ({
+        ...friend,
+        friendStatus: 'pending',
+      })),
+      friendRequests: friendRequests.map((friend) => ({
+        ...friend,
+        friendStatus: 'requested',
+      })),
     };
-    return friends;
+    return result;
   } catch (error) {
     console.error(error);
     return {
       friends: [],
       pendingFriends: [],
+      friendRequests: [],
     };
+  }
+}
+
+export async function getUsersMatchingSearchTerm(searchTerm: string) {
+  try {
+    const response = await fetch(await apiUrlFor(`/users?q=${searchTerm}`));
+    const users = (await response.json()) as UserInfo[];
+    return users;
+    // return Promise.resolve([]);
+  } catch (error) {
+    console.error(error);
+    return [];
   }
 }

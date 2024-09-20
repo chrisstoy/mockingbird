@@ -1,9 +1,13 @@
 import { revalidateTag } from 'next/cache';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
-import logger from '@/_server/logger';
 import { prisma } from '@/_server/db';
+import baseLogger from '@/_server/logger';
 import { z } from 'zod';
+
+const logger = baseLogger.child({
+  service: 'api:posts',
+});
 
 const postSchema = z.object({
   posterId: z.string().min(1),

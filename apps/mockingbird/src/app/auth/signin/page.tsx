@@ -3,7 +3,6 @@ import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { redirect, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-// import { signInWithEmailAndPassword } from '../localCredentials';
 import { SignInButton } from './_components/SignInButton';
 import { AuthError } from 'next-auth';
 

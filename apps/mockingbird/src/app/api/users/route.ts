@@ -1,31 +1,83 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/_server/db';
-import logger from '@/_server/logger';
+import baseLogger from '@/_server/logger';
 import { CreateUserData, CreateUserDataSchema } from '@/_types/schemas';
-import { z } from 'zod';
+import { UserInfo } from '@/_types/users';
+import { auth } from '@/app/auth';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import * as argon2 from 'argon2';
+import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
-type Params = {
-  q?: string;
-};
+const logger = baseLogger.child({
+  service: 'api:users',
+});
 
-export async function GET(request: NextRequest, context: { params: Params }) {
-  const query = context.params?.q;
+export async function GET(request: NextRequest) {
+  const url = new URL(request.url);
+  const query = url.searchParams.get('q');
 
-  logger.info(`Search for Users: ${JSON.stringify(context.params)}`);
+  const session = await auth();
+  if (!session?.user?.id) {
+    logger.error('User not logged in');
+    return NextResponse.json(
+      { statusText: 'User not logged in' },
+      { status: 401 }
+    );
+  }
+
+  logger.info(`Search for Users with query: ${query}`);
+
+  if (!query?.length) {
+    return NextResponse.json(
+      { statusText: 'No query provided' },
+      { status: 500 }
+    );
+  }
 
   const users = await prisma.user.findMany({
     where: {
-      name: { contains: query },
+      OR: [
+        {
+          name: {
+            contains: query,
+            mode: 'insensitive',
+          },
+        },
+        {
+          email: {
+            contains: query,
+            mode: 'insensitive',
+          },
+        },
+      ],
     },
   });
 
-  const usersToReturn = users.map((user) => ({
-    id: user.id,
-    name: user.name,
-    image: user.image,
-  }));
+  const friends = await prisma.friends.findMany({
+    where: {
+      userId: session.user.id,
+    },
+    select: {
+      friendId: true,
+      accepted: true,
+    },
+  });
+
+  const usersToReturn = users.map((user) => {
+    const friend = friends.find((f) => f.friendId === user.id);
+
+    const userInfo: UserInfo = {
+      id: user.id,
+      name: user.name ?? '',
+      image: user.image,
+      friendStatus: friend
+        ? friend.accepted
+          ? 'accepted'
+          : 'pending'
+        : undefined,
+      mutualFriends: 0,
+    };
+    return userInfo;
+  });
 
   return NextResponse.json(usersToReturn, { status: 200 });
 }

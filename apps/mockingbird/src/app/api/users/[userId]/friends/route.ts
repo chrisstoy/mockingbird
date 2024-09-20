@@ -1,9 +1,11 @@
-import { revalidateTag } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 
-import logger from '@/_server/logger';
-import { prisma } from '@/_server/db';
-import { z } from 'zod';
+import baseLogger from '@/_server/logger';
+import { getFriendRequestsForUser, getFriendsForUser } from './service';
+
+const logger = baseLogger.child({
+  service: 'api:users:user:friends',
+});
 
 type Params = {
   userId: string;
@@ -12,41 +14,18 @@ type Params = {
 export async function GET(request: NextRequest, context: { params: Params }) {
   const userId = context.params.userId;
 
-  logger.info(`Getting friends for userId: ${userId}`);
+  logger.info(`APIGetting friends for userId: ${userId}`);
 
-  const allFriends = await prisma.friends.findMany({
-    where: {
-      userId,
-    },
-    select: {
-      friendId: true,
-      accepted: true,
-    },
-  });
+  const friends = await getFriendsForUser(userId);
 
-  const friends = await prisma.user.findMany({
-    where: {
-      id: {
-        in: allFriends.map(({ friendId }) => friendId),
-      },
-    },
-    select: {
-      id: true,
-      name: true,
-      image: true,
-    },
-  });
+  const { pendingRequestsByUser, friendRequestsForUser } =
+    await getFriendRequestsForUser(userId);
 
   return NextResponse.json(
     {
-      friends: friends.filter(
-        ({ id }) =>
-          allFriends.find(({ friendId }) => friendId === id)?.accepted === true
-      ),
-      pendingFriends: friends.filter(
-        ({ id }) =>
-          allFriends.find(({ friendId }) => friendId === id)?.accepted === false
-      ),
+      friends,
+      pendingFriends: pendingRequestsByUser,
+      friendRequests: friendRequestsForUser,
     },
     { status: 200 }
   );

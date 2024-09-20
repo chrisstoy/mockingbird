@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 export function Header() {
   return (
-    <div className="navbar bg-neutral text-neutral-content">
+    <div className="navbar bg-neutral text-neutral-content w-full">
       <Link href="/">
         <Image
           className={'ml-2 w-auto h-auto'}

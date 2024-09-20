@@ -11,7 +11,7 @@ datasource db {
 
 model User {
   id            String    @id @default(cuid())
-  name          String?
+  name          String
   email         String?   @unique
   emailVerified DateTime?
   image         String?
@@ -23,8 +23,8 @@ model User {
   updatedAt DateTime @updatedAt
 
   // Mockingbird specific references
-  Post    Post[]
-  Friends Friends[]
+  posts   Post[]
+  friends Friends[]
 }
 
 model Account {

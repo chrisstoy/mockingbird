@@ -1,9 +1,13 @@
 import { revalidateTag } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 
-import logger from '@/_server/logger';
+import baseLogger from '@/_server/logger';
 import { prisma } from '@/_server/db';
 import { z } from 'zod';
+
+const logger = baseLogger.child({
+  service: 'api:users:user:feed',
+});
 
 type Params = {
   userId: string;

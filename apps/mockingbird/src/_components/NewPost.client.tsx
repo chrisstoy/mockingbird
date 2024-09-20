@@ -42,7 +42,7 @@ export function NewPost({ user, apiKey }: Props) {
   }
 
   return (
-    <div className="card bg-base-100 shadow-xl">
+    <div className="card bg-base-100 shadow-xl w-full">
       <div className="card-body">
         <div className="flex flex-row">
           <div className="avatar">

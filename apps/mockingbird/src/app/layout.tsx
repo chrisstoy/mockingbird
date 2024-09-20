@@ -26,7 +26,7 @@ export default async function RootLayout({
       <body className="bg-neutral">
         <ErrorBoundary fallbackRender={renderError}>
           <SessionProvider session={session}>
-            <div className="flex flex-col h-dvh">
+            <div className="w-full h-dvh">
               <Suspense
                 fallback={
                   <span className="loading loading-ball loading-lg"></span>
