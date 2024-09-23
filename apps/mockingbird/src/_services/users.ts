@@ -25,19 +25,10 @@ export async function getFriendsForUser(id: string) {
     const { friends, pendingFriends, friendRequests } =
       (await response.json()) as FriendsForUser;
 
-    const result: FriendsForUser = {
-      friends: friends.map((friend) => ({
-        ...friend,
-        friendStatus: 'accepted',
-      })),
-      pendingFriends: pendingFriends.map((friend) => ({
-        ...friend,
-        friendStatus: 'pending',
-      })),
-      friendRequests: friendRequests.map((friend) => ({
-        ...friend,
-        friendStatus: 'requested',
-      })),
+    const result = {
+      friends,
+      pendingFriends,
+      friendRequests,
     };
     return result;
   } catch (error) {
@@ -55,9 +46,63 @@ export async function getUsersMatchingSearchTerm(searchTerm: string) {
     const response = await fetch(await apiUrlFor(`/users?q=${searchTerm}`));
     const users = (await response.json()) as UserInfo[];
     return users;
-    // return Promise.resolve([]);
   } catch (error) {
     console.error(error);
     return [];
   }
+}
+
+export async function requestFriend(userId: string, friendId: string) {
+  try {
+    const response = await fetch(
+      await apiUrlFor(`/users/${userId}/friends/${friendId}`),
+      {
+        method: 'PUT',
+      }
+    );
+    const user = await response.json();
+    return user;
+  } catch (error) {
+    console.error(error);
+    return undefined;
+  }
+}
+
+export async function acceptFriendRequest(userId: string, friendId: string) {
+  try {
+    const response = await fetch(
+      await apiUrlFor(`/users/${userId}/friends/${friendId}`),
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          accepted: true,
+        }),
+      }
+    );
+    const user = await response.json();
+    return user;
+  } catch (error) {
+    console.error(error);
+    return undefined;
+  }
+}
+
+export async function removeFriend(userId: string, friendId: string) {
+  try {
+    const response = await fetch(
+      await apiUrlFor(`/users/${userId}/friends/${friendId}`),
+      {
+        method: 'DELETE',
+      }
+    );
+    const user = await response.json();
+    return user;
+  } catch (error) {
+    console.error(error);
+    return undefined;
+  }
+}
+
+export async function cancelFriendRequest(userId: string, friendId: string) {
+  return removeFriend(userId, friendId);
 }

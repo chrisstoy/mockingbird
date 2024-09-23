@@ -14,7 +14,7 @@ type Params = {
 export async function GET(request: NextRequest, context: { params: Params }) {
   const userId = context.params.userId;
 
-  logger.info(`GET /api/users/${userId}`);
+  logger.info(`Getting user: ${userId}`);
 
   const user = await prisma.user.findFirst({
     where: {

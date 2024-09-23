@@ -9,6 +9,7 @@
     "@heroicons/react": "^2.1.5",
     "@hookform/resolvers": "^3.9.0",
     "@prisma/client": "^5.18.0",
+    "@redux-devtools/extension": "^3.3.0",
     "@tinymce/tinymce-react": "^5.1.1",
     "@types/bcrypt": "^5.0.2",
     "@uidotdev/usehooks": "^2.4.1",
@@ -21,7 +22,8 @@
     "react-hook-form": "^7.53.0",
     "tslib": "^2.3.0",
     "winston": "^3.14.2",
-    "winston-daily-rotate-file": "^5.0.0"
+    "winston-daily-rotate-file": "^5.0.0",
+    "zustand": "^5.0.0-rc.2"
   },
   "devDependencies": {
     "@babel/core": "^7.14.5",

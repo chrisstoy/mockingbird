@@ -1,11 +1,11 @@
 import { prisma } from '@/_server/db';
 import baseLogger from '@/_server/logger';
 import { CreateUserData, CreateUserDataSchema } from '@/_types/schemas';
-import { UserInfo } from '@/_types/users';
 import { auth } from '@/app/auth';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { getUsersMatchingQuery } from './service';
 
 const logger = baseLogger.child({
   service: 'api:users',
@@ -33,53 +33,9 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const users = await prisma.user.findMany({
-    where: {
-      OR: [
-        {
-          name: {
-            contains: query,
-            mode: 'insensitive',
-          },
-        },
-        {
-          email: {
-            contains: query,
-            mode: 'insensitive',
-          },
-        },
-      ],
-    },
-  });
+  const users = await getUsersMatchingQuery(query);
 
-  const friends = await prisma.friends.findMany({
-    where: {
-      userId: session.user.id,
-    },
-    select: {
-      friendId: true,
-      accepted: true,
-    },
-  });
-
-  const usersToReturn = users.map((user) => {
-    const friend = friends.find((f) => f.friendId === user.id);
-
-    const userInfo: UserInfo = {
-      id: user.id,
-      name: user.name ?? '',
-      image: user.image,
-      friendStatus: friend
-        ? friend.accepted
-          ? 'accepted'
-          : 'pending'
-        : undefined,
-      mutualFriends: 0,
-    };
-    return userInfo;
-  });
-
-  return NextResponse.json(usersToReturn, { status: 200 });
+  return NextResponse.json(users, { status: 200 });
 }
 
 export async function POST(request: Request) {
@@ -154,7 +110,7 @@ export async function POST(request: Request) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { statusText: `Bad Request: ${error}` },
+        { statusText: `Invalid data: ${error}` },
         { status: 500 }
       );
     }
