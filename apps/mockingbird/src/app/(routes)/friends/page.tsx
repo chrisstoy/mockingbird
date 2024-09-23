@@ -16,16 +16,16 @@ export default async function FriendsPage() {
     );
   }
 
-  const { friends, pendingFriends, friendRequests } = await getFriendsForUser(
-    session.user.id
-  );
+  const allFriends = await getFriendsForUser(session.user.id);
+
+  const { friends, pendingFriends, friendRequests } = allFriends;
 
   return (
     <div className="flex flex-col flex-auto gap-4">
       <div className="card bg-base-100 shadow-xl">
         <div className="card-title p-3">Add Friends</div>
         <div className="card-body">
-          <SearchForUsers></SearchForUsers>
+          <SearchForUsers friends={allFriends}></SearchForUsers>
         </div>
       </div>
 
@@ -34,34 +34,48 @@ export default async function FriendsPage() {
           <div className="card-title p-3">
             Have requested to be your friend...
           </div>
-          <div className="card-body flex flex-row">
+          <div className="card-body flex flex-row flex-wrap gap-2">
             {friendRequests.map((friend) => (
-              <FriendCard key={friend.id} friend={friend} />
+              <FriendCard
+                key={friend.id}
+                friend={friend}
+                friendStatus="requested"
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {pendingFriends.length > 0 && (
+        <div className="card bg-base-100 shadow-xl">
+          <div className="card-title p-3">
+            You requested to be friends with...
+          </div>
+          <div className="card-body flex flex-row flex-wrap gap-2">
+            {pendingFriends.map((friend) => (
+              <FriendCard
+                key={friend.id}
+                friend={friend}
+                friendStatus="pending"
+              />
             ))}
           </div>
         </div>
       )}
 
       <div className="card bg-base-100 shadow-xl">
-        <div className="card-title p-3">
-          You requested to be friends with...
-        </div>
-        <div className="card-body flex flex-row">
-          {pendingFriends.map((friend) => (
-            <FriendCard key={friend.id} friend={friend} />
-          ))}
-        </div>
-      </div>
-
-      <div className="card bg-base-100 shadow-xl">
         <div className="card-title p-3">Friends</div>
-        <div className="card-body flex flex-row">
+        <div className="card-body flex flex-row flex-wrap gap-2">
           {friends.length === 0 && (
             <div className="text-xl">Make some friends!</div>
           )}
           {friends.length > 0 &&
             friends.map((friend) => (
-              <FriendCard key={friend.id} friend={friend} />
+              <FriendCard
+                key={friend.id}
+                friend={friend}
+                friendStatus="friend"
+              />
             ))}
         </div>
       </div>

@@ -6,9 +6,23 @@ import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { useDebounce } from '@uidotdev/usehooks';
 import { getUsersMatchingSearchTerm } from '@/_services/users';
 import { UserInfo } from '@/_types/users';
+import { useSession } from 'next-auth/react';
 
-export function SearchForUsers() {
-  const [foundUsers, setFoundUsers] = useState<Array<UserInfo>>([]);
+type Props = {
+  friends: {
+    friends: UserInfo[];
+    pendingFriends: UserInfo[];
+    friendRequests: UserInfo[];
+  };
+};
+
+type ExtendedUserInfo = UserInfo & {
+  friendStatus?: 'friend' | 'pending' | 'requested' | 'none';
+};
+
+export function SearchForUsers({ friends }: Props) {
+  const { data: session } = useSession();
+  const [foundUsers, setFoundUsers] = useState<Array<ExtendedUserInfo>>([]);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [isSearching, setIsSearching] = useState(false);
 
@@ -28,12 +42,29 @@ export function SearchForUsers() {
     }
     const searchUsers = async () => {
       setIsSearching(true);
-      const matchedUsers = await getUsersMatchingSearchTerm(
+      const matchedUsers: ExtendedUserInfo[] = await getUsersMatchingSearchTerm(
         debouncedSearchTerm
       );
       setIsSearching(false);
       console.log(`Found users: ${JSON.stringify(matchedUsers)}`);
-      setFoundUsers(matchedUsers);
+
+      const createMatchUserWithIdPredicate = (id: string) => (user: UserInfo) =>
+        user.id === id;
+
+      // update friend status for each user
+      for (const user of matchedUsers) {
+        const userWithId = createMatchUserWithIdPredicate(user.id);
+        if (friends.friends.find(userWithId)) {
+          user.friendStatus = 'friend';
+        } else if (friends.pendingFriends.find(userWithId)) {
+          user.friendStatus = 'pending';
+        } else if (friends.friendRequests.find(userWithId)) {
+          user.friendStatus = 'requested';
+        } else {
+          user.friendStatus = 'none';
+        }
+      }
+      setFoundUsers(matchedUsers.filter((u) => u.id !== session?.user?.id));
     };
     searchUsers();
   }, [debouncedSearchTerm, setIsSearching, setFoundUsers]);
@@ -70,7 +101,13 @@ export function SearchForUsers() {
         {isSearching ? (
           <div className="text-xs">Searching...</div>
         ) : foundUsers.length > 0 ? (
-          foundUsers.map((user) => <FriendCard key={user.id} friend={user} />)
+          foundUsers.map((user) => (
+            <FriendCard
+              key={user.id}
+              friend={user}
+              friendStatus={user.friendStatus ?? 'none'}
+            />
+          ))
         ) : searchTerm.length > 0 ? (
           <div className="text-xs">No users found.</div>
         ) : null}

@@ -1,12 +1,22 @@
 'use client';
-import { ComponentPropsWithoutRef } from 'react';
+import {
+  acceptFriendRequest,
+  removeFriend,
+  requestFriend,
+} from '@/_services/users';
+import { UserInfo } from '@/_types/users';
 import {
   CheckIcon,
   PlusIcon,
   TrashIcon,
   XMarkIcon,
 } from '@heroicons/react/20/solid';
-import { UserInfo } from '@/_types/users';
+import {
+  ConfirmationDialog,
+  ConfirmationDialogResult,
+} from '@mockingbird/stoyponents';
+import { useSession } from 'next-auth/react';
+import { useCallback, useState } from 'react';
 
 type ButtonProps = {
   label: string;
@@ -34,75 +44,135 @@ function FriendActionButton({ label, type, onAction }: ButtonProps) {
 
 interface Props {
   friend: UserInfo;
+  friendStatus: 'friend' | 'pending' | 'requested' | 'none';
 }
 
-export function FriendCard({ friend }: Props) {
-  const { name, image, mutualFriends, friendStatus } = friend;
+export function FriendCard({ friend, friendStatus }: Props) {
+  const { name, image } = friend;
   const imageSrc = image ?? '/generic-user-icon.jpg';
 
-  const handleAddFriend = () => {
-    console.log(`Add friend: ${name}`);
-  };
+  const [showRemoveFriendDialog, setShowRemoveFriendDialog] = useState(false);
+  const [showCancelFriendRequestDialog, setShowCancelFriendRequestDialog] =
+    useState(false);
 
-  const handleAcceptFriend = () => {
+  const { data: session } = useSession();
+
+  if (!session?.user?.id) {
+    return null;
+  }
+
+  const userId = session.user.id;
+
+  const handleRequestFriend = useCallback(async () => {
+    console.log(`Request friend: ${name}`);
+    await requestFriend(userId, friend.id);
+  }, [userId, friend.id]);
+
+  const handleAcceptFriendRequest = useCallback(async () => {
     console.log(`Accept friend: ${name}`);
-  };
+    await acceptFriendRequest(userId, friend.id);
+  }, [userId, friend.id]);
 
-  const handleRemoveFriend = () => {
-    console.log(`Removing friend: ${name}`);
-  };
+  const handleConfirmCancelFriendRequest = useCallback(
+    async (result?: ConfirmationDialogResult) => {
+      if (result === 'ok') {
+        console.log(`Canceling friend request: ${name}`);
+        await removeFriend(userId, friend.id);
+      }
+      setShowCancelFriendRequestDialog(false);
+    },
+    [userId, friend.id]
+  );
 
-  const handleCancelFriendRequest = () => {
-    console.log(`Cancel friend request: ${name}`);
-  };
+  const handleConfirmRemoveFriend = useCallback(
+    async (result?: ConfirmationDialogResult) => {
+      if (result === 'ok') {
+        console.log(`Removing friend: ${name}`);
+        await removeFriend(userId, friend.id);
+      }
+      setShowRemoveFriendDialog(false);
+    },
+    [userId, friend.id]
+  );
 
   return (
-    <div className="card card-side bg-base-100 shadow-xl w-[48%] p-2">
-      <figure className="w-16 ml-1">
-        <img
-          className="rounded-full"
-          src={imageSrc}
-          alt="Profile Picture"
-        ></img>
-      </figure>
-      <div className="card-body p-0 pl-1">
-        <h2 className="card-title text-sm font-bold">{name}</h2>
-        <p className="text-xs font-extralight">
-          {mutualFriends ? `${mutualFriends}` : 'No'} Mutual Friends
-        </p>
-      </div>
+    <>
+      <div className="card card-side bg-base-100 shadow-xl w-[48%] p-2">
+        <figure className="w-16 ml-1">
+          <img
+            className="rounded-full"
+            src={imageSrc}
+            alt="Profile Picture"
+          ></img>
+        </figure>
+        <div className="card-body p-0 pl-1">
+          <h2 className="card-title text-sm font-bold">{name}</h2>
+          {/* <p className="text-xs font-extralight">
+            {mutualFriends ? `${mutualFriends}` : 'No'} Mutual Friends
+          </p> */}
+        </div>
 
-      <div className="card-actions justify-end mr-1 mb-1">
-        <div className="flex flex-col flex-auto">
-          <div className="">
-            {friendStatus === undefined ? (
-              <FriendActionButton
-                label="Add Friend"
-                type="add"
-                onAction={handleAddFriend}
-              ></FriendActionButton>
-            ) : friendStatus === 'accepted' ? (
-              <FriendActionButton
-                label="Remove Friend"
-                type="remove"
-                onAction={handleRemoveFriend}
-              ></FriendActionButton>
-            ) : friendStatus === 'pending' ? (
-              <FriendActionButton
-                label="Cancel Request"
-                type="cancel"
-                onAction={handleCancelFriendRequest}
-              ></FriendActionButton>
-            ) : (
-              <FriendActionButton
-                label="Accept Request"
-                type="accept"
-                onAction={handleCancelFriendRequest}
-              ></FriendActionButton>
-            )}
+        <div className="card-actions justify-end mr-1 mb-1">
+          <div className="flex flex-col flex-auto">
+            <div className="">
+              {friendStatus === 'none' ? (
+                <FriendActionButton
+                  label="Add Friend"
+                  type="add"
+                  onAction={handleRequestFriend}
+                ></FriendActionButton>
+              ) : friendStatus === 'friend' ? (
+                <FriendActionButton
+                  label="Remove Friend"
+                  type="remove"
+                  onAction={() => setShowRemoveFriendDialog(true)}
+                ></FriendActionButton>
+              ) : friendStatus === 'pending' ? (
+                <FriendActionButton
+                  label="Cancel Request"
+                  type="cancel"
+                  onAction={() => setShowCancelFriendRequestDialog(true)}
+                ></FriendActionButton>
+              ) : (
+                <FriendActionButton
+                  label="Accept Request"
+                  type="accept"
+                  onAction={handleAcceptFriendRequest}
+                ></FriendActionButton>
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+
+      {showRemoveFriendDialog && (
+        <ConfirmationDialog
+          title={`Remove Friend?`}
+          defaultResult={'cancel'}
+          buttons={[
+            { title: 'Remove', result: 'ok' },
+            { title: 'Cancel', intent: 'primary', result: 'cancel' },
+          ]}
+          onClosed={handleConfirmRemoveFriend}
+        >
+          Are you sure you want to remove your friend {friend.name}?
+        </ConfirmationDialog>
+      )}
+
+      {showCancelFriendRequestDialog && (
+        <ConfirmationDialog
+          title={`Cancel Friend Request?`}
+          defaultResult={'cancel'}
+          buttons={[
+            { title: 'Ok', result: 'ok' },
+            { title: 'Cancel', intent: 'primary', result: 'cancel' },
+          ]}
+          onClosed={handleConfirmCancelFriendRequest}
+        >
+          Are you sure you want to cancel your friend request with {friend.name}
+          ?
+        </ConfirmationDialog>
+      )}
+    </>
   );
 }
