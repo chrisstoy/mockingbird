@@ -1,6 +1,5 @@
-import baseLogger from '@/_server/logger';
 import { prisma } from '@/_server/db';
-import { z } from 'zod';
+import baseLogger from '@/_server/logger';
 import { UserInfo } from '@/_types/users';
 
 const logger = baseLogger.child({
@@ -54,6 +53,36 @@ export async function getUsersMatchingQuery(query: string) {
     },
   });
   return users;
+}
+
+export async function getAcceptedFriendsForUser(userId: string) {
+  logger.info(`Getting friends for userId: ${userId}`);
+
+  const allFriends = await prisma.friends.findMany({
+    where: {
+      OR: [
+        {
+          userId,
+        },
+        {
+          friendId: userId,
+        },
+      ],
+    },
+    select: {
+      userId: true,
+      friendId: true,
+      accepted: true,
+    },
+  });
+
+  const acceptedFriendIds = allFriends
+    .filter((friend) => friend.accepted)
+    .map((friend) =>
+      friend.userId === userId ? friend.friendId : friend.userId
+    );
+
+  return acceptedFriendIds;
 }
 
 /**

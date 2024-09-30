@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import baseLogger from '@/_server/logger';
-import { getFriendRequestsForUser, getFriendsForUser } from '../../service';
+import { getFriendsForUser } from '../../service';
 
 const logger = baseLogger.child({
   service: 'api:users:user:friends',

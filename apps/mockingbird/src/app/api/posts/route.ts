@@ -1,9 +1,9 @@
 import { revalidateTag } from 'next/cache';
 import { NextResponse } from 'next/server';
-
 import { prisma } from '@/_server/db';
 import baseLogger from '@/_server/logger';
 import { z } from 'zod';
+import { auth } from '@/app/auth';
 
 const logger = baseLogger.child({
   service: 'api:posts',
@@ -16,8 +16,21 @@ const postSchema = z.object({
 
 export async function POST(request: Request) {
   try {
+    const session = await auth();
+    if (!session?.user?.id) {
+      logger.error('User not logged in');
+      return NextResponse.json(
+        { statusText: 'User not logged in' },
+        { status: 401 }
+      );
+    }
+
     const rawBody = await request.json();
     const { posterId, content } = postSchema.parse(rawBody);
+
+    if (session?.user?.id !== posterId) {
+      throw new Error('posterId and userId must match');
+    }
 
     const post = await prisma.post.create({
       data: {

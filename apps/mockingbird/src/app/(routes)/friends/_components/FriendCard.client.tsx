@@ -1,9 +1,10 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 import {
   acceptFriendRequest,
   removeFriend,
   requestFriend,
-} from '@/_services/users';
+} from '@/_services/friends';
 import { FriendStatus, UserInfo } from '@/_types/users';
 import {
   CheckIcon,
@@ -61,55 +62,58 @@ export function FriendCard({
     useState(false);
 
   const { data: session } = useSession();
-
-  if (!session?.user?.id) {
-    return null;
-  }
-
-  const userId = session.user.id;
+  const userId = session?.user?.id;
 
   const handleRequestFriend = useCallback(async () => {
     console.log(`Request friend: ${name}`);
-    await requestFriend(userId, friend.id);
-    if (onFriendStatusChange) {
-      onFriendStatusChange(friendId, 'requested');
+    if (userId) {
+      await requestFriend(userId, friendId);
+      if (onFriendStatusChange) {
+        onFriendStatusChange(friendId, 'requested');
+      }
     }
-  }, [userId, friend.id]);
+  }, [name, userId, friendId, onFriendStatusChange]);
 
   const handleAcceptFriendRequest = useCallback(async () => {
     console.log(`Accept friend: ${name}`);
-    await acceptFriendRequest(userId, friend.id);
-    if (onFriendStatusChange) {
-      onFriendStatusChange(friendId, 'friend');
+    if (userId) {
+      await acceptFriendRequest(userId, friendId);
+      if (onFriendStatusChange) {
+        onFriendStatusChange(friendId, 'friend');
+      }
     }
-  }, [userId, friend.id]);
+  }, [name, userId, friendId, onFriendStatusChange]);
 
   const handleConfirmCancelFriendRequest = useCallback(
     async (result?: ConfirmationDialogResult) => {
-      if (result === 'ok') {
-        console.log(`Canceling friend request: ${name}`);
-        await removeFriend(userId, friend.id);
-        if (onFriendStatusChange) {
-          onFriendStatusChange(friendId, 'none');
+      if (userId) {
+        if (result === 'ok') {
+          console.log(`Canceling friend request: ${name}`);
+          await removeFriend(userId, friendId);
+          if (onFriendStatusChange) {
+            onFriendStatusChange(friendId, 'none');
+          }
         }
+        setShowCancelFriendRequestDialog(false);
       }
-      setShowCancelFriendRequestDialog(false);
     },
-    [userId, friend.id]
+    [userId, name, friendId, onFriendStatusChange]
   );
 
   const handleConfirmRemoveFriend = useCallback(
     async (result?: ConfirmationDialogResult) => {
-      if (result === 'ok') {
-        console.log(`Removing friend: ${name}`);
-        await removeFriend(userId, friend.id);
-        if (onFriendStatusChange) {
-          onFriendStatusChange(friendId, 'none');
+      if (userId) {
+        if (result === 'ok') {
+          console.log(`Removing friend: ${name}`);
+          await removeFriend(userId, friendId);
+          if (onFriendStatusChange) {
+            onFriendStatusChange(friendId, 'none');
+          }
         }
+        setShowRemoveFriendDialog(false);
       }
-      setShowRemoveFriendDialog(false);
     },
-    [userId, friend.id]
+    [userId, name, friendId, onFriendStatusChange]
   );
 
   return (
@@ -124,6 +128,7 @@ export function FriendCard({
         </figure>
         <div className="card-body p-0 pl-1">
           <h2 className="card-title text-sm font-bold">{name}</h2>
+          <p className="text-xs font-extralight">{friendId}</p>
           {/* <p className="text-xs font-extralight">
             {mutualFriends ? `${mutualFriends}` : 'No'} Mutual Friends
           </p> */}

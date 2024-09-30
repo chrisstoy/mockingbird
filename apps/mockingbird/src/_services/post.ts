@@ -5,7 +5,7 @@ export async function createPost(
   userId: string,
   content: string
 ): Promise<Post> {
-  const response = await fetch(await apiUrlFor(`/feed/${userId}`), {
+  const response = await fetch(await apiUrlFor(`/posts`), {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

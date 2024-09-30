@@ -1,9 +1,6 @@
-import { revalidateTag } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
-
-import baseLogger from '@/_server/logger';
 import { prisma } from '@/_server/db';
-import { z } from 'zod';
+import baseLogger from '@/_server/logger';
 
 const logger = baseLogger.child({
   service: 'api:posts:post',

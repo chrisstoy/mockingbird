@@ -1,5 +1,5 @@
 'use client';
-import { getFriendsForUser } from '@/_services/users';
+import { getFriendsForUser } from '@/_services/friends';
 import { FriendStatus } from '@/_types/users';
 import { useSession } from 'next-auth/react';
 import { useEffect } from 'react';

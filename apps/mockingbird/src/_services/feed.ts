@@ -8,7 +8,7 @@ const logger = baseLogger.child({
 
 export async function getFeedForUser(userId: string) {
   try {
-    const response = await fetch(await apiUrlFor(`/feed/${userId}`), {
+    const response = await fetch(await apiUrlFor(`/users/${userId}/feed`), {
       next: { tags: ['feed'] },
     });
 

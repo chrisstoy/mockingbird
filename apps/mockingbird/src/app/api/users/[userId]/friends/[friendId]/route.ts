@@ -74,7 +74,7 @@ export async function PUT(request: Request, context: { params: Params }) {
   };
 
   try {
-    const result = await prisma.friends.create({
+    await prisma.friends.create({
       data: friendRequest,
     });
   } catch (error) {
@@ -96,7 +96,7 @@ export async function DELETE(request: Request, context: { params: Params }) {
   const friendId = context.params.friendId;
 
   try {
-    const result = await prisma.friends.deleteMany({
+    await prisma.friends.deleteMany({
       where: {
         OR: [
           {

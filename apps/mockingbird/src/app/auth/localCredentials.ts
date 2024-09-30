@@ -1,6 +1,6 @@
 import Credentials from 'next-auth/providers/credentials';
 import { prisma } from '@/_server/db';
-import * as argon2 from 'argon2';
+// import * as argon2 from 'argon2';
 
 type CredentialsConfigType = Parameters<typeof Credentials>[0];
 

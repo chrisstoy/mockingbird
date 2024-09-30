@@ -3,7 +3,7 @@ import {
   cancelFriendRequest,
   removeFriend,
   requestFriend,
-} from '@/_services/users';
+} from '@/_services/friends';
 import { FriendStatus } from '@/_types/users';
 
 export async function updateFriendStatusWithUser(

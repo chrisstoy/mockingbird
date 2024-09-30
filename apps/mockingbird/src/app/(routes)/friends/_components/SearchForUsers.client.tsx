@@ -1,5 +1,4 @@
 'use client';
-import { getUsersMatchingSearchTerm } from '@/_services/users';
 import { FriendStatus, UserInfo } from '@/_types/users';
 import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { useDebounce } from '@uidotdev/usehooks';
@@ -7,6 +6,7 @@ import { useSession } from 'next-auth/react';
 import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { useFriendCollectionStore } from '../_service/state';
 import { FriendCard } from './FriendCard.client';
+import { getUsersMatchingSearchTerm } from '@/_services/users';
 
 type ExtendedUserInfo = UserInfo & {
   friendStatus?: 'friend' | 'pending' | 'requested' | 'none';
@@ -101,6 +101,7 @@ export function SearchForUsers({ onFriendStatusChange }: Props) {
   useEffect(() => {
     const updatedFoundUsers = foundUsers.map(updateUserFriendStatus);
     setFoundUsers(updatedFoundUsers);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- do NOT trigger effect when foundUsers changes since that will cause an infinite loop
   }, [friends, friendRequests, pendingFriends, updateUserFriendStatus]);
 
   return (
