@@ -1,124 +1,112 @@
-import { prisma } from '@/_server/db';
 import baseLogger from '@/_server/logger';
-import { Params } from 'next/dist/shared/lib/router/utils/route-matcher';
+import { ResponseError } from '@/app/api/types';
+import { validateAuthentication } from '@/app/api/validateAuthentication';
+import { auth } from '@/app/auth';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { updateFriendshiptBetweenUsers } from '../../../service';
+import {
+  deleteFriendshipBetweenUsers,
+  getAcceptedFriendsForUser,
+  requestFriendshipBetweenUsers,
+  respondWithError,
+  updateFriendshipBetweenUsers,
+} from '../../../service';
 
 const logger = baseLogger.child({
   service: 'api:users:user:friends:friend',
 });
 
-const AcceptFriendshipSchema = z.object({
+const acceptFriendshipSchema = z.object({
   accepted: z.boolean(),
 });
 
+const paramsSchema = z.object({
+  userId: z.string().min(1),
+  friendId: z.string().min(1),
+});
+
 /**
- * Accept a friend
+ * Accept/paused a friend
  */
-export async function POST(request: Request, context: { params: Params }) {
-  const userId = context.params.userId;
-  const friendId = context.params.friendId;
-
+export const POST = auth(async function POST(request, context) {
   try {
-    const data = await request.json();
-    const { accepted } = AcceptFriendshipSchema.parse(data);
+    validateAuthentication(request.auth);
 
-    if (accepted) {
-      await updateFriendshiptBetweenUsers(userId, friendId);
+    const { userId, friendId } = paramsSchema.parse(context.params);
+
+    const data = await request.json();
+    const { accepted } = acceptFriendshipSchema.parse(data);
+
+    const recordsUpdated = await updateFriendshipBetweenUsers(userId, friendId);
+    if (recordsUpdated === 0) {
+      throw new ResponseError(400, 'Friendship does not exist');
     }
+
+    logger.info(
+      `User ${userId} ${
+        accepted ? 'accepted' : 'paused'
+      } friendship with ${friendId}`
+    );
+    return NextResponse.json({ userId, friendId, accepted }, { status: 200 });
   } catch (error) {
-    if (error instanceof z.ZodError) {
+    logger.error(error);
+    return respondWithError(error);
+  }
+});
+
+/** request a friend */
+export const PUT = auth(async function PUT(request, context) {
+  try {
+    validateAuthentication(request.auth);
+
+    const { userId, friendId } = paramsSchema.parse(context.params);
+
+    const existingFriends = await getAcceptedFriendsForUser(userId);
+
+    if (existingFriends.includes(friendId)) {
+      logger.info(`User ${userId} already friends with ${friendId}`);
       return NextResponse.json(
-        { statusText: `Invalid data: ${error}` },
-        { status: 500 }
+        { userId, friendId, accepted: true },
+        { status: 200 }
       );
     }
 
-    logger.error(error);
-    throw error;
-  }
+    const friendRequest = await requestFriendshipBetweenUsers(userId, friendId);
 
-  logger.info(`User ${userId} accepted friendship with ${friendId}`);
-  return NextResponse.json(
-    { statusText: `Requested friendship with ${friendId}` },
-    { status: 201 }
-  );
-}
-
-/** request a friend */
-export async function PUT(request: Request, context: { params: Params }) {
-  const userId = context.params.userId;
-  const friendId = context.params.friendId;
-
-  logger.info(`User ${userId} wants to add friend ${friendId}`);
-
-  const existingFriend = await prisma.friends.findFirst({
-    where: {
-      userId,
-      friendId,
-    },
-  });
-
-  if (existingFriend) {
-    return NextResponse.json(
-      { statusText: `Already friends` },
-      { status: 200 }
+    logger.info(
+      `User ${userId} requested to add friend ${friendId}. Friend request id: ${friendRequest.id}`
     );
-  }
 
-  const friendRequest = {
-    userId,
-    friendId,
-    accepted: false,
-  };
-
-  try {
-    await prisma.friends.create({
-      data: friendRequest,
-    });
+    return NextResponse.json(
+      { statusText: `Requested friendship with ${friendId}` },
+      { status: 201 }
+    );
   } catch (error) {
     logger.error(error);
-    throw error;
+    return respondWithError(error);
   }
-
-  logger.info(`User ${userId} requested to add friend ${friendId}`);
-
-  return NextResponse.json(
-    { statusText: `Requested friendship with ${friendId}` },
-    { status: 201 }
-  );
-}
+});
 
 /** remove a friend */
-export async function DELETE(request: Request, context: { params: Params }) {
-  const userId = context.params.userId;
-  const friendId = context.params.friendId;
-
+export const DELETE = auth(async function DELETE({ auth }, context) {
   try {
-    await prisma.friends.deleteMany({
-      where: {
-        OR: [
-          {
-            userId,
-            friendId,
-          },
-          {
-            userId: friendId,
-            friendId: userId,
-          },
-        ],
-      },
-    });
+    validateAuthentication(auth);
+
+    const { userId, friendId } = paramsSchema.parse(context.params);
+
+    const result = await deleteFriendshipBetweenUsers(userId, friendId);
+    if (result === 0) {
+      logger.warn(`User ${userId} does not have a friendship with ${friendId}`);
+    } else {
+      logger.info(`User ${userId} removed friendship with ${friendId}`);
+    }
+
+    return NextResponse.json(
+      { statusText: `Removed friendship with ${friendId}` },
+      { status: 200 }
+    );
   } catch (error) {
     logger.error(error);
-    throw error;
+    return respondWithError(error);
   }
-
-  logger.info(`User ${userId} Removed friend ${friendId}`);
-
-  return NextResponse.json(
-    { statusText: `Removed friend ${friendId}` },
-    { status: 200 }
-  );
-}
+});

@@ -1,16 +1,22 @@
 meta {
-  name: DELETE a friend
+  name: ACCEPT friend request
   type: http
-  seq: 2
+  seq: 3
 }
 
-delete {
+post {
   url: {{apiHost}}/users/:userId/friends/:friendId
-  body: none
+  body: json
   auth: none
 }
 
 params:path {
   userId: cm1750szo00001ocb5aog8ley
-  friendId: cm175soco00051ocbbnmnfi42
+  friendId: cm1b29kin0000v7ywlc4ofxms
+}
+
+body:json {
+  {
+    "accepted": false
+  }
 }

@@ -1,0 +1,11 @@
+meta {
+  name: signout
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{apiHost}}/auth/signout
+  body: multipartForm
+  auth: none
+}

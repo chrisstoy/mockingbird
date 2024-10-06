@@ -1,12 +1,31 @@
 import { prisma } from '@/_server/db';
 import baseLogger from '@/_server/logger';
 import { UserInfo } from '@/_types/users';
+import { STATUS_CODES } from 'http';
+import { NextResponse } from 'next/server';
+import { z } from 'zod';
+import { ResponseError } from '../types';
 
 const logger = baseLogger.child({
   service: 'users:service',
 });
 
-export async function updateFriendshiptBetweenUsers(
+export async function requestFriendshipBetweenUsers(
+  userId: string,
+  friendId: string
+) {
+  const friendRequest = {
+    userId,
+    friendId,
+    accepted: false,
+  };
+
+  return await prisma.friends.create({
+    data: friendRequest,
+  });
+}
+
+export async function updateFriendshipBetweenUsers(
   userId: string,
   friendId: string,
   accepted = true
@@ -28,7 +47,28 @@ export async function updateFriendshiptBetweenUsers(
       accepted,
     },
   });
-  return result;
+  return result.count;
+}
+
+export async function deleteFriendshipBetweenUsers(
+  userId: string,
+  friendId: string
+) {
+  const result = await prisma.friends.deleteMany({
+    where: {
+      OR: [
+        {
+          userId,
+          friendId,
+        },
+        {
+          userId: friendId,
+          friendId: userId,
+        },
+      ],
+    },
+  });
+  return result.count;
 }
 
 export async function getUsersMatchingQuery(query: string) {
@@ -222,4 +262,86 @@ export async function getFriendRequestsForUser(userId: string) {
       ({ user }) => user
     ),
   };
+}
+
+export async function getUserById(id: string) {
+  logger.info(`Getting user with id: ${id}`);
+  const user = await prisma.user.findUnique({
+    where: {
+      id,
+    },
+  });
+  return user;
+}
+
+export async function getUserByEmail(email: string) {
+  logger.info(`Getting user with email: ${email}`);
+  const user = await prisma.user.findUnique({
+    where: {
+      email,
+    },
+  });
+  return user;
+}
+
+export async function createUser(
+  name: string,
+  email: string,
+  password: string
+) {
+  logger.info(`Creating new user with name: '${name}' and email: ${email}`);
+
+  const newUser = await prisma.user.create({
+    data: {
+      email,
+      name,
+    },
+  });
+
+  const today = new Date();
+  const expiresAt = new Date(
+    today.getFullYear() + 1,
+    today.getMonth(),
+    today.getDate()
+  );
+
+  // encrypt password
+  try {
+    const encryptedPassword = password; //await argon2.hash(password);
+    const passwordResult = await prisma.passwords.create({
+      data: {
+        userId: newUser.id,
+        password: encryptedPassword,
+        expiresAt,
+      },
+    });
+    logger.info(
+      `Created new user: ${newUser} with password expiration: ${passwordResult.expiresAt.toISOString()}`
+    );
+    return newUser.id;
+  } catch (err) {
+    logger.error(err);
+    throw new Error('Failed to encrypt password');
+  }
+}
+
+function createErrorResponse(status: number, message: string) {
+  const statusText = STATUS_CODES[status] || 'Error';
+  return NextResponse.json({ message, status, statusText }, { status });
+}
+
+export function respondWithError(error: unknown) {
+  if (error instanceof z.ZodError) {
+    return createErrorResponse(400, `Invalid data: ` + JSON.stringify(error));
+  }
+
+  if (error instanceof ResponseError) {
+    return createErrorResponse(error.status, error.message);
+  }
+
+  if (error instanceof Error) {
+    return createErrorResponse(500, `${error.name}: ${error.message}`);
+  }
+
+  return createErrorResponse(500, `${error}`);
 }

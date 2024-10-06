@@ -1,64 +1,43 @@
+import baseLogger from '@/_server/logger';
+import { createPostDataSchema } from '@/_types/post';
+import { auth } from '@/app/auth';
 import { revalidateTag } from 'next/cache';
 import { NextResponse } from 'next/server';
-import { prisma } from '@/_server/db';
-import baseLogger from '@/_server/logger';
-import { z } from 'zod';
-import { auth } from '@/app/auth';
+import { ResponseError } from '../types';
+import { respondWithError } from '../users/service';
+import { validateAuthentication } from '../validateAuthentication';
+import { createPost } from './service';
 
 const logger = baseLogger.child({
   service: 'api:posts',
 });
 
-const postSchema = z.object({
-  posterId: z.string().min(1),
-  content: z.string().min(1),
-});
-
-export async function POST(request: Request) {
+export const POST = auth(async function POST(request) {
   try {
-    const session = await auth();
-    if (!session?.user?.id) {
-      logger.error('User not logged in');
-      return NextResponse.json(
-        { statusText: 'User not logged in' },
-        { status: 401 }
+    validateAuthentication(request.auth);
+
+    const body = await request.json();
+    const { posterId, content, responseToPostId } =
+      createPostDataSchema.parse(body);
+
+    if (request.auth?.user?.id !== posterId) {
+      throw new ResponseError(
+        400,
+        'posterId does not match the logged in user'
       );
     }
 
-    const rawBody = await request.json();
-    const { posterId, content } = postSchema.parse(rawBody);
-
-    if (session?.user?.id !== posterId) {
-      throw new Error('posterId and userId must match');
-    }
-
-    const post = await prisma.post.create({
-      data: {
-        posterId,
-        content,
-      },
-    });
+    const post = await createPost(posterId, content, responseToPostId);
 
     revalidateTag('feed');
 
-    logger.info(`Created a new post for userId: ${posterId}`);
+    logger.info(
+      `Created a new post with id ${post.id} for userId: ${posterId}`
+    );
 
     return NextResponse.json({ postId: post.id }, { status: 201 });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      const issues = JSON.stringify(error.issues);
-
-      logger.error(`Failed to create new post. Invalid data - ${issues}`);
-      return NextResponse.json(
-        { statusText: `Bad Request: ${issues}` },
-        { status: 400 }
-      );
-    }
-
-    logger.error(`Failed to create new post. Error - ${error})}`);
-    return NextResponse.json(
-      { statusText: `Bad Request: ${error}` },
-      { status: 400 }
-    );
+    logger.error(error);
+    return respondWithError(error);
   }
-}
+});
