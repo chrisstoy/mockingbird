@@ -1,126 +1,67 @@
-import { prisma } from '@/_server/db';
 import baseLogger from '@/_server/logger';
-import { CreateUserData, CreateUserDataSchema } from '@/_types/schemas';
+import { createUserDataSchema } from '@/_types/createUser';
 import { auth } from '@/app/auth';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
-import { getUsersMatchingQuery } from './service';
+import { NextResponse } from 'next/server';
+import { ResponseError } from '../types';
+import { validateAuthentication } from '../validateAuthentication';
+import {
+  createUser,
+  getUserByEmail,
+  getUsersMatchingQuery,
+  respondWithError,
+} from './service';
 
 const logger = baseLogger.child({
   service: 'api:users',
 });
 
-export async function GET(request: NextRequest) {
-  const url = new URL(request.url);
-  const query = url.searchParams.get('q');
-
-  const session = await auth();
-  if (!session?.user?.id) {
-    logger.error('User not logged in');
-    return NextResponse.json(
-      { statusText: 'User not logged in' },
-      { status: 401 }
-    );
-  }
-
-  logger.info(`Search for Users with query: ${query}`);
-
-  if (!query?.length) {
-    return NextResponse.json(
-      { statusText: 'No query provided' },
-      { status: 500 }
-    );
-  }
-
-  const users = await getUsersMatchingQuery(query);
-
-  return NextResponse.json(users, { status: 200 });
-}
-
-export async function POST(request: Request) {
+/**
+ * Get users matching the passed query string
+ */
+export const GET = auth(async function GET({ url: _url, auth }) {
   try {
-    const createUserData: CreateUserData = await request.json();
+    validateAuthentication(auth);
 
-    try {
-      CreateUserDataSchema.parse(createUserData);
-    } catch (error) {
-      logger.error(error);
-      return NextResponse.json(
-        { statusText: `Bad Request: ${error}` },
-        { status: 400 }
-      );
+    const url = new URL(_url);
+    const query = url.searchParams.get('q');
+
+    logger.info(`Search for Users with query: ${query}`);
+
+    if (!query?.length) {
+      throw new ResponseError(500, 'No query provided');
     }
 
-    const existingUser = await prisma.user.findFirst({
-      where: {
-        email: createUserData.email,
-      },
-    });
+    logger.info(`Getting users that match query: ${query}`);
+
+    const users = await getUsersMatchingQuery(query);
+
+    return NextResponse.json(users, { status: 200 });
+  } catch (error) {
+    logger.error(error);
+    return respondWithError(error);
+  }
+});
+
+/**
+ * Create a new user
+ */
+export const POST = auth(async function POST(request) {
+  try {
+    validateAuthentication(request.auth);
+
+    const data = await request.json();
+    const { name, email, password } = createUserDataSchema.parse(data);
+
+    const existingUser = await getUserByEmail(email);
 
     if (existingUser) {
-      return NextResponse.json(
-        {
-          statusText: `User with email '${createUserData.email}' already exists`,
-        },
-        { status: 409 }
-      );
+      throw new ResponseError(409, `User with email '${email}' already exists`);
     }
 
-    logger.info(`Creating new user: ${JSON.stringify(createUserData)}`);
-
-    const { name, email, password } = createUserData;
-
-    const newUser = await prisma.user.create({
-      data: {
-        email,
-        name,
-      },
-    });
-
-    const today = new Date();
-    const expiresAt = new Date(
-      today.getFullYear() + 1,
-      today.getMonth(),
-      today.getDate()
-    );
-
-    // encrypt password
-    try {
-      const encryptedPassword = password; //await argon2.hash(password);
-      const passwordResult = await prisma.passwords.create({
-        data: {
-          userId: newUser.id,
-          password: encryptedPassword,
-          expiresAt,
-        },
-      });
-      logger.info(
-        `Created new user: ${newUser} with password expiration: ${passwordResult.expiresAt.toISOString()}`
-      );
-    } catch (err) {
-      logger.error(err);
-      throw new Error('Failed to encrypt password');
-    }
-
-    return NextResponse.json(
-      { statusText: 'Created', userId: newUser.id },
-      { status: 201 }
-    );
+    const userId = await createUser(name, email, password);
+    return NextResponse.json({ userId }, { status: 201 });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { statusText: `Invalid data: ${error}` },
-        { status: 500 }
-      );
-    }
-    if (error instanceof PrismaClientKnownRequestError) {
-      return NextResponse.json(
-        { statusText: `Bad Request: ${error}` },
-        { status: 500 }
-      );
-    }
-
     logger.error(error);
+    return respondWithError(error);
   }
-}
+});

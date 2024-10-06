@@ -5,7 +5,7 @@ meta {
 }
 
 post {
-  url: {{host}}/posts
+  url: {{apiHost}}/posts
   body: json
   auth: none
 }
@@ -13,6 +13,7 @@ post {
 body:json {
   {
     "posterId": "cm1750szo00001ocb5aog8ley",
-    "content": "This is a test post from Bruno."
+    "responseToPostId": "cm1lhw5nq000dvai1cznoi0mx",
+    "content": "Tihs is a response to a post"
   }
 }

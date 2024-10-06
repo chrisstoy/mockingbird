@@ -1,34 +1,33 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
-import { prisma } from '@/_server/db';
 import baseLogger from '@/_server/logger';
-import { getAcceptedFriendsForUser } from '../../service';
+import { validateAuthentication } from '@/app/api/validateAuthentication';
+import { auth } from '@/app/auth';
+import { z } from 'zod';
+import { respondWithError } from '../../service';
+import { getFeedForUser } from './service';
 
 const logger = baseLogger.child({
   service: 'api:users:user:feed',
 });
 
-type Params = {
-  userId: string;
-};
+const paramsSchema = z.object({
+  userId: z.string().min(1),
+});
 
-export async function GET(request: NextRequest, context: { params: Params }) {
-  const userId = context.params.userId;
+export const GET = auth(async function GET(request, context) {
+  try {
+    validateAuthentication(request.auth);
 
-  logger.info(`Getting feed for userId: ${userId}`);
+    const { userId } = paramsSchema.parse(context.params);
 
-  // the user's feed consists of all top-level posts by the user
-  // as well as all top-level posts by the user's friends.
-  const userIdsForFeed = await getAcceptedFriendsForUser(userId);
-  userIdsForFeed.push(userId);
+    logger.info(`Getting feed for userId: ${userId}`);
 
-  const posts = await prisma.post.findMany({
-    where: {
-      posterId: { in: userIdsForFeed },
-    },
-    orderBy: {
-      createdAt: 'desc',
-    },
-  });
-  return NextResponse.json(posts, { status: 200 });
-}
+    const feed = await getFeedForUser(userId);
+
+    return NextResponse.json(feed, { status: 200 });
+  } catch (error) {
+    logger.error(error);
+    return respondWithError(error);
+  }
+});

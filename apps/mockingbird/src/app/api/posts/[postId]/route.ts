@@ -1,27 +1,39 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/_server/db';
 import baseLogger from '@/_server/logger';
+import { auth } from '@/app/auth';
+import { NextResponse } from 'next/server';
+import { z } from 'zod';
+import { ResponseError } from '../../types';
+import { respondWithError } from '../../users/service';
+import { validateAuthentication } from '../../validateAuthentication';
 
 const logger = baseLogger.child({
   service: 'api:posts:post',
 });
 
-type Params = {
-  postId: string;
-};
+const paramsSchema = z.object({
+  postId: z.string().min(1),
+});
 
-export async function GET(request: NextRequest, context: { params: Params }) {
-  const postId = context.params.postId;
+export const GET = auth(async function GET({ auth }, context) {
+  try {
+    validateAuthentication(auth);
 
-  logger.info(`Getting Post ${postId}`);
+    const { postId } = paramsSchema.parse(context.params);
 
-  // the user's feed consists of all top-level posts by the user
-  // as well as all top-level posts by the user's friends.
-  const post = await prisma.post.findFirst({
-    where: {
-      id: postId,
-    },
-  });
+    const post = await prisma.post.findFirst({
+      where: {
+        id: postId,
+      },
+    });
 
-  return NextResponse.json(post, { status: 200 });
-}
+    if (!post) {
+      throw new ResponseError(404, `Post not found: ${postId}`);
+    }
+
+    return NextResponse.json(post, { status: 200 });
+  } catch (error) {
+    logger.error(error);
+    return respondWithError(error);
+  }
+});

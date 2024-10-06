@@ -1,0 +1,15 @@
+meta {
+  name: csrf
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{apiHost}}/auth/csrf
+  body: none
+  auth: none
+}
+
+vars:post-response {
+  csrfToken: res.body.csrfToken
+}
