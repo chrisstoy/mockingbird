@@ -6,11 +6,12 @@ Basic social media app that will allow users to post stories and comment on othe
 
 ### Posts
 
-- A Post must consist of text and/or a single image.
+- ~~A Post must consist of text~~
+- A Post should contain a single image.
 - A Post could contain an hyperlink to any website
-- A Post could contain a link to an existing Post
+- A Post could contain a link to an existing Post (Deep-linking)
 - A Post could contain any number of Comments, where each Comment is itself a Post
-- A Post must display the name of the Poster and the poster's Avatar
+- ~~A Post must display the name of the Poster and the poster's Avatar~~
 - A User should be able to quickly like or dislike a Post
 - A Post could support any number of Hashtags embeded within the text
 
@@ -31,9 +32,9 @@ Basic social media app that will allow users to post stories and comment on othe
 
 ### Feed
 
-- The Feed must display a list of Posts created by the User and the User's friends
+- ~~The Feed must display a list of Posts created by the User and the User's friends~~
 - The Feed must provide a way to filter which Posts are displayed
-- The Feed must provide a way for the current User to create a new Post
+- ~~The Feed must provide a way for the current User to create a new Post~~
 
 ### Friends
 
