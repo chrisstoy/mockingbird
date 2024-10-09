@@ -1,11 +1,8 @@
 import { getUser } from '@/_services/users';
 import { Post } from '@/_types/post';
-import {
-  ChatBubbleLeftEllipsisIcon,
-  HandThumbDownIcon,
-  HandThumbUpIcon,
-} from '@heroicons/react/20/solid';
+import { HandThumbDownIcon, HandThumbUpIcon } from '@heroicons/react/20/solid';
 import Image from 'next/image';
+import { CommentButton } from './CommentButton.client';
 
 type Props = {
   post: Post;
@@ -51,10 +48,7 @@ export async function SummaryPost({ post }: Props) {
             Dislike
           </button>
           <div className="flex-auto"></div>
-          <button className="btn btn-xs">
-            <ChatBubbleLeftEllipsisIcon className="h-4 w-4" />
-            Comment
-          </button>
+          <CommentButton post={post}></CommentButton>
         </div>
       </div>
     </div>

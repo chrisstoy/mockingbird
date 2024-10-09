@@ -6,7 +6,7 @@ import { NextResponse } from 'next/server';
 import { ResponseError } from '../types';
 import { respondWithError } from '../users/service';
 import { validateAuthentication } from '../validateAuthentication';
-import { createPost } from './service';
+import { createPost, doesPostExist } from './service';
 
 const logger = baseLogger.child({
   service: 'api:posts',
@@ -25,6 +25,13 @@ export const POST = auth(async function POST(request) {
         400,
         'posterId does not match the logged in user'
       );
+    }
+
+    if (responseToPostId) {
+      const exists = await doesPostExist(responseToPostId);
+      if (!exists) {
+        throw new ResponseError(400, 'Post being commented on does not exist');
+      }
     }
 
     const post = await createPost(posterId, content, responseToPostId);

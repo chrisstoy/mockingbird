@@ -1,4 +1,3 @@
-import { env } from '@/../env.mjs';
 import { FeedList } from '@/_components/FeedList';
 import { NewPost } from '@/_components/NewPost.client';
 import { getFeedForUser } from '@/_services/feed';
@@ -7,7 +6,6 @@ import { auth } from '@/app/auth';
 
 export default async function AppPage() {
   const session = await auth();
-  const tinyMCEApiKey = env.TINYMCE_API_KEY;
 
   const feed: Post[] = session?.user?.id
     ? await getFeedForUser(session?.user.id)
@@ -15,7 +13,7 @@ export default async function AppPage() {
 
   return (
     <div className="flex flex-col flex-auto">
-      <NewPost user={session?.user} apiKey={tinyMCEApiKey}></NewPost>
+      <NewPost user={session?.user}></NewPost>
       <FeedList feed={feed}></FeedList>
     </div>
   );

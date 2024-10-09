@@ -1,16 +1,16 @@
 'use client';
-import Image from 'next/image';
-import { useMemo, useState } from 'react';
-import { PostEditorDialog } from './PostEditorDialog.client';
+import { getEditorApiKey } from '@/_server/getEditorApiKey';
 import { createPost } from '@/_services/post';
 import { User } from 'next-auth';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
+import { PostEditorDialog } from './PostEditorDialog.client';
 
 type Props = {
   user: User | undefined;
-  apiKey: string | undefined;
 };
-export function NewPost({ user, apiKey }: Props) {
+export function NewPost({ user }: Props) {
   const [showEditor, setShowEditor] = useState(false);
 
   const router = useRouter();
@@ -65,9 +65,8 @@ export function NewPost({ user, apiKey }: Props) {
           </div>
         </div>
       </div>
-      {showEditor && apiKey && (
+      {showEditor && (
         <PostEditorDialog
-          apiKey={apiKey}
           onSubmitPost={handleCreatePost}
           onClosed={() => setShowEditor(false)}
         ></PostEditorDialog>

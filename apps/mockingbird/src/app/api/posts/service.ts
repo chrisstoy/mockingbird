@@ -14,3 +14,12 @@ export async function createPost(
   });
   return post;
 }
+
+export async function doesPostExist(postId: string) {
+  const post = await prisma.post.findUnique({
+    where: {
+      id: postId,
+    },
+  });
+  return !!post;
+}
