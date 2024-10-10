@@ -1,13 +1,15 @@
 'use client';
-import { Editor } from '@tinymce/tinymce-react';
-import { useEffect, useRef, useState } from 'react';
+import { getEditorApiKey } from '@/_server/getEditorApiKey';
+import { getUser } from '@/_services/users';
+import { Post } from '@/_types/post';
 import {
   DialogActions,
-  DialogHeader,
   DialogButton,
+  DialogHeader,
 } from '@mockingbird/stoyponents';
-import { Post } from '@/_types/post';
-import { getEditorApiKey } from '@/_server/getEditorApiKey';
+import { Editor } from '@tinymce/tinymce-react';
+import { useEffect, useRef, useState } from 'react';
+import { PostView } from './PostView';
 
 const initOptions = {
   plugins: [],
@@ -19,10 +21,10 @@ const initOptions = {
 type Props = {
   onSubmitPost: (content: string) => void;
   onClosed: () => void;
-  originalPost?: Post;
+  originalPost: Post;
 };
 
-export function PostEditorDialog({
+export function CommentEditorDialog({
   onSubmitPost,
   onClosed,
   originalPost,
@@ -31,12 +33,22 @@ export function PostEditorDialog({
   const editorRef = useRef<Editor>(null);
 
   const [apiKey, setApiKey] = useState<string>();
+  const [posterInfo, setPosterInfo] = useState<{
+    userName: string;
+    imageSrc: string;
+  }>();
   useEffect(() => {
     (async () => {
       const apiKey = await getEditorApiKey();
       setApiKey(apiKey);
+
+      const poster = await getUser(originalPost.posterId);
+      setPosterInfo({
+        userName: poster?.name ?? 'Unknown',
+        imageSrc: poster?.image ?? '/generic-user-icon.jpg',
+      });
     })();
-  }, [setApiKey]);
+  }, [originalPost]);
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -61,14 +73,20 @@ export function PostEditorDialog({
       {apiKey && (
         <div className="card card-bordered shadow-xl bg-base-100 w-96">
           <DialogHeader
-            title={'Create a Post'}
+            title={'Comment on a Post'}
             onClosed={onClosed}
           ></DialogHeader>
+          <PostView
+            imageSrc={posterInfo?.imageSrc ?? ''}
+            userName={posterInfo?.userName ?? ''}
+            content={originalPost.content}
+            createdAt={originalPost.createdAt}
+          ></PostView>
           <Editor
             ref={editorRef}
             apiKey={apiKey}
             init={initOptions}
-            initialValue={originalPost?.content ?? ''}
+            initialValue={''}
           />
 
           <DialogActions

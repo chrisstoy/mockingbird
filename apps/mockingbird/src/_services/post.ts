@@ -3,7 +3,8 @@ import { apiUrlFor } from './api';
 
 export async function createPost(
   userId: string,
-  content: string
+  content: string,
+  responseToPostId?: string
 ): Promise<Post> {
   const response = await fetch(await apiUrlFor(`/posts`), {
     method: 'POST',
@@ -13,6 +14,7 @@ export async function createPost(
     body: JSON.stringify({
       posterId: userId,
       content,
+      responseToPostId,
     }),
   });
 
@@ -23,4 +25,15 @@ export async function createPost(
   }
 
   return response.json();
+}
+
+export async function getPostWithId(postId: string) {
+  try {
+    const response = await fetch(await apiUrlFor(`/posts/${postId}`));
+    const post = (await response.json()) as Post;
+    return post;
+  } catch (error) {
+    console.error(error);
+    return undefined;
+  }
 }

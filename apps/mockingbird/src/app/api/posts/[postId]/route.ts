@@ -37,3 +37,14 @@ export const GET = auth(async function GET({ auth }, context) {
     return respondWithError(error);
   }
 });
+
+export const DELETE = auth(async function DELETE({ auth }, context) {
+  try {
+    validateAuthentication(auth);
+
+    throw new ResponseError(500, 'Not Implemented');
+  } catch (error) {
+    logger.error(error);
+    return respondWithError(error);
+  }
+});

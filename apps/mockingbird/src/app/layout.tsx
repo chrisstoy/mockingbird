@@ -1,8 +1,8 @@
 import { auth } from '@/app/auth';
 import { SessionProvider } from 'next-auth/react';
+import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import './global.css';
-import { Suspense } from 'react';
 
 async function renderError({ error }: { error: Error }) {
   'use server';
