@@ -1,0 +1,15 @@
+meta {
+  name: GET comments for a Post
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{apiHost}}/posts/:postId/comments
+  body: none
+  auth: none
+}
+
+params:path {
+  postId: cm240ngbb00018dalrepl0s2s
+}

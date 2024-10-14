@@ -6,7 +6,7 @@ import {
 import { signIn, signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 function MenuItem({ title, onClick }: { title: string; onClick: () => void }) {
   return (
@@ -30,9 +30,23 @@ export function UserButton() {
 
   const [showSignout, setShowSignout] = useState(false);
 
-  const userName = session?.user?.name ?? 'Not Logged In';
-  const email = session?.user?.email ?? '';
-  const imageSrc = session?.user?.image ?? '/generic-user-icon.jpg';
+  const [userData, setUserData] = useState<{
+    name: string;
+    email: string;
+    image: string;
+  }>({
+    name: 'Not Logged In',
+    email: '',
+    image: '/generic-user-icon.jpg',
+  });
+
+  useEffect(() => {
+    setUserData({
+      name: session?.user?.name ?? 'Not Logged In',
+      email: session?.user?.email ?? '',
+      image: session?.user?.image ?? '/generic-user-icon.jpg',
+    });
+  }, [session?.user]);
 
   function handleSignOutResponse(
     result?: ConfirmationDialogResult | undefined
@@ -52,9 +66,14 @@ export function UserButton() {
       <label
         tabIndex={0}
         className="btn btn-circle overflow-hidden tooltip"
-        data-tip={userName}
+        data-tip={userData.name}
       >
-        <Image src={imageSrc} alt="User Profile" width={50} height={50}></Image>
+        <Image
+          src={userData.image}
+          alt="User Profile"
+          width={50}
+          height={50}
+        ></Image>
       </label>
       <ul
         tabIndex={0}
@@ -62,8 +81,8 @@ export function UserButton() {
       >
         <div className="menu-title">
           <span className="flex flex-col items-start ">
-            <div className="font-extrabold text-lg">{userName}</div>
-            <div className="text-xs">{email}</div>
+            <div className="font-extrabold text-lg">{userData.name}</div>
+            <div className="text-xs">{userData.email}</div>
           </span>
           <hr className="m-1"></hr>
         </div>

@@ -23,3 +23,16 @@ export async function doesPostExist(postId: string) {
   });
   return !!post;
 }
+
+export async function getCommentsForPost(postId: string) {
+  const posts = await prisma.post.findMany({
+    where: {
+      responseToPostId: postId,
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
+
+  return posts;
+}

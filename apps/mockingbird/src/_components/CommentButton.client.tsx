@@ -1,9 +1,10 @@
 'use client';
 
-import { createPost } from '@/_services/post';
+import { commentOnPost } from '@/_services/post';
 import { Post } from '@/_types/post';
 import { ChatBubbleLeftEllipsisIcon } from '@heroicons/react/20/solid';
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { CommentEditorDialog } from './CommentEditorDialog.client';
 
@@ -14,6 +15,7 @@ type Props = {
 export function CommentButton({ post }: Props) {
   const [showEditor, setShowEditor] = useState(false);
   const { data: session } = useSession();
+  const router = useRouter();
 
   async function handleCommentOnPost(content: string) {
     setShowEditor(false);
@@ -22,8 +24,9 @@ export function CommentButton({ post }: Props) {
       return;
     }
 
-    const result = await createPost(session.user.id, content, post.id);
+    const result = await commentOnPost(session.user.id, post.id, content);
     console.log(`Commented on a post with content: ${JSON.stringify(result)}`);
+    router.refresh();
   }
 
   return (

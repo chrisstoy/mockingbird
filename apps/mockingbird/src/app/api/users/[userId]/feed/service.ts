@@ -12,6 +12,7 @@ export async function getFeedForUser(userId: string) {
   const posts = await prisma.post.findMany({
     where: {
       posterId: { in: userIdsForFeed },
+      responseToPostId: null,
     },
     orderBy: {
       createdAt: 'desc',

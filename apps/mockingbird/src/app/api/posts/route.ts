@@ -6,7 +6,7 @@ import { NextResponse } from 'next/server';
 import { ResponseError } from '../types';
 import { respondWithError } from '../users/service';
 import { validateAuthentication } from '../validateAuthentication';
-import { createPost, doesPostExist } from './service';
+import { createPost } from './service';
 
 const logger = baseLogger.child({
   service: 'api:posts',
@@ -17,8 +17,7 @@ export const POST = auth(async function POST(request) {
     validateAuthentication(request.auth);
 
     const body = await request.json();
-    const { posterId, content, responseToPostId } =
-      createPostDataSchema.parse(body);
+    const { posterId, content } = createPostDataSchema.parse(body);
 
     if (request.auth?.user?.id !== posterId) {
       throw new ResponseError(
@@ -27,14 +26,7 @@ export const POST = auth(async function POST(request) {
       );
     }
 
-    if (responseToPostId) {
-      const exists = await doesPostExist(responseToPostId);
-      if (!exists) {
-        throw new ResponseError(400, 'Post being commented on does not exist');
-      }
-    }
-
-    const post = await createPost(posterId, content, responseToPostId);
+    const post = await createPost(posterId, content);
 
     revalidateTag('feed');
 

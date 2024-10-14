@@ -73,7 +73,7 @@ export function CommentEditorDialog({
       {apiKey && (
         <div className="card card-bordered shadow-xl bg-base-100 w-96">
           <DialogHeader
-            title={'Comment on a Post'}
+            title={`${posterInfo?.userName}'s Post`}
             onClosed={onClosed}
           ></DialogHeader>
           <PostView
