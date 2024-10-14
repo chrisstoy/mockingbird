@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { LocalTime } from './LocalTime';
 
 type Props = {
   imageSrc: string;
@@ -9,7 +10,7 @@ type Props = {
 
 export function PostView({ imageSrc, userName, content, createdAt }: Props) {
   return (
-    <div>
+    <div className="p-2">
       <div className="flex flex-row">
         <div className="avatar">
           <div className="rounded-full">
@@ -23,7 +24,9 @@ export function PostView({ imageSrc, userName, content, createdAt }: Props) {
         </div>
         <div className="flex flex-col ml-2 justify-center">
           <div className="mb-1">{userName}</div>
-          <div className="text-xs">Posted on {createdAt.toLocaleString()}</div>
+          <div className="text-xs">
+            Posted on <LocalTime date={createdAt}></LocalTime>
+          </div>
         </div>
       </div>
       <div className="card bg-base-100 shadow-md">

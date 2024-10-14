@@ -1,10 +1,9 @@
 'use client';
-import { getEditorApiKey } from '@/_server/getEditorApiKey';
 import { createPost } from '@/_services/post';
 import { User } from 'next-auth';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { PostEditorDialog } from './PostEditorDialog.client';
 
 type Props = {

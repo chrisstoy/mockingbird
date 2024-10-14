@@ -2,13 +2,16 @@ import { getUser } from '@/_services/users';
 import { Post } from '@/_types/post';
 import { HandThumbDownIcon, HandThumbUpIcon } from '@heroicons/react/20/solid';
 import Image from 'next/image';
+import Link from 'next/link';
 import { CommentButton } from './CommentButton.client';
+import { LocalTime } from './LocalTime';
 
 type Props = {
   post: Post;
+  linkToDetails?: boolean;
 };
 
-export async function SummaryPost({ post }: Props) {
+export async function SummaryPost({ post, linkToDetails = false }: Props) {
   const poster = await getUser(post.posterId);
 
   const userName = poster?.name ?? 'Unknown';
@@ -31,12 +34,22 @@ export async function SummaryPost({ post }: Props) {
           <div className="flex flex-col ml-2 justify-center">
             <div className="mb-1">{userName}</div>
             <div className="text-xs">
-              Posted on {post.createdAt.toLocaleString()}
+              Posted on <LocalTime date={post.createdAt}></LocalTime>
             </div>
           </div>
         </div>
-        <div className="card bg-base-100 shadow-md">
-          <div className="card-body">{post.content}</div>
+        <div
+          className={`card bg-base-100 shadow-md ${
+            linkToDetails && 'hover:bg-base-200'
+          }`}
+        >
+          <div className="card-body">
+            {linkToDetails ? (
+              <Link href={`/post/${post.id}`}>{post.content}</Link>
+            ) : (
+              <div>{post.content}</div>
+            )}
+          </div>
         </div>
         <div className="card-actions flex flex-row">
           <button className="btn btn-xs">

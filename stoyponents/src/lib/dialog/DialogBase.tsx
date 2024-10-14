@@ -22,7 +22,9 @@ export function DialogHeader<_Result>({
   onClosed,
 }: Pick<DialogProps<_Result>, 'title' | 'onClosed'>) {
   return (
-    <div className={`rounded-2xl card-title bg-primary text-primary-content`}>
+    <div
+      className={`rounded-t-2xl rounded-b-sm card-title bg-primary text-primary-content`}
+    >
       <div
         className={
           'flex w-full px-5 font-bold py-4 items-center justify-between text-xl'

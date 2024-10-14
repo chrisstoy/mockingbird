@@ -3,8 +3,7 @@ import { apiUrlFor } from './api';
 
 export async function createPost(
   userId: string,
-  content: string,
-  responseToPostId?: string
+  content: string
 ): Promise<Post> {
   const response = await fetch(await apiUrlFor(`/posts`), {
     method: 'POST',
@@ -14,7 +13,6 @@ export async function createPost(
     body: JSON.stringify({
       posterId: userId,
       content,
-      responseToPostId,
     }),
   });
 
@@ -36,4 +34,40 @@ export async function getPostWithId(postId: string) {
     console.error(error);
     return undefined;
   }
+}
+
+export async function getCommentsForPost(postId: string) {
+  try {
+    const response = await fetch(await apiUrlFor(`/posts/${postId}/comments`));
+    const posts = (await response.json()) as Post[];
+    return posts;
+  } catch (error) {
+    console.error(error);
+    return undefined;
+  }
+}
+
+export async function commentOnPost(
+  userId: string,
+  postId: string,
+  content: string
+): Promise<Post> {
+  const response = await fetch(await apiUrlFor(`/posts/${postId}/comments`), {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      posterId: userId,
+      content,
+    }),
+  });
+
+  if (!response.ok) {
+    console.error(
+      `Failed to comment on post: ${response.status}: ${response.statusText}`
+    );
+  }
+
+  return response.json();
 }
