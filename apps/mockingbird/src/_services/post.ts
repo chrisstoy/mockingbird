@@ -71,3 +71,10 @@ export async function commentOnPost(
 
   return response.json();
 }
+
+export async function deletePost(postId: string) {
+  const response = await fetch(await apiUrlFor(`/posts/${postId}`), {
+    method: 'DELETE',
+  });
+  return response;
+}

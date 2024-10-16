@@ -325,7 +325,7 @@ export async function createUser(
   }
 }
 
-function createErrorResponse(status: number, message: string) {
+export function createErrorResponse(status: number, message: string) {
   const statusText = STATUS_CODES[status] || 'Error';
   return NextResponse.json({ message, status, statusText }, { status });
 }

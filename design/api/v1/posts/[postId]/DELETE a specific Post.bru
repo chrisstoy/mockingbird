@@ -1,0 +1,15 @@
+meta {
+  name: DELETE a specific Post
+  type: http
+  seq: 2
+}
+
+delete {
+  url: {{apiHost}}/posts/:postId
+  body: none
+  auth: none
+}
+
+params:path {
+  postId: cm1767yw400091ocbpiulutc2
+}
