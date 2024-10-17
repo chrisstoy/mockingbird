@@ -1,19 +1,19 @@
 'use client';
 import { deletePost } from '@/_services/post';
-import { Post } from '@/_types/post';
 import { EllipsisHorizontalIcon } from '@heroicons/react/24/solid';
 import {
   ConfirmationDialog,
   ConfirmationDialogResult,
 } from '@mockingbird/stoyponents';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 type Props = {
-  post: Post;
+  postId: string;
+  isComment?: boolean;
 };
 
-export function CommentMenu({ post }: Props) {
+export function PostMenu({ postId, isComment = false }: Props) {
   const router = useRouter();
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
 
@@ -26,14 +26,15 @@ export function CommentMenu({ post }: Props) {
   async function handleConfirmDelete(result?: ConfirmationDialogResult) {
     setShowConfirmDelete(false);
     if (result === 'ok') {
-      const { id: postId } = post;
       const result = await deletePost(postId);
       if (result.status === 204) {
-        console.log(`Deleted comment: ${postId}`);
+        console.log(`Deleted ${isComment ? 'comment' : 'post'}: ${postId}`);
         router.refresh();
       } else {
         console.error(
-          `Failed to delete comment: ${postId}, ${JSON.stringify(result)}`
+          `Failed to delete ${
+            isComment ? 'comment' : 'post'
+          }: ${postId}, ${JSON.stringify(result)}`
         );
       }
     }
@@ -54,7 +55,7 @@ export function CommentMenu({ post }: Props) {
       </ul>
       {showConfirmDelete && (
         <ConfirmationDialog
-          title={`Delete Comment?`}
+          title={`Delete ${isComment ? 'Comment' : 'Post'}?`}
           defaultResult={'cancel'}
           buttons={[
             { title: 'Ok', result: 'ok' },
@@ -62,7 +63,10 @@ export function CommentMenu({ post }: Props) {
           ]}
           onClosed={handleConfirmDelete}
         >
-          Are you sure you want to delete this comment?
+          {`Are you sure you want to delete this ${
+            isComment ? 'comment' : 'post'
+          }`}
+          ?
         </ConfirmationDialog>
       )}
     </div>
