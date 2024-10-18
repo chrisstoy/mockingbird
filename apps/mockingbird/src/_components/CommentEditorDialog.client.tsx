@@ -49,7 +49,6 @@ export function CommentEditorDialog({
       });
     })();
   }, [originalPost]);
-
   useEffect(() => {
     const dialog = dialogRef.current;
     dialog?.showModal();
