@@ -20,15 +20,20 @@ const paramsSchema = z.object({
 /**
  * Get all Comments on a Post
  */
-export const GET = auth(async function GET(request, context) {
+export const GET = auth(async function GET({ url: _url, auth }, context) {
   try {
-    validateAuthentication(request.auth);
+    validateAuthentication(auth);
 
     const { postId } = paramsSchema.parse(context.params);
+    const url = new URL(_url);
+    const _limit = url.searchParams.get('limit');
+    const limit = _limit ? parseInt(_limit) : undefined;
 
-    logger.info(`Getting comments for Post: { postId: ${postId} }`);
+    logger.info(
+      `Getting comments for Post: { postId: ${postId}, limit: ${limit} }`
+    );
 
-    const feed = await getCommentsForPost(postId);
+    const feed = await getCommentsForPost(postId, limit);
 
     return NextResponse.json(feed, { status: 200 });
   } catch (error) {

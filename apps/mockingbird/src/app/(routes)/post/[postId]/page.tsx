@@ -2,6 +2,7 @@ import { CommentList } from '@/_components/CommentList';
 import { SummaryPost } from '@/_components/SummaryPost';
 import { getCommentsForPost, getPostWithId } from '@/_services/post';
 import { auth } from '@/app/auth';
+import { Suspense } from 'react';
 
 export default async function PostDetailPage({
   params,
@@ -26,7 +27,15 @@ export default async function PostDetailPage({
   return (
     <div className="flex flex-col flex-auto bg-base-200">
       <SummaryPost post={post}></SummaryPost>
-      <CommentList feed={comments}></CommentList>
+      <Suspense
+        fallback={
+          <div className="text-secondary-content m-2 text-center">
+            Loading...
+          </div>
+        }
+      >
+        <CommentList feed={comments} originalPostId={postId}></CommentList>
+      </Suspense>
     </div>
   );
 }

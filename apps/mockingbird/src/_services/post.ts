@@ -36,15 +36,24 @@ export async function getPostWithId(postId: string) {
   }
 }
 
-export async function getCommentsForPost(postId: string) {
+export async function getCommentsForPost(postId: string, limit?: number) {
   try {
-    const response = await fetch(await apiUrlFor(`/posts/${postId}/comments`));
+    const response = await fetch(
+      await apiUrlFor(
+        `/posts/${postId}/comments${limit ? `?limt=${limit}` : ``}`
+      )
+    );
     const posts = (await response.json()) as Post[];
     return posts;
   } catch (error) {
     console.error(error);
     return undefined;
   }
+}
+
+export async function getFirstCommentForPost(postId: string) {
+  const comments = await getCommentsForPost(postId, 1);
+  return comments?.[0];
 }
 
 export async function commentOnPost(
