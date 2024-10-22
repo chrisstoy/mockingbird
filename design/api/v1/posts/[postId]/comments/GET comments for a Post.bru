@@ -5,9 +5,13 @@ meta {
 }
 
 get {
-  url: {{apiHost}}/posts/:postId/comments
+  url: {{apiHost}}/posts/:postId/comments?limit=1
   body: none
   auth: none
+}
+
+params:query {
+  limit: 1
 }
 
 params:path {

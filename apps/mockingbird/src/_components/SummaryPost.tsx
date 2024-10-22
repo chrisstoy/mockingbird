@@ -5,13 +5,20 @@ import { HandThumbDownIcon, HandThumbUpIcon } from '@heroicons/react/20/solid';
 import Link from 'next/link';
 import { CommentButton } from './CommentButton.client';
 import { PostHeader } from './PostHeader';
+import { Comment } from './Comment';
+import { getFirstCommentForPost } from '@/_services/post';
 
 type Props = {
   post: Post;
   linkToDetails?: boolean;
+  showFirstComment?: boolean;
 };
 
-export async function SummaryPost({ post, linkToDetails = false }: Props) {
+export async function SummaryPost({
+  post,
+  linkToDetails = false,
+  showFirstComment = false,
+}: Props) {
   const session = await auth();
   const poster = await getUser(post.posterId);
 
@@ -19,6 +26,8 @@ export async function SummaryPost({ post, linkToDetails = false }: Props) {
   const imageSrc = poster?.image ?? '/generic-user-icon.jpg';
 
   const showOptionsMenu = post.posterId === session?.user?.id;
+
+  const firstComment = await getFirstCommentForPost(post.id);
 
   return (
     <div className="card bg-base-100 shadow-xl">
@@ -56,6 +65,15 @@ export async function SummaryPost({ post, linkToDetails = false }: Props) {
           <CommentButton post={post}></CommentButton>
         </div>
       </div>
+      {showFirstComment && firstComment && (
+        <div className="card-body pt-0">
+          <Comment
+            linkToDetails
+            post={firstComment}
+            originalPostId={post.id}
+          ></Comment>
+        </div>
+      )}
     </div>
   );
 }

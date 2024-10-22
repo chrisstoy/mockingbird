@@ -24,7 +24,7 @@ export async function doesPostExist(postId: string) {
   return !!post;
 }
 
-export async function getCommentsForPost(postId: string) {
+export async function getCommentsForPost(postId: string, limit?: number) {
   const posts = await prisma.post.findMany({
     where: {
       responseToPostId: postId,
@@ -32,6 +32,7 @@ export async function getCommentsForPost(postId: string) {
     orderBy: {
       createdAt: 'desc',
     },
+    take: limit,
   });
 
   return posts;

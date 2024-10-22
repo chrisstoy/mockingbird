@@ -17,7 +17,7 @@ export async function FeedList({ feed }: Props) {
     <ul className="list-none max-w-2xl">
       {sortedFeed.map((post) => (
         <li className="m-2" key={post.id}>
-          <SummaryPost post={post} linkToDetails />
+          <SummaryPost post={post} linkToDetails showFirstComment />
         </li>
       ))}
     </ul>
