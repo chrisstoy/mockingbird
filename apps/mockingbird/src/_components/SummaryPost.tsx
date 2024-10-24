@@ -70,7 +70,8 @@ export async function SummaryPost({
           <Comment
             linkToDetails
             post={firstComment}
-            originalPostId={post.id}
+            originalPost={post}
+            hideOptionsMenu
           ></Comment>
         </div>
       )}

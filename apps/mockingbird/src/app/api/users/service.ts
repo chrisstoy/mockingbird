@@ -96,7 +96,7 @@ export async function getUsersMatchingQuery(query: string) {
 }
 
 export async function getAcceptedFriendsForUser(userId: string) {
-  logger.info(`Getting friends for userId: ${userId}`);
+  logger.info(`Getting accepted friends for userId: ${userId}`);
 
   const allFriends = await prisma.friends.findMany({
     where: {

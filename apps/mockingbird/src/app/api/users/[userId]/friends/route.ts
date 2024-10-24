@@ -20,8 +20,6 @@ export const GET = auth(async function GET({ auth }, context) {
 
     const { userId } = paramsSchema.parse(context.params);
 
-    logger.info(`Getting friends for userId: ${userId}`);
-
     const friends = await getFriendsForUser(userId);
     return NextResponse.json(friends, { status: 200 });
   } catch (error) {
