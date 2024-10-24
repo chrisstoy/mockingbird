@@ -6,21 +6,25 @@ import { PostHeader } from './PostHeader';
 
 type Props = {
   post: Post;
-  originalPostId: string;
+  originalPost: Post;
   linkToDetails?: boolean;
+  hideOptionsMenu?: boolean;
 };
 
 export async function Comment({
   post,
-  originalPostId,
+  originalPost,
   linkToDetails = false,
+  hideOptionsMenu = false,
 }: Props) {
   const session = await auth();
   const poster = await getUser(post.posterId);
 
   const userName = poster?.name ?? 'Unknown';
   const imageSrc = poster?.image ?? '/generic-user-icon.jpg';
-  const showOptionsMenu = post.posterId === session?.user?.id;
+  const showOptionsMenu =
+    post.posterId === session?.user?.id ||
+    originalPost.posterId === session?.user?.id;
 
   const renderContent = () => (
     <>
@@ -31,7 +35,7 @@ export async function Comment({
         postId={post.id}
         small
         isComment
-        showOptionsMenu={showOptionsMenu}
+        showOptionsMenu={!hideOptionsMenu && showOptionsMenu}
       ></PostHeader>
       <div className="text-sm p-2 bg-transparent rounded-lg">
         <div>{post.content}</div>
@@ -47,7 +51,7 @@ export async function Comment({
         }`}
       >
         {linkToDetails ? (
-          <Link href={`/post/${originalPostId}`}>{renderContent()}</Link>
+          <Link href={`/post/${originalPost.id}`}>{renderContent()}</Link>
         ) : (
           <div>{renderContent()}</div>
         )}

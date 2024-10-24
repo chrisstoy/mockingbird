@@ -4,9 +4,9 @@ import { useMemo } from 'react';
 
 type Props = {
   feed: Post[];
-  originalPostId: string;
+  originalPost: Post;
 };
-export async function CommentList({ feed, originalPostId }: Props) {
+export async function CommentList({ feed, originalPost }: Props) {
   const sortedFeed = useMemo(() => {
     return feed.sort(
       (a, b) =>
@@ -18,7 +18,7 @@ export async function CommentList({ feed, originalPostId }: Props) {
     <ul className="list-none max-w-2xl">
       {sortedFeed.map((post) => (
         <li className="m-2" key={post.id}>
-          <Comment post={post} originalPostId={originalPostId} />
+          <Comment post={post} originalPost={originalPost} />
         </li>
       ))}
     </ul>

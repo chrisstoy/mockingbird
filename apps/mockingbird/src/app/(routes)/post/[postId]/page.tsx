@@ -34,7 +34,7 @@ export default async function PostDetailPage({
           </div>
         }
       >
-        <CommentList feed={comments} originalPostId={postId}></CommentList>
+        <CommentList feed={comments} originalPost={post}></CommentList>
       </Suspense>
     </div>
   );
