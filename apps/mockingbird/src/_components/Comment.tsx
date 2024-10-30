@@ -1,6 +1,7 @@
 import { getUser } from '@/_services/users';
 import { Post } from '@/_types/post';
 import { auth } from '@/app/auth';
+import { TextDisplay } from '@mockingbird/stoyponents';
 import Link from 'next/link';
 import { PostHeader } from './PostHeader';
 
@@ -37,8 +38,8 @@ export async function Comment({
         isComment
         showOptionsMenu={!hideOptionsMenu && showOptionsMenu}
       ></PostHeader>
-      <div className="text-sm p-2 bg-transparent rounded-lg">
-        <div>{post.content}</div>
+      <div className="text-sm bg-transparent rounded-lg">
+        <TextDisplay content={post.content}></TextDisplay>
       </div>
     </>
   );

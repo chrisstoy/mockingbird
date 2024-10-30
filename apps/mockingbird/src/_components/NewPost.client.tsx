@@ -27,7 +27,7 @@ export function NewPost({ user }: Props) {
   async function handleCreatePost(content: string) {
     setShowEditor(false);
 
-    if (!user || !user.id) {
+    if (!user || !user.id || content.length === 0) {
       return;
     }
 

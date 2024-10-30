@@ -1,0 +1,14 @@
+/* @import 'quill/dist/quill.snow.css'; */
+@import 'quill/dist/quill.bubble.css';
+
+.ql-container {
+  font-size: 1em;
+}
+
+.ql-container .ql-editor[contenteditable="false"]>* {
+  cursor: default;
+}
+
+a .ql-container .ql-editor[contenteditable="false"]>* {
+  cursor: pointer;
+}

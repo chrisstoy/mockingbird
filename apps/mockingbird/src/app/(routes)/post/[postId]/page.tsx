@@ -1,16 +1,13 @@
 import { CommentList } from '@/_components/CommentList';
 import { SummaryPost } from '@/_components/SummaryPost';
 import { getCommentsForPost, getPostWithId } from '@/_services/post';
-import { auth } from '@/app/auth';
 import { Suspense } from 'react';
 
-export default async function PostDetailPage({
-  params,
-}: {
+interface Props {
   params: { postId: string };
-}) {
-  const session = await auth();
+}
 
+export default async function PostDetailPage({ params }: Props) {
   const postId = params.postId;
 
   if (!postId) {

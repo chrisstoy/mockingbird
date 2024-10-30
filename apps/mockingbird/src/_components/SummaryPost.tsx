@@ -1,12 +1,13 @@
+import { getFirstCommentForPost } from '@/_services/post';
 import { getUser } from '@/_services/users';
 import { Post } from '@/_types/post';
 import { auth } from '@/app/auth';
 import { HandThumbDownIcon, HandThumbUpIcon } from '@heroicons/react/20/solid';
+import { TextDisplay } from '@mockingbird/stoyponents';
 import Link from 'next/link';
+import { Comment } from './Comment';
 import { CommentButton } from './CommentButton.client';
 import { PostHeader } from './PostHeader';
-import { Comment } from './Comment';
-import { getFirstCommentForPost } from '@/_services/post';
 
 type Props = {
   post: Post;
@@ -44,11 +45,13 @@ export async function SummaryPost({
             linkToDetails && 'hover:bg-base-200'
           }`}
         >
-          <div className="card-body">
+          <div className="card-body p-2">
             {linkToDetails ? (
-              <Link href={`/post/${post.id}`}>{post.content}</Link>
+              <Link href={`/post/${post.id}`}>
+                <TextDisplay content={post.content}></TextDisplay>
+              </Link>
             ) : (
-              <div>{post.content}</div>
+              <TextDisplay content={post.content}></TextDisplay>
             )}
           </div>
         </div>
