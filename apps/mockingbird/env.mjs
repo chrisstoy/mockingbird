@@ -16,8 +16,6 @@ export const env = createEnv({
 
     DATABASE_URL: z.string().url(),
 
-    TINYMCE_API_KEY: z.string().min(1),
-
     AUTH_SECRET:
       process.env.NODE_ENV === 'production'
         ? z.string().min(1)
@@ -46,7 +44,6 @@ export const env = createEnv({
   //   AUTH_SECRET: process.env.AUTH_SECRET,
   //   AUTH_GITHUB_ID: process.env.AUTH_GITHUB_ID,
   //   AUTH_GITHUB_SECRET: process.env.AUTH_GITHUB_SECRET,
-  //   TINYMCE_API_KEY: process.env.TINYMCE_API_KEY,
   // },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.

@@ -27,6 +27,7 @@ export function PostHeader({
       <div className="flex flex-row flex-auto">
         <div className="avatar">
           <div className={`${small ? 'h-8' : 'h-12'} rounded-full`}>
+            {/* eslint-disable-next-line @next/next/no-img-element*/}
             <img src={image} alt="Profile Picture"></img>
           </div>
         </div>

@@ -1,8 +1,7 @@
 import { QuillOptions } from 'quill';
-import 'quill/dist/quill.snow.css'; // Add css for snow theme
-// import 'quill/dist/quill.bubble.css'; // Add css for bubble theme
+import './styles.css';
 
-const theme = 'snow';
+const theme = 'bubble';
 const modules = {
   toolbar: [
     ['bold', 'italic', 'underline', 'code'],
@@ -18,3 +17,29 @@ const options: QuillOptions = {
 };
 
 export default options;
+
+/** Possible modules and formats for Quill
+'background'
+'bold'
+'color'
+'font'
+'code'
+'italic'
+'link'
+'size'
+'strike'
+'script'
+'underline'
+
+'blockquote'
+'header'
+'indent'
+'list'
+'align'
+'direction'
+'code-block'
+
+'formula'
+'image'
+'video'
+ */

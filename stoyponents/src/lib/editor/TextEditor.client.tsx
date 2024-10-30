@@ -33,6 +33,10 @@ export function TextEditor({
     if (quill) {
       quill.on('text-change', (delta, oldDelta, source) => {
         if (source === 'user') {
+          if (quill.getText().trim().length === 0) {
+            return;
+          }
+
           onChange(sanitizeHtml(quill.getSemanticHTML()));
           if (onChangeDelta) {
             onChangeDelta(quill.getContents());

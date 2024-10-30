@@ -20,7 +20,7 @@ export function CommentButton({ post }: Props) {
   async function handleCommentOnPost(content: string) {
     setShowEditor(false);
 
-    if (!session?.user?.id) {
+    if (!session?.user?.id || content.length === 0) {
       return;
     }
 
