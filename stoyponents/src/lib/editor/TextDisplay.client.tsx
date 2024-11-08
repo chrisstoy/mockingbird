@@ -1,18 +1,17 @@
 'use client';
-
 import Delta from 'quill-delta';
-import { useEffect } from 'react';
+import { ComponentPropsWithoutRef, useEffect } from 'react';
 import { useQuill } from 'react-quilljs';
 import sanitizeHtml from 'sanitize-html';
 import options from './options';
 
 export { Delta };
 
-interface Props {
-  content: string | Delta | undefined;
+interface Props extends ComponentPropsWithoutRef<'div'> {
+  data: string | Delta | undefined;
 }
 
-export function TextDisplay({ content }: Props) {
+export function TextDisplay({ data: content, ...rest }: Props) {
   const { quill, quillRef } = useQuill({
     ...options,
     readOnly: true,
@@ -32,5 +31,5 @@ export function TextDisplay({ content }: Props) {
     }
   }, [quill, content]);
 
-  return <div ref={quillRef}></div>;
+  return <div {...rest} ref={quillRef}></div>;
 }

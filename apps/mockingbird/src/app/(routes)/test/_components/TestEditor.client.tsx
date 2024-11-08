@@ -19,7 +19,7 @@ export function TestEditor() {
         onChangeDelta={setDelta}
       ></TextEditor>
       <br />
-      <TextDisplay content={content}></TextDisplay>
+      <TextDisplay data={content}></TextDisplay>
       <br />
       <div>{typeof content === 'string' ? content : ''}</div>
       <br />

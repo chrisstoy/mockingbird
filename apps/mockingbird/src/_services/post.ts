@@ -40,7 +40,7 @@ export async function getCommentsForPost(postId: string, limit?: number) {
   try {
     const response = await fetch(
       await apiUrlFor(
-        `/posts/${postId}/comments${limit ? `?limt=${limit}` : ``}`
+        `/posts/${postId}/comments${limit ? `?limit=${limit}` : ``}`
       )
     );
     const posts = (await response.json()) as Post[];

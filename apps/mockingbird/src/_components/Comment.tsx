@@ -3,28 +3,29 @@ import { Post } from '@/_types/post';
 import { auth } from '@/app/auth';
 import { TextDisplay } from '@mockingbird/stoyponents';
 import Link from 'next/link';
+import { CommentReplyContainer } from './CommentReplyContainer.client';
 import { PostHeader } from './PostHeader';
 
 type Props = {
-  post: Post;
+  comment: Post;
   originalPost: Post;
   linkToDetails?: boolean;
-  hideOptionsMenu?: boolean;
+  hideReplies?: boolean;
 };
 
 export async function Comment({
-  post,
+  comment,
   originalPost,
   linkToDetails = false,
-  hideOptionsMenu = false,
+  hideReplies = false,
 }: Props) {
   const session = await auth();
-  const poster = await getUser(post.posterId);
+  const poster = await getUser(comment.posterId);
 
   const userName = poster?.name ?? 'Unknown';
   const imageSrc = poster?.image ?? '/generic-user-icon.jpg';
   const showOptionsMenu =
-    post.posterId === session?.user?.id ||
+    comment.posterId === session?.user?.id ||
     originalPost.posterId === session?.user?.id;
 
   const renderContent = () => (
@@ -32,20 +33,20 @@ export async function Comment({
       <PostHeader
         name={userName}
         image={imageSrc}
-        date={post.createdAt}
-        postId={post.id}
+        date={comment.createdAt}
+        postId={comment.id}
         small
         isComment
-        showOptionsMenu={!hideOptionsMenu && showOptionsMenu}
+        showOptionsMenu={showOptionsMenu}
       ></PostHeader>
       <div className="text-sm bg-transparent rounded-lg">
-        <TextDisplay content={post.content}></TextDisplay>
+        <TextDisplay data={comment.content}></TextDisplay>
       </div>
     </>
   );
 
   return (
-    <div className={`card card-compact bg-base-100 shadow-md`}>
+    <div className={`card card-compact bg-base-100 shadow-md ml-4`}>
       <div
         className={`card-body rounded-lg ${
           linkToDetails && 'hover:bg-base-200'
@@ -57,6 +58,12 @@ export async function Comment({
           <div>{renderContent()}</div>
         )}
       </div>
+
+      <CommentReplyContainer
+        hideReplies={hideReplies}
+        originalComment={comment}
+        originalPosterId={originalPost.posterId}
+      ></CommentReplyContainer>
     </div>
   );
 }
