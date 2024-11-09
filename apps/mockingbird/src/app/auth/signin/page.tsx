@@ -3,7 +3,7 @@ import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { redirect, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { SignInButton } from './_components/SignInButton';
+import { SignInButton } from './_components/SignInButton.client';
 import { AuthError } from 'next-auth';
 
 async function signInWithEmailAndPassword(email: string, password: string) {
