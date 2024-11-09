@@ -77,7 +77,7 @@ export const POST = auth(async function POST(request, context) {
       `Commented on a Post: {postId: ${post.id}, posterId: ${posterId}, content: ${content}, responseToPostId: ${postId}} `
     );
 
-    return NextResponse.json({ postId: post.id }, { status: 201 });
+    return NextResponse.json(post, { status: 201 });
   } catch (error) {
     logger.error(error);
     return respondWithError(error);

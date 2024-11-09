@@ -17,6 +17,7 @@ module.exports = {
     themes: [
       {
         mockingbird: {
+          /** colors */
           primary: '#8e7d75',
           secondary: '#774f43',
           accent: '#e5d9db',
@@ -26,6 +27,9 @@ module.exports = {
           success: '#2fd479',
           warning: '#b9530f',
           error: '#d62200',
+
+          /** variables */
+          '--padding-card': '1em',
         },
       },
     ],

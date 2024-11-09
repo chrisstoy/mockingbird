@@ -21,3 +21,13 @@ export const postSchema = createPostDataSchema.extend({
   dislikeCount: z.number(),
 });
 export type Post = z.infer<typeof postSchema>;
+
+export const sortByCreatedAtAsc = (
+  a: { createdAt: Date },
+  b: { createdAt: Date }
+) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+
+export const sortByCreatedAtDesc = (
+  a: { createdAt: Date },
+  b: { createdAt: Date }
+) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();

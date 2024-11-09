@@ -1,5 +1,5 @@
 'use client';
-
+import { PaperAirplaneIcon, TrashIcon } from '@heroicons/react/20/solid';
 import Delta from 'quill-delta';
 import { useEffect } from 'react';
 import { useQuill } from 'react-quilljs';
@@ -11,8 +11,9 @@ interface Props {
   placeholder?: string;
   readOnly?: boolean;
 
-  onChange: (value: string) => void;
+  onChange?: (value: string) => void;
   onChangeDelta?: (delta: Delta) => void;
+  onSubmit?: (canceled?: boolean) => void;
 }
 
 export function TextEditor({
@@ -22,6 +23,7 @@ export function TextEditor({
 
   onChange,
   onChangeDelta,
+  onSubmit,
 }: Props) {
   const { quill, quillRef } = useQuill({
     ...options,
@@ -31,13 +33,16 @@ export function TextEditor({
 
   useEffect(() => {
     if (quill) {
-      quill.on('text-change', (delta, oldDelta, source) => {
+      quill.on('text-change', (_delta, _oldDelta, source) => {
         if (source === 'user') {
           if (quill.getText().trim().length === 0) {
             return;
           }
 
-          onChange(sanitizeHtml(quill.getSemanticHTML()));
+          if (onChange) {
+            onChange(sanitizeHtml(quill.getSemanticHTML()));
+          }
+
           if (onChangeDelta) {
             onChangeDelta(quill.getContents());
           }
@@ -57,5 +62,29 @@ export function TextEditor({
     }
   }, [quill]);
 
-  return <div ref={quillRef}></div>;
+  return (
+    <div className="flex flex-row flex-auto">
+      <div className="flex-auto" ref={quillRef}></div>
+      {onSubmit && (
+        <div className="join">
+          <button
+            className="btn btn-ghost btn-primary"
+            onClick={() => onSubmit(true)}
+          >
+            <span className="w-4 h-4 tooltip" data-tip="Cancel">
+              <TrashIcon></TrashIcon>
+            </span>
+          </button>
+          <button
+            className="btn btn-ghost btn-primary"
+            onClick={() => onSubmit()}
+          >
+            <span className="w-4 h-4 tooltip" data-tip="Send">
+              <PaperAirplaneIcon></PaperAirplaneIcon>
+            </span>
+          </button>
+        </div>
+      )}
+    </div>
+  );
 }

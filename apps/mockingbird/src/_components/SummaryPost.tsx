@@ -1,12 +1,13 @@
-import { getFirstCommentForPost } from '@/_services/post';
+import { getCommentsForPost } from '@/_services/post';
 import { getUser } from '@/_services/users';
 import { Post } from '@/_types/post';
 import { auth } from '@/app/auth';
-import { HandThumbDownIcon, HandThumbUpIcon } from '@heroicons/react/20/solid';
 import { TextDisplay } from '@mockingbird/stoyponents';
 import Link from 'next/link';
-import { Comment } from './Comment';
-import { CommentButton } from './CommentButton.client';
+
+import { Suspense } from 'react';
+import { CommentList } from './CommentList';
+import { PostActionsFooter } from './PostActionsFooter';
 import { PostHeader } from './PostHeader';
 
 type Props = {
@@ -28,7 +29,8 @@ export async function SummaryPost({
 
   const showOptionsMenu = post.posterId === session?.user?.id;
 
-  const firstComment = await getFirstCommentForPost(post.id);
+  const comments =
+    (await getCommentsForPost(post.id, showFirstComment ? 1 : undefined)) ?? [];
 
   return (
     <div className="card bg-base-100 shadow-xl">
@@ -45,39 +47,33 @@ export async function SummaryPost({
             linkToDetails && 'hover:bg-base-200'
           }`}
         >
-          <div className="card-body p-2">
+          <div className="card-body">
             {linkToDetails ? (
               <Link href={`/post/${post.id}`}>
-                <TextDisplay content={post.content}></TextDisplay>
+                <TextDisplay data={post.content}></TextDisplay>
               </Link>
             ) : (
-              <TextDisplay content={post.content}></TextDisplay>
+              <TextDisplay data={post.content}></TextDisplay>
             )}
           </div>
+          <PostActionsFooter post={post}></PostActionsFooter>
         </div>
-        <div className="card-actions flex flex-row">
-          <button className="btn btn-xs">
-            <HandThumbUpIcon className="h-4 w-4" />
-            Like
-          </button>
-          <button className="btn btn-xs">
-            <HandThumbDownIcon className="h-4 w-4" />
-            Dislike
-          </button>
-          <div className="flex-auto"></div>
-          <CommentButton post={post}></CommentButton>
-        </div>
-      </div>
-      {showFirstComment && firstComment && (
-        <div className="card-body pt-0">
-          <Comment
-            linkToDetails
-            post={firstComment}
+        <div className="card-actions"></div>
+        <Suspense
+          fallback={
+            <div className="text-secondary-content m-2 text-center">
+              Loading...
+            </div>
+          }
+        >
+          <CommentList
+            feed={comments}
             originalPost={post}
-            hideOptionsMenu
-          ></Comment>
-        </div>
-      )}
+            linkToDetails={linkToDetails}
+            hideReplies={showFirstComment}
+          ></CommentList>
+        </Suspense>
+      </div>
     </div>
   );
 }

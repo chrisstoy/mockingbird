@@ -32,7 +32,7 @@ export function PostView({ imageSrc, userName, content, createdAt }: Props) {
       </div>
       <div className="card bg-base-100 shadow-md">
         <div className="card-body p-2">
-          <TextDisplay content={content}></TextDisplay>
+          <TextDisplay data={content}></TextDisplay>
         </div>
       </div>
     </div>
