@@ -45,9 +45,9 @@ export function CommentReply({
   return (
     <div
       data-id={comment.id}
-      className={`border-solid border border-base-500 card card-compact bg-base-100`}
+      className={`card-bordered card card-compact bg-base-100`}
     >
-      <div className={`card-body rounded-lg p-0`}>
+      <div className={`card-body rounded-lg`}>
         <PostHeader
           name={commenterNameAndImage.name}
           image={commenterNameAndImage.image}
