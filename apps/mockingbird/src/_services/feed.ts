@@ -1,10 +1,5 @@
-import baseLogger from '@/_server/logger';
 import { signIn } from '@/app/auth';
 import { apiUrlFor } from './api';
-
-const logger = baseLogger.child({
-  service: 'feed',
-});
 
 export async function getFeedForUser(userId: string) {
   try {
@@ -17,7 +12,7 @@ export async function getFeedForUser(userId: string) {
         signIn();
       }
 
-      logger.error(
+      console.error(
         `Failed to fetch feed: ${response.status}: ${response.statusText}`
       );
       return [];
@@ -26,7 +21,7 @@ export async function getFeedForUser(userId: string) {
     const posts = await response.json();
     return posts;
   } catch (error) {
-    logger.error(error);
+    console.error(error);
     return [];
   }
 }
