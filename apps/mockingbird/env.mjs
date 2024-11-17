@@ -21,6 +21,8 @@ export const env = createEnv({
         ? z.string().min(1)
         : z.string().min(1).optional(),
 
+    AUTH_TRUST_HOST: z.enum(['true', 'false']).optional(),
+
     AUTH_GITHUB_ID: z.string().min(1),
     AUTH_GITHUB_SECRET: z.string().min(1),
 

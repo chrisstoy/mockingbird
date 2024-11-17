@@ -8,7 +8,7 @@ export default async function NotFoundPage() {
         <h1 className="text-center text-4xl">Page not Found</h1>
         <figure>
           <Image
-            src="/mockingbird-dark.png"
+            src="/images/mockingbird-dark.png"
             alt="Mockingbird"
             width={256}
             height={256}

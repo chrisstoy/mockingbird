@@ -11,10 +11,12 @@ export default async function AuthLayout({
         <h1 className="text-center text-4xl">Welcome to Mockingbird</h1>
         <figure>
           <Image
-            src="/mockingbird-dark.png"
+            className="w-[256px] h-[256px]"
+            src="/images/mockingbird-dark.png"
             alt="Mockingbird"
             width={256}
             height={256}
+            priority
           />
         </figure>
         <div className="card-body">{children}</div>

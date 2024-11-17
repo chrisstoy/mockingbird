@@ -8,7 +8,7 @@ export function Header() {
       <Link href="/">
         <Image
           className={'ml-2 w-auto h-auto'}
-          src="/mockingbird-white.png"
+          src="/images/mockingbird-white.png"
           alt="Mockingbird"
           width={64}
           height={64}

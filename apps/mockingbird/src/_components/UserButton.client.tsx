@@ -1,4 +1,5 @@
 'use client';
+import { GENERIC_USER_IMAGE_URL } from '@/constants';
 import {
   ConfirmationDialogResult,
   ConfirmSignOutDialog,
@@ -37,14 +38,14 @@ export function UserButton() {
   }>({
     name: 'Not Logged In',
     email: '',
-    image: '/generic-user-icon.jpg',
+    image: GENERIC_USER_IMAGE_URL,
   });
 
   useEffect(() => {
     setUserData({
       name: session?.user?.name ?? 'Not Logged In',
       email: session?.user?.email ?? '',
-      image: session?.user?.image ?? '/generic-user-icon.jpg',
+      image: session?.user?.image ?? GENERIC_USER_IMAGE_URL,
     });
   }, [session?.user]);
 

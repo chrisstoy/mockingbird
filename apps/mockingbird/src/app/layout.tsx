@@ -23,10 +23,10 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <body className="bg-neutral">
+      <body>
         <ErrorBoundary fallbackRender={renderError}>
           <SessionProvider session={session}>
-            <div className="w-full h-dvh">
+            <div className="w-full bg-neutral">
               <Suspense
                 fallback={
                   <span className="loading loading-ball loading-lg"></span>

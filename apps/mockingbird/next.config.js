@@ -13,6 +13,12 @@ const nextConfig = {
     svgr: false,
   },
   images: {
+    localPatterns: [
+      {
+        pathname: '/images/**',
+        search: '',
+      },
+    ],
     remotePatterns: [
       {
         protocol: 'https',
@@ -40,7 +46,10 @@ const nextConfig = {
       },
     ],
   },
-
+  experimental: {
+    instrumentationHook: true,
+  },
+  output: 'standalone',
   compiler: {},
 };
 

@@ -40,6 +40,46 @@
     },
     "prisma-validate": {
       "executor": "@nx-tools/nx-prisma:validate"
+    },
+    "deploy": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        "clean",
+        "build"
+      ],
+      "options": {
+        "command": "cp -R apps/mockingbird/.next/static apps/mockingbird/.next/standalone/apps/mockingbird/.next && cp -R apps/mockingbird/public apps/mockingbird/.next/standalone/apps/mockingbird"
+      }
+    },
+    "clean": {
+      "executor": "nx:run-commands",
+      "dependsOn": [],
+      "options": {
+        "command": "rm -rf apps/mockingbird/.next"
+      }
+    },
+    "container": {
+      "executor": "@nx-tools/nx-container:build",
+      "dependsOn": [
+        "build",
+        "deploy"
+      ],
+      "options": {
+        "engine": "docker",
+        "metadata": {
+          "images": [
+            "mockingbird"
+          ],
+          "load": true,
+          "tags": [
+            "type=schedule",
+            "type=ref,event=branch",
+            "type=ref,event=tag",
+            "type=ref,event=pr",
+            "type=sha,prefix=sha-"
+          ]
+        }
+      }
     }
   }
 }
