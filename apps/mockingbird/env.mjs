@@ -19,6 +19,8 @@ export const env = createEnv({
     API_HOST: z.string().url(),
     API_PATH: z.string().min(1),
 
+    NEXT_SHARP_PATH: z.string().optional(),
+
     AUTH_SECRET:
       process.env.NODE_ENV === 'production'
         ? z.string().min(1)
