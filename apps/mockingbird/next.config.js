@@ -49,7 +49,6 @@ const nextConfig = {
   experimental: {
     instrumentationHook: true,
   },
-  output: 'standalone',
   compiler: {},
 };
 
