@@ -51,6 +51,13 @@
         "command": "cp -R apps/mockingbird/.next/static apps/mockingbird/.next/standalone/apps/mockingbird/.next && cp -R apps/mockingbird/public apps/mockingbird/.next/standalone/apps/mockingbird"
       }
     },
+    "build-vercel": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        "prisma-generate",
+        "build"
+      ]
+    },
     "clean": {
       "executor": "nx:run-commands",
       "dependsOn": [],
