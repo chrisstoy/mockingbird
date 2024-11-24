@@ -5,6 +5,7 @@ import { TextDisplay } from '@mockingbird/stoyponents';
 import Link from 'next/link';
 import { CommentReplyContainer } from './CommentReplyContainer.client';
 import { PostHeader } from './PostHeader';
+import { GENERIC_USER_IMAGE_URL } from '@/constants';
 
 type Props = {
   comment: Post;
@@ -23,7 +24,7 @@ export async function Comment({
   const poster = await getUser(comment.posterId);
 
   const userName = poster?.name ?? 'Unknown';
-  const imageSrc = poster?.image ?? '/generic-user-icon.jpg';
+  const imageSrc = poster?.image ?? GENERIC_USER_IMAGE_URL;
   const showOptionsMenu =
     comment.posterId === session?.user?.id ||
     originalPost.posterId === session?.user?.id;

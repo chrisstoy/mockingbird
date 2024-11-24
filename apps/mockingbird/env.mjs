@@ -7,7 +7,11 @@ export const env = createEnv({
    * isn't built with invalid env vars.
    */
   server: {
-    NODE_ENV: z.enum(['development', 'test', 'production']),
+    NODE_ENV: z.enum(['development', 'test', 'production']).optional(),
+
+    VERCEL: z.string().optional(),
+    VECEL_ENV: z.enum(['development', 'preview', 'production']).optional(),
+    VERCEL_URL: z.string().optional(),
 
     LOG_LEVEL: z
       .enum(['error', 'warn', 'info', 'debug', 'trace'])
@@ -16,10 +20,18 @@ export const env = createEnv({
 
     DATABASE_URL: z.string().url(),
 
+    API_HOST: z.string().url(),
+    API_PATH: z.string().min(1),
+
+    NEXT_SHARP_PATH: z.string().optional(),
+
     AUTH_SECRET:
-      process.env.NODE_ENV === 'production'
+      process.env.NODE_ENV === 'production' ||
+      process.env.VECEL_ENV === 'production'
         ? z.string().min(1)
         : z.string().min(1).optional(),
+
+    AUTH_TRUST_HOST: z.enum(['true', 'false']).optional(),
 
     AUTH_GITHUB_ID: z.string().min(1),
     AUTH_GITHUB_SECRET: z.string().min(1),

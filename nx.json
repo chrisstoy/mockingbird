@@ -1,7 +1,10 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "namedInputs": {
-    "default": ["{projectRoot}/**/*", "sharedGlobals"],
+    "default": [
+      "{projectRoot}/**/*",
+      "sharedGlobals"
+    ],
     "production": [
       "default",
       "!{projectRoot}/.eslintrc.json",
@@ -55,5 +58,6 @@
       }
     }
   },
+  "defaultProject": "mockingbird",
   "nxCloudAccessToken": "Mzc0MmI4YWMtOTk3Yi00ODhlLTk3OGItNzQzYzk3NzE0ODVkfHJlYWQtd3JpdGU="
 }

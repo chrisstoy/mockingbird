@@ -6,6 +6,7 @@ import { useSession } from 'next-auth/react';
 import { useEffect, useMemo, useState } from 'react';
 import { PostHeader } from './PostHeader';
 import { ReplyFooter } from './ReplyFooter.client';
+import { GENERIC_USER_IMAGE_URL } from '@/constants';
 
 type Props = {
   comment: Post;
@@ -22,7 +23,7 @@ export function CommentReply({
   const { data: session } = useSession();
   const [commenterNameAndImage, setCommenterNameAndImage] = useState({
     name: 'Unknown',
-    image: '/generic-user-icon.jpg',
+    image: GENERIC_USER_IMAGE_URL,
   });
 
   useEffect(() => {
@@ -30,7 +31,7 @@ export function CommentReply({
       const poster = await getUser(comment.posterId);
       setCommenterNameAndImage({
         name: poster?.name ?? 'Unknown',
-        image: poster?.image ?? '/generic-user-icon.jpg',
+        image: poster?.image ?? GENERIC_USER_IMAGE_URL,
       });
     })();
   }, [comment.posterId]);

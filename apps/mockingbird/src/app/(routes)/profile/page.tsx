@@ -1,13 +1,14 @@
 import Image from 'next/image';
 import { auth } from '@/app/auth';
 import { SignOutButton } from './_components/SignOutButton';
+import { GENERIC_USER_IMAGE_URL } from '@/constants';
 
 export default async function UserProfilePage() {
   const session = await auth();
 
   const userName = session?.user?.name ?? 'Unknown';
   const email = session?.user?.email;
-  const imageSrc = session?.user?.image ?? '/generic-user-icon.jpg';
+  const imageSrc = session?.user?.image ?? GENERIC_USER_IMAGE_URL;
 
   return (
     <div className="hero  bg-base-100">

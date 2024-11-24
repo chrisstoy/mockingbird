@@ -9,6 +9,7 @@ import { Suspense } from 'react';
 import { CommentList } from './CommentList';
 import { PostActionsFooter } from './PostActionsFooter';
 import { PostHeader } from './PostHeader';
+import { GENERIC_USER_IMAGE_URL } from '@/constants';
 
 type Props = {
   post: Post;
@@ -25,7 +26,7 @@ export async function SummaryPost({
   const poster = await getUser(post.posterId);
 
   const userName = poster?.name ?? 'Unknown';
-  const imageSrc = poster?.image ?? '/generic-user-icon.jpg';
+  const imageSrc = poster?.image ?? GENERIC_USER_IMAGE_URL;
 
   const showOptionsMenu = post.posterId === session?.user?.id;
 

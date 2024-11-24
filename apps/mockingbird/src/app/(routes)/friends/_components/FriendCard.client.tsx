@@ -6,6 +6,7 @@ import {
   requestFriend,
 } from '@/_services/friends';
 import { FriendStatus, UserInfo } from '@/_types/users';
+import { GENERIC_USER_IMAGE_URL } from '@/constants';
 import {
   CheckIcon,
   PlusIcon,
@@ -55,7 +56,7 @@ export function FriendCard({
   onFriendStatusChange,
 }: Props) {
   const { name, image, id: friendId } = friend;
-  const imageSrc = image ?? '/generic-user-icon.jpg';
+  const imageSrc = image ?? GENERIC_USER_IMAGE_URL;
 
   const [showRemoveFriendDialog, setShowRemoveFriendDialog] = useState(false);
   const [showCancelFriendRequestDialog, setShowCancelFriendRequestDialog] =
@@ -126,12 +127,8 @@ export function FriendCard({
             alt="Profile Picture"
           ></img>
         </figure>
-        <div className="card-body p-0 pl-1">
+        <div className="card-body p-0 pl-1 justify-center">
           <h2 className="card-title text-sm font-bold">{name}</h2>
-          <p className="text-xs font-extralight">{friendId}</p>
-          {/* <p className="text-xs font-extralight">
-            {mutualFriends ? `${mutualFriends}` : 'No'} Mutual Friends
-          </p> */}
         </div>
 
         <div className="card-actions justify-end mr-1 mb-1">

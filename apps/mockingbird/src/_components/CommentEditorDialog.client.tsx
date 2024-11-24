@@ -9,6 +9,7 @@ import {
 } from '@mockingbird/stoyponents';
 import { useEffect, useRef, useState } from 'react';
 import { PostView } from './PostView';
+import { GENERIC_USER_IMAGE_URL } from '@/constants';
 
 type Props = {
   onSubmitPost: (content: string) => void;
@@ -33,7 +34,7 @@ export function CommentEditorDialog({
       const poster = await getUser(originalPost.posterId);
       setPosterInfo({
         userName: poster?.name ?? 'Unknown',
-        imageSrc: poster?.image ?? '/generic-user-icon.jpg',
+        imageSrc: poster?.image ?? GENERIC_USER_IMAGE_URL,
       });
     })();
   }, [originalPost]);

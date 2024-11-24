@@ -125,7 +125,7 @@ export function SearchForUsers({ onFriendStatusChange }: Props) {
           type="text"
           placeholder="Enter Name or Email address"
           className="grow"
-          textContent={searchTerm}
+          value={searchTerm}
           onChange={updateSearchTerm}
         />
 

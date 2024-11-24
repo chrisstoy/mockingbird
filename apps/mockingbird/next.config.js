@@ -13,6 +13,12 @@ const nextConfig = {
     svgr: false,
   },
   images: {
+    localPatterns: [
+      {
+        pathname: '/images/**',
+        search: '',
+      },
+    ],
     remotePatterns: [
       {
         protocol: 'https',
@@ -40,8 +46,9 @@ const nextConfig = {
       },
     ],
   },
-
-  compiler: {},
+  experimental: {
+    instrumentationHook: true,
+  },
 };
 
 const plugins = [

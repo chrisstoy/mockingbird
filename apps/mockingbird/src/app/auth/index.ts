@@ -41,8 +41,12 @@ const nextAuth = NextAuth({
       //   return NextResponse.json('Invalid auth token', { status: 401 });
       // }
 
-      // Logged in users are authenticated, otherwise redirect to login page
-      if (request.nextUrl.pathname === '/auth/create-account') {
+      // always allow create-account and public /images.  this is necessary to display
+      // images on the signin page.
+      if (
+        request.nextUrl.pathname === '/auth/create-account' ||
+        request.nextUrl.pathname.startsWith('/images')
+      ) {
         return true;
       }
       return !!auth;
