@@ -10,15 +10,21 @@ const createLogFileName = () => {
   return `mockingbird-${env.NODE_ENV ?? env.VECEL_ENV}-${dateString}.log`;
 };
 
-const baseLogger = winston.createLogger({
+const options: winston.LoggerOptions = {
   level: env.LOG_LEVEL,
   format: combine(timestamp(), json(), errors({ stack: true })),
   transports: [
     new winston.transports.Console(),
-    new winston.transports.File({
-      filename: join(env.LOG_DIR ?? '', createLogFileName()),
-    }),
+    ...(env.VECEL
+      ? []
+      : [
+          new winston.transports.File({
+            filename: join(env.LOG_DIR ?? '', createLogFileName()),
+          }),
+        ]),
   ],
-});
+};
+
+const baseLogger = winston.createLogger(options);
 
 export default baseLogger;
