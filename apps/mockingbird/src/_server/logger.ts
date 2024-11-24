@@ -15,14 +15,14 @@ const options: winston.LoggerOptions = {
   format: combine(timestamp(), json(), errors({ stack: true })),
   transports: [
     new winston.transports.Console(),
-    ...(env.VECEL !== '1'
-      ? [
-          new winston.transports.File({
-            filename: join(env.LOG_DIR ?? '', createLogFileName()),
-          }),
-        ]
-      : []),
-  ],
+  //   ...(env.VECEL !== '1'
+  //     ? [
+  //         new winston.transports.File({
+  //           filename: join(env.LOG_DIR ?? '', createLogFileName()),
+  //         }),
+  //       ]
+  //     : []),
+  // ],
 };
 
 console.log(`Winston Options: ${JSON.stringify(options)}`);
