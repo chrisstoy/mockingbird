@@ -25,8 +25,6 @@ const options: winston.LoggerOptions = {
   ],
 };
 
-console.log(`Winston Options: ${JSON.stringify(options)}`);
-
 const baseLogger = winston.createLogger(options);
 
 export default baseLogger;
