@@ -8,7 +8,10 @@ export const env = createEnv({
    */
   server: {
     NODE_ENV: z.enum(['development', 'test', 'production']).optional(),
-    VECEL_ENV: z.enum(['development', 'test', 'production']).optional(),
+
+    VERCEL: z.number().optional(),
+    VECEL_ENV: z.enum(['development', 'preview', 'production']).optional(),
+    VERCEL_URL: z.string().optional(),
 
     LOG_LEVEL: z
       .enum(['error', 'warn', 'info', 'debug', 'trace'])
