@@ -7,7 +7,8 @@ export const env = createEnv({
    * isn't built with invalid env vars.
    */
   server: {
-    NODE_ENV: z.enum(['development', 'test', 'production']),
+    NODE_ENV: z.enum(['development', 'test', 'production']).optional(),
+    VECEL_ENV: z.enum(['development', 'test', 'production']).optional(),
 
     LOG_LEVEL: z
       .enum(['error', 'warn', 'info', 'debug', 'trace'])
@@ -22,7 +23,8 @@ export const env = createEnv({
     NEXT_SHARP_PATH: z.string().optional(),
 
     AUTH_SECRET:
-      process.env.NODE_ENV === 'production'
+      process.env.NODE_ENV === 'production' ||
+      process.env.VECEL_ENV === 'production'
         ? z.string().min(1)
         : z.string().min(1).optional(),
 
