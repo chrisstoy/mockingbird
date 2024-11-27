@@ -15,3 +15,33 @@
   - using `env` does not seem to expose the VERCEL variables. The can be found on `process.env`.
 
 - Need to enable CORS for API calls
+
+- ensure env variables are correctly set for each deployment type (production, preview, development).
+-
+
+## SDLC
+
+### Developing a feature
+
+- ensure a Jira for feature exists and add it to current Release in Jira
+- create a feature branch from `develop` -> `feature/MOC-XXX-...`
+- develop feature, commit changes to branch, and test
+  - local testing
+  - preview testing of commits to branch through Vercel
+- create PR in GitHub
+  - squash-merge branch into `develop`
+  - delete feature branch
+- mark Jira as Complete
+
+### Releasing to Production
+
+- create a release branch from `develop` -> `release/x.x.x`
+- update CHANGELOG.md with all changes since previous release
+- update version to release version
+- merge release branch into `develop`
+- merge release branch into `main`
+  - merging into `main` triggers production build on Vercel
+  - tag `main` with release version `x.x.x`
+- delete release branch
+- marke Release as complete in Jira
+- create next Release in Jira

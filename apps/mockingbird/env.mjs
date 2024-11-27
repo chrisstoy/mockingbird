@@ -20,7 +20,7 @@ export const env = createEnv({
 
     DATABASE_URL: z.string().url(),
 
-    API_HOST: z.string().url(),
+    API_HOST: z.string().url().optional(),
     API_PATH: z.string().min(1),
 
     NEXT_SHARP_PATH: z.string().optional(),
