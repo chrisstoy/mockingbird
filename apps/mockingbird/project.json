@@ -41,6 +41,12 @@
     "prisma-validate": {
       "executor": "@nx-tools/nx-prisma:validate"
     },
+    "update-build-date": {
+      "executor": "@mockingbird/stoy-plugin:tools/stoy-plugin/src/executors/update-version",
+      "options": {
+        "versionFile": "./apps/mockingbird/version.json"
+      }
+    },
     "deploy": {
       "executor": "nx:run-commands",
       "dependsOn": [
@@ -55,6 +61,7 @@
       "executor": "nx:noop",
       "dependsOn": [
         "prisma-generate",
+        "update-build-date",
         "build"
       ]
     },

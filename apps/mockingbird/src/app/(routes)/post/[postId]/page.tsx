@@ -20,7 +20,7 @@ export default async function PostDetailPage({ params }: Props) {
   }
 
   return (
-    <div className="flex flex-col flex-auto bg-base-200">
+    <div className="flex flex-col flex-auto bg-transparent">
       <SummaryPost post={post}></SummaryPost>
     </div>
   );

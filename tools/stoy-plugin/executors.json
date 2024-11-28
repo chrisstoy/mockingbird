@@ -1,0 +1,9 @@
+{
+  "executors": {
+    "tools/stoy-plugin/src/executors/update-version": {
+      "implementation": "./src/executors/executor",
+      "schema": "./src/executors/schema.json",
+      "description": "tools/stoy-plugin/src/executors/update-version executor"
+    }
+  }
+}
