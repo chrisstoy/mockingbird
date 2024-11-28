@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@mockingbird/stoy-plugin": ["tools/stoy-plugin/src/index.ts"],
       "@mockingbird/stoyponents": ["stoyponents/src/index.ts"]
     }
   },

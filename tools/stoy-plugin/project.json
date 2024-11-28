@@ -1,0 +1,49 @@
+{
+  "name": "stoy-plugin",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "tools/stoy-plugin/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "dist/tools/stoy-plugin",
+        "main": "tools/stoy-plugin/src/index.ts",
+        "tsConfig": "tools/stoy-plugin/tsconfig.lib.json",
+        "assets": [
+          "tools/stoy-plugin/*.md",
+          {
+            "input": "./tools/stoy-plugin/src",
+            "glob": "**/!(*.ts)",
+            "output": "./src"
+          },
+          {
+            "input": "./tools/stoy-plugin/src",
+            "glob": "**/*.d.ts",
+            "output": "./src"
+          },
+          {
+            "input": "./tools/stoy-plugin",
+            "glob": "generators.json",
+            "output": "."
+          },
+          {
+            "input": "./tools/stoy-plugin",
+            "glob": "executors.json",
+            "output": "."
+          }
+        ]
+      }
+    },
+    "update-build-date": {
+      "executor": "@mockingbird/stoy-plugin:tools/stoy-plugin/src/executors/update-version",
+      "options": {
+        "versionFile": "./tools/stoy-plugin/test-version.json"
+      }
+    }
+  }
+}

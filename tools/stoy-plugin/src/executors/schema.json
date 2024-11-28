@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "version": 2,
+  "title": "UpdateVersion executor",
+  "description": "Updates the date of last build in a version file",
+  "type": "object",
+  "properties": {
+    "versionFile": {
+      "type": "string",
+      "description": "File to update"
+    }
+  },
+  "required": []
+}
