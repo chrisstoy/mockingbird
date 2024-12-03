@@ -41,10 +41,12 @@ const nextAuth = NextAuth({
       //   return NextResponse.json('Invalid auth token', { status: 401 });
       // }
 
-      // always allow create-account and public /images.  this is necessary to display
+      // always allow create-account, reset-password, and public /images.  this is necessary to
+      // all a non-logged in user to create an account, reset a password, and display
       // images on the signin page.
       if (
         request.nextUrl.pathname === '/auth/create-account' ||
+        request.nextUrl.pathname === '/auth/reset-password' ||
         request.nextUrl.pathname.startsWith('/images')
       ) {
         return true;
