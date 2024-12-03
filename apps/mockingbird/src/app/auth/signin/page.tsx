@@ -1,10 +1,10 @@
 'use client';
+import { AuthError } from 'next-auth';
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { redirect, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { SignInButton } from './_components/SignInButton.client';
-import { AuthError } from 'next-auth';
 
 async function signInWithEmailAndPassword(email: string, password: string) {
   try {
@@ -46,12 +46,12 @@ export default function SignInPage() {
 
   const [selectedProvider, setSelectedProvider] = useState<string>('');
 
-  async function signInWithService(serviceId: string) {
+  async function handleSignInWithService(serviceId: string) {
     setSelectedProvider(serviceId);
     signIn(serviceId, { callbackUrl: '/' });
   }
 
-  async function signInWithUserAndPassword(formData: FormData) {
+  async function handleSignInWithEmailAndPassword(formData: FormData) {
     const email = formData.get('email')?.toString();
     const password = formData.get('password')?.toString();
 
@@ -75,7 +75,7 @@ export default function SignInPage() {
 
           {includeCredentialProvider && (
             <>
-              <form action={signInWithUserAndPassword}>
+              <form action={handleSignInWithEmailAndPassword}>
                 <div className="card-actions flex flex-col items-center">
                   <input
                     id="email"
@@ -91,7 +91,10 @@ export default function SignInPage() {
                     placeholder="Password"
                     className="input input-bordered w-full max-w-xs"
                   />
-                  <button type="submit" className="btn btn-primary w-full">
+                  <button
+                    type="submit"
+                    className="btn btn-primary w-full max-w-xs"
+                  >
                     Sign In
                   </button>
                 </div>
@@ -101,7 +104,7 @@ export default function SignInPage() {
                   Forgot Password
                 </Link>
                 <Link
-                  className="btn btn-sm btn-secondary w-full"
+                  className="btn btn-sm btn-secondary w-full max-w-xs"
                   href="/auth/create-account"
                 >
                   Create new account
@@ -118,7 +121,7 @@ export default function SignInPage() {
                 id={id}
                 name={name}
                 imageSrc={iconSrc}
-                onSignIn={signInWithService}
+                onSignIn={handleSignInWithService}
               />
             ))}
           </div>

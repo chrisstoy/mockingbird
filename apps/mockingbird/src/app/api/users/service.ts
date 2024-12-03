@@ -1,6 +1,7 @@
 import { prisma } from '@/_server/db';
 import baseLogger from '@/_server/logger';
 import { UserInfo } from '@/_types/users';
+import bcrypt from 'bcryptjs';
 import { STATUS_CODES } from 'http';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
@@ -305,9 +306,9 @@ export async function createUser(
     today.getDate()
   );
 
-  // encrypt password
   try {
-    const encryptedPassword = password; //await argon2.hash(password);
+    const salt = await bcrypt.genSalt(10);
+    const encryptedPassword = await bcrypt.hash(password, salt);
     const passwordResult = await prisma.passwords.create({
       data: {
         userId: newUser.id,

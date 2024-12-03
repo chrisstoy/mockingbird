@@ -23,7 +23,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <body className="h-screen">
+      <body className="min-h-screen bg-neutral">
         <ErrorBoundary fallbackRender={renderError}>
           <SessionProvider session={session}>
             <div className="w-full h-full bg-neutral">
