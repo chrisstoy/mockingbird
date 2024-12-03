@@ -1,6 +1,7 @@
 import Credentials from 'next-auth/providers/credentials';
 import { prisma } from '@/_server/db';
-// import * as argon2 from 'argon2';
+import bcrypt from 'bcryptjs';
+import { CredentialsError } from './credentialsError';
 
 type CredentialsConfigType = Parameters<typeof Credentials>[0];
 
@@ -21,12 +22,14 @@ const credentialsConfig: CredentialsConfigType = {
 };
 
 async function authorize(
-  credentials: Partial<Record<'email' | 'password', unknown>>
+  credentials: Partial<Record<'email' | 'password', string>>
 ) {
-  const email = credentials?.email as string;
-  const password = credentials?.password as string;
+  const { email, password } = credentials;
   if (!email || !password) {
-    throw new Error('Email and password are required.');
+    throw new CredentialsError(
+      'emailAndPasswordRequired',
+      'Email and password are required'
+    );
   }
 
   const user = await prisma.user.findFirst({
@@ -36,7 +39,8 @@ async function authorize(
   });
 
   if (!user) {
-    throw new Error('User not found.');
+    console.error(`User with email ${email} not found`);
+    throw new CredentialsError('userNotFound', 'User not found');
   }
 
   const existingPassword = await prisma.passwords.findFirst({
@@ -46,16 +50,31 @@ async function authorize(
   });
 
   if (!existingPassword) {
-    throw new Error('Password not found.');
+    throw new CredentialsError('passwordNotFound', 'Password not found');
   }
 
   try {
-    if (password !== existingPassword.password) {
-      // if (!(await argon2.verify(existingPassword.password, password))) {
-      throw new Error('Incorrect password.');
+    if (!(await bcrypt.compare(password, existingPassword.password))) {
+      console.log(`Invalid password for user ${user.id}:${user.email}`);
+      throw new CredentialsError('invalidPassword', 'Invalid password');
     }
   } catch (error) {
-    throw new Error('Error comparing passwords');
+    if (error instanceof CredentialsError) {
+      throw error;
+    }
+    throw new CredentialsError(
+      'errorComparingPasswords',
+      'Error comparing passwords'
+    );
+  }
+
+  if (existingPassword.expiresAt < new Date()) {
+    console.warn(
+      `Password for user ${user.id}:${
+        user.email
+      } expired on ${existingPassword.expiresAt.toISOString()}`
+    );
+    throw new CredentialsError('passwordExpired', 'Password has expired');
   }
 
   return user;
