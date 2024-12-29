@@ -1,9 +1,10 @@
 import { SummaryPost } from '@/_components/SummaryPost';
 import { getPostWithId } from '@/_services/post';
+import { PostId } from '@/_types/post';
 
 interface Props {
   params: {
-    postId: string;
+    postId: PostId;
   };
 }
 

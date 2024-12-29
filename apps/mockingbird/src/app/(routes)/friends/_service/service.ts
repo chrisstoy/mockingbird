@@ -4,11 +4,11 @@ import {
   removeFriend,
   requestFriend,
 } from '@/_services/friends';
-import { FriendStatus } from '@/_types/users';
+import { FriendStatus, UserId } from '@/_types/users';
 
 export async function updateFriendStatusWithUser(
-  userId: string,
-  friendId: string,
+  userId: UserId,
+  friendId: UserId,
   status: FriendStatus
 ) {
   console.log(`Update friend status: ${friendId}, ${status}`);

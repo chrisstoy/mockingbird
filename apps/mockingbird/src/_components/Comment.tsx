@@ -1,11 +1,12 @@
+import { sessionUser } from '@/_hooks/sessionUser';
 import { getUser } from '@/_services/users';
 import { Post } from '@/_types/post';
-import { auth } from '@/app/auth';
+import { GENERIC_USER_IMAGE_URL } from '@/constants';
 import { TextDisplay } from '@mockingbird/stoyponents';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { CommentReplyContainer } from './CommentReplyContainer.client';
 import { PostHeader } from './PostHeader';
-import { GENERIC_USER_IMAGE_URL } from '@/constants';
 
 type Props = {
   comment: Post;
@@ -20,14 +21,16 @@ export async function Comment({
   linkToDetails = false,
   hideReplies = false,
 }: Props) {
-  const session = await auth();
+  const user = await sessionUser();
+  if (!user) {
+    redirect('/auth/signin');
+  }
   const poster = await getUser(comment.posterId);
 
   const userName = poster?.name ?? 'Unknown';
   const imageSrc = poster?.image ?? GENERIC_USER_IMAGE_URL;
   const showOptionsMenu =
-    comment.posterId === session?.user?.id ||
-    originalPost.posterId === session?.user?.id;
+    comment.posterId === user.id || originalPost.posterId === user.id;
 
   const renderContent = () => (
     <>

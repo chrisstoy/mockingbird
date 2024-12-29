@@ -1,5 +1,5 @@
 import { apiUrlFor } from './api';
-import { UserInfo } from '@/_types/users';
+import { UserId, UserInfo } from '@/_types/users';
 
 interface FriendsForUser {
   friends: UserInfo[];
@@ -7,9 +7,9 @@ interface FriendsForUser {
   friendRequests: UserInfo[];
 }
 
-export async function getFriendsForUser(id: string) {
+export async function getFriendsForUser(userId: UserId) {
   try {
-    const response = await fetch(await apiUrlFor(`/users/${id}/friends`));
+    const response = await fetch(await apiUrlFor(`/users/${userId}/friends`));
     const { friends, pendingFriends, friendRequests } =
       (await response.json()) as FriendsForUser;
 
@@ -29,7 +29,7 @@ export async function getFriendsForUser(id: string) {
   }
 }
 
-export async function requestFriend(userId: string, friendId: string) {
+export async function requestFriend(userId: UserId, friendId: UserId) {
   try {
     const response = await fetch(
       await apiUrlFor(`/users/${userId}/friends/${friendId}`),
@@ -45,7 +45,7 @@ export async function requestFriend(userId: string, friendId: string) {
   }
 }
 
-export async function acceptFriendRequest(userId: string, friendId: string) {
+export async function acceptFriendRequest(userId: UserId, friendId: UserId) {
   try {
     const response = await fetch(
       await apiUrlFor(`/users/${userId}/friends/${friendId}`),
@@ -64,7 +64,7 @@ export async function acceptFriendRequest(userId: string, friendId: string) {
   }
 }
 
-export async function removeFriend(userId: string, friendId: string) {
+export async function removeFriend(userId: UserId, friendId: UserId) {
   try {
     const response = await fetch(
       await apiUrlFor(`/users/${userId}/friends/${friendId}`),
@@ -80,6 +80,6 @@ export async function removeFriend(userId: string, friendId: string) {
   }
 }
 
-export async function cancelFriendRequest(userId: string, friendId: string) {
+export async function cancelFriendRequest(userId: UserId, friendId: UserId) {
   return removeFriend(userId, friendId);
 }

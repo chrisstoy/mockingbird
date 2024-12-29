@@ -6,6 +6,14 @@
       "jest",
       "node"
     ],
+    "paths": {
+      "@mockingbird/stoyponents": [
+        "stoyponents/src/index.ts"
+      ],
+      "@/*": [
+        "./apps/mockingbird/src/*"
+      ]
+    },
     "jsx": "react"
   },
   "include": [

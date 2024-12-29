@@ -1,7 +1,9 @@
 import { signIn } from '@/app/auth';
 import { apiUrlFor } from './api';
+import { UserId } from '@/_types/users';
+import { Post } from '@/_types/post';
 
-export async function getFeedForUser(userId: string) {
+export async function getFeedForUser(userId: UserId) {
   try {
     const response = await fetch(await apiUrlFor(`/users/${userId}/feed`), {
       next: { tags: ['feed'] },
@@ -18,7 +20,7 @@ export async function getFeedForUser(userId: string) {
       return [];
     }
 
-    const posts = await response.json();
+    const posts = (await response.json()) as Post[];
     return posts;
   } catch (error) {
     console.error(error);

@@ -1,10 +1,9 @@
 import baseLogger from '@/_server/logger';
-import { createPostDataSchema } from '@/_types/post';
+import { CreatePostDataSchema } from '@/_types/post';
 import { auth } from '@/app/auth';
 import { revalidateTag } from 'next/cache';
 import { NextResponse } from 'next/server';
-import { ResponseError } from '../types';
-import { respondWithError } from '../users/service';
+import { respondWithError, ResponseError } from '../errors';
 import { validateAuthentication } from '../validateAuthentication';
 import { createPost } from './service';
 
@@ -17,7 +16,7 @@ export const POST = auth(async function POST(request) {
     validateAuthentication(request.auth);
 
     const body = await request.json();
-    const { posterId, content } = createPostDataSchema.parse(body);
+    const { posterId, content } = CreatePostDataSchema.parse(body);
 
     if (request.auth?.user?.id !== posterId) {
       throw new ResponseError(

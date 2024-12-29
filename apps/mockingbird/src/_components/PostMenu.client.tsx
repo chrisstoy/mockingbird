@@ -1,5 +1,6 @@
 'use client';
 import { deletePost } from '@/_services/post';
+import { PostId } from '@/_types/post';
 import { EllipsisHorizontalIcon } from '@heroicons/react/24/solid';
 import {
   ConfirmationDialog,
@@ -9,7 +10,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 type Props = {
-  postId: string;
+  postId: PostId;
   isComment?: boolean;
 };
 

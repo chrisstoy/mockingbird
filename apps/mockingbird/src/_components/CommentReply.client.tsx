@@ -1,12 +1,12 @@
 'use cient';
+import { useSessionUser } from '@/_hooks/useSessionUser';
 import { getUser } from '@/_services/users';
 import { Post } from '@/_types/post';
+import { GENERIC_USER_IMAGE_URL } from '@/constants';
 import { TextDisplay } from '@mockingbird/stoyponents';
-import { useSession } from 'next-auth/react';
 import { useEffect, useMemo, useState } from 'react';
 import { PostHeader } from './PostHeader';
 import { ReplyFooter } from './ReplyFooter.client';
-import { GENERIC_USER_IMAGE_URL } from '@/constants';
 
 type Props = {
   comment: Post;
@@ -20,7 +20,7 @@ export function CommentReply({
   originalPosterId,
   onReplyToComment,
 }: Props) {
-  const { data: session } = useSession();
+  const user = useSessionUser();
   const [commenterNameAndImage, setCommenterNameAndImage] = useState({
     name: 'Unknown',
     image: GENERIC_USER_IMAGE_URL,
@@ -37,11 +37,8 @@ export function CommentReply({
   }, [comment.posterId]);
 
   const showOptionsMenu = useMemo(() => {
-    return (
-      comment.posterId === session?.user?.id ||
-      originalPosterId === session?.user?.id
-    );
-  }, [session?.user?.id, originalPosterId, comment.posterId]);
+    return comment.posterId === user?.id || originalPosterId === user?.id;
+  }, [user?.id, originalPosterId, comment.posterId]);
 
   return (
     <div

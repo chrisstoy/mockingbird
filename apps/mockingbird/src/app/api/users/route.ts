@@ -1,15 +1,10 @@
 import baseLogger from '@/_server/logger';
-import { createUserDataSchema } from '@/_types/createUser';
+import { CreateUserDataSchema } from '@/_types/createUser';
 import { auth } from '@/app/auth';
 import { NextResponse } from 'next/server';
-import { ResponseError } from '../types';
+import { respondWithError, ResponseError } from '../errors';
 import { validateAuthentication } from '../validateAuthentication';
-import {
-  createUser,
-  getUserByEmail,
-  getUsersMatchingQuery,
-  respondWithError,
-} from './service';
+import { createUser, getUserByEmail, getUsersMatchingQuery } from './service';
 
 const logger = baseLogger.child({
   service: 'api:users',
@@ -50,7 +45,7 @@ export const POST = auth(async function POST(request) {
     validateAuthentication(request.auth);
 
     const data = await request.json();
-    const { name, email, password } = createUserDataSchema.parse(data);
+    const { name, email, password } = CreateUserDataSchema.parse(data);
 
     const existingUser = await getUserByEmail(email);
 

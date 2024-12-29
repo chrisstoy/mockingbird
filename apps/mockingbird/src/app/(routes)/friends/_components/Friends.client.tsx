@@ -1,10 +1,10 @@
 'use client';
-import { FriendStatus } from '@/_types/users';
+import { FriendStatus, UserId } from '@/_types/users';
 import { useFriendCollectionStore } from '../_service/state';
 import { FriendCard } from './FriendCard.client';
 
 type Props = {
-  onFriendStatusChange: (friendId: string, status: FriendStatus) => void;
+  onFriendStatusChange: (friendId: UserId, status: FriendStatus) => void;
 };
 
 export function Friends({ onFriendStatusChange }: Props) {

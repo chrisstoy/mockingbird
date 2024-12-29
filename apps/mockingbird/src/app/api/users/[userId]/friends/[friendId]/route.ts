@@ -1,5 +1,6 @@
 import baseLogger from '@/_server/logger';
-import { ResponseError } from '@/app/api/types';
+import { UserIdSchema } from '@/_types/users';
+import { respondWithError, ResponseError } from '@/app/api/errors';
 import { validateAuthentication } from '@/app/api/validateAuthentication';
 import { auth } from '@/app/auth';
 import { NextResponse } from 'next/server';
@@ -8,7 +9,6 @@ import {
   deleteFriendshipBetweenUsers,
   getAcceptedFriendsForUser,
   requestFriendshipBetweenUsers,
-  respondWithError,
   updateFriendshipBetweenUsers,
 } from '../../../service';
 
@@ -21,8 +21,8 @@ const acceptFriendshipSchema = z.object({
 });
 
 const paramsSchema = z.object({
-  userId: z.string().min(1),
-  friendId: z.string().min(1),
+  userId: UserIdSchema,
+  friendId: UserIdSchema,
 });
 
 /**

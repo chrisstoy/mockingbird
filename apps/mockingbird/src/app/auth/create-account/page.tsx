@@ -1,15 +1,15 @@
 'use client';
-import { CreateUser, createUserSchema } from '@/_types/createUser';
-import { FormTextInput } from '@mockingbird/stoyponents';
-import Link from 'next/link';
-import { useForm } from 'react-hook-form';
+import { CreateUser, CreateUserSchema } from '@/_types/createUser';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
+import { FormTextInput } from '@mockingbird/stoyponents';
 import { signIn } from 'next-auth/react';
+import Link from 'next/link';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 export default function CreateAccountPage() {
   const form = useForm<CreateUser>({
-    resolver: zodResolver(createUserSchema),
+    resolver: zodResolver(CreateUserSchema),
   });
   const {
     register,
