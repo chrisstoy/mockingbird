@@ -1,17 +1,18 @@
-import { NextResponse } from 'next/server';
-
 import baseLogger from '@/_server/logger';
+import { UserIdSchema } from '@/_types/users';
+import { respondWithError } from '@/app/api/errors';
 import { validateAuthentication } from '@/app/api/validateAuthentication';
 import { auth } from '@/app/auth';
-import { getFriendsForUser, respondWithError } from '../../service';
+import { NextResponse } from 'next/server';
 import { z } from 'zod';
+import { getFriendsForUser } from '../../service';
 
 const logger = baseLogger.child({
   service: 'api:users:user:friends',
 });
 
 const paramsSchema = z.object({
-  userId: z.string().min(1),
+  userId: UserIdSchema,
 });
 
 export const GET = auth(async function GET({ auth }, context) {

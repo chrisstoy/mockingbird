@@ -1,8 +1,8 @@
 'use client';
+import { useSessionUser } from '@/_hooks/useSessionUser';
 import { commentOnPost, getCommentsForPost } from '@/_services/post';
 import { Post, sortByCreatedAtDesc } from '@/_types/post';
 import { TextEditor } from '@mockingbird/stoyponents';
-import { useSession } from 'next-auth/react';
 import { Suspense, useEffect, useState } from 'react';
 import { CommentReplyList } from './CommentReplyList.client';
 import { ReplyFooter } from './ReplyFooter.client';
@@ -17,7 +17,7 @@ export function CommentReplyContainer({
   originalPosterId,
   hideReplies = false,
 }: Props) {
-  const { data: session } = useSession();
+  const user = useSessionUser();
   const [showReplyEditor, setShowReplyEditor] = useState(false);
   const [replyContent, setReplyContent] = useState<string>('');
 
@@ -34,16 +34,12 @@ export function CommentReplyContainer({
   const submitReply = async (canceled?: boolean) => {
     setShowReplyEditor(false);
 
-    if (
-      canceled ||
-      replyContent.length === 0 ||
-      session?.user?.id === undefined
-    ) {
+    if (canceled || replyContent.length === 0 || user?.id === undefined) {
       return;
     }
 
     const result = await commentOnPost(
-      session?.user?.id,
+      user?.id,
       originalComment.id,
       replyContent
     );

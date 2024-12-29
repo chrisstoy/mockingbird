@@ -1,10 +1,11 @@
 'use client';
+import { useSessionUser } from '@/_hooks/useSessionUser';
 import { GENERIC_USER_IMAGE_URL } from '@/constants';
 import {
   ConfirmationDialogResult,
   ConfirmSignOutDialog,
 } from '@mockingbird/stoyponents';
-import { signIn, signOut, useSession } from 'next-auth/react';
+import { signIn, signOut } from 'next-auth/react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -26,7 +27,7 @@ function MenuItem({ title, onClick }: { title: string; onClick: () => void }) {
 }
 
 export function UserButton() {
-  const { data: session } = useSession();
+  const user = useSessionUser();
   const router = useRouter();
 
   const [showSignout, setShowSignout] = useState(false);
@@ -43,11 +44,11 @@ export function UserButton() {
 
   useEffect(() => {
     setUserData({
-      name: session?.user?.name ?? 'Not Logged In',
-      email: session?.user?.email ?? '',
-      image: session?.user?.image ?? GENERIC_USER_IMAGE_URL,
+      name: user?.name ?? 'Not Logged In',
+      email: user?.email ?? '',
+      image: user?.image ?? GENERIC_USER_IMAGE_URL,
     });
-  }, [session?.user]);
+  }, [user]);
 
   function handleSignOutResponse(
     result?: ConfirmationDialogResult | undefined
@@ -87,7 +88,7 @@ export function UserButton() {
           </span>
           <hr className="m-1"></hr>
         </div>
-        {session?.user ? (
+        {user ? (
           <>
             <MenuItem title="Friends" onClick={() => router.push('/friends')} />
             <MenuItem title="Profile" onClick={() => router.push('/profile')} />

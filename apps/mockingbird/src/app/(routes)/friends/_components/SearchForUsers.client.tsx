@@ -1,9 +1,10 @@
 'use client';
+import { useSessionUser } from '@/_hooks/useSessionUser';
 import { getUsersMatchingSearchTerm } from '@/_services/users';
-import { FriendStatus, UserInfo } from '@/_types/users';
+import { FriendStatus, UserId, UserInfo } from '@/_types/users';
 import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { useDebounce } from '@uidotdev/usehooks';
-import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { useFriendCollectionStore } from '../_service/state';
 import { FriendCard } from './FriendCard.client';
@@ -13,10 +14,13 @@ type ExtendedUserInfo = UserInfo & {
 };
 
 type Props = {
-  onFriendStatusChange: (friendId: string, status: FriendStatus) => void;
+  onFriendStatusChange: (friendId: UserId, status: FriendStatus) => void;
 };
 
 export function SearchForUsers({ onFriendStatusChange }: Props) {
+  const router = useRouter();
+  const user = useSessionUser();
+
   const friends = useFriendCollectionStore((state) => state.friends);
   const friendRequests = useFriendCollectionStore(
     (state) => state.friendRequests
@@ -25,13 +29,15 @@ export function SearchForUsers({ onFriendStatusChange }: Props) {
     (state) => state.pendingFriends
   );
 
-  const { data: session } = useSession();
-
   const [foundUsers, setFoundUsers] = useState<Array<ExtendedUserInfo>>([]);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [isSearching, setIsSearching] = useState(false);
 
   const debouncedSearchTerm = useDebounce(searchTerm, 1000);
+
+  if (!user) {
+    router.push('/auth/signin');
+  }
 
   const updateUserFriendStatus = useCallback(
     (user: ExtendedUserInfo): ExtendedUserInfo => {
@@ -85,7 +91,7 @@ export function SearchForUsers({ onFriendStatusChange }: Props) {
       setIsSearching(false);
 
       const updatedMatchedUsers = matchedUsers
-        .filter((u) => u.id !== session?.user?.id)
+        .filter((u) => u.id !== user?.id)
         .map(updateUserFriendStatus);
 
       setFoundUsers(updatedMatchedUsers);
@@ -94,7 +100,7 @@ export function SearchForUsers({ onFriendStatusChange }: Props) {
     debouncedSearchTerm,
     setIsSearching,
     setFoundUsers,
-    session?.user?.id,
+    user?.id,
     updateUserFriendStatus,
   ]);
 

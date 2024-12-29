@@ -1,11 +1,12 @@
 import { toLocalTime } from '@/_services/toLocalTime';
 import { PostMenu } from './PostMenu.client';
+import { PostId } from '@/_types/post';
 
 type Props = {
   date: Date;
   image: string;
   name: string;
-  postId: string;
+  postId: PostId;
 
   isComment?: boolean;
   showOptionsMenu?: boolean;

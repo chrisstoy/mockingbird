@@ -1,26 +1,29 @@
 import { z } from 'zod';
+import { createDatabaseIdSchema } from './type-utilities';
+import { UserIdSchema } from './users';
 
-const createPostDataShape = {
-  posterId: z.string(),
+export const CreatePostDataSchema = z.object({
+  posterId: UserIdSchema,
   content: z.string().min(1),
-};
+});
+export type CreatePost = z.infer<typeof CreatePostDataSchema>;
 
-export const createPostDataSchema = z.object(createPostDataShape);
-export type CreatePost = z.infer<typeof createPostDataSchema>;
-
-export const createCommentDataSchema = createPostDataSchema.extend({
+export const CreateCommentDataSchema = CreatePostDataSchema.extend({
   responseToPostId: z.string().optional(),
 });
-export type CreateComment = z.infer<typeof createCommentDataSchema>;
+export type CreateComment = z.infer<typeof CreateCommentDataSchema>;
 
-export const postSchema = createPostDataSchema.extend({
-  id: z.string(),
+export type PostId = string & { __brand: 'PostId' };
+export const PostIdSchema = createDatabaseIdSchema<PostId>();
+
+export const PostSchema = CreatePostDataSchema.extend({
+  id: PostIdSchema,
   createdAt: z.date(),
   updatedAt: z.date(),
   likeCount: z.number(),
   dislikeCount: z.number(),
 });
-export type Post = z.infer<typeof postSchema>;
+export type Post = z.infer<typeof PostSchema>;
 
 export const sortByCreatedAtAsc = (
   a: { createdAt: Date },

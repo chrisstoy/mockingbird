@@ -1,8 +1,9 @@
-import { Post } from '@/_types/post';
+import { Post, PostId } from '@/_types/post';
+import { UserId } from '@/_types/users';
 import { apiUrlFor } from './api';
 
 export async function createPost(
-  userId: string,
+  userId: UserId,
   content: string
 ): Promise<Post> {
   const response = await fetch(await apiUrlFor(`/posts`), {
@@ -25,7 +26,7 @@ export async function createPost(
   return response.json();
 }
 
-export async function getPostWithId(postId: string) {
+export async function getPostWithId(postId: PostId) {
   try {
     const response = await fetch(await apiUrlFor(`/posts/${postId}`));
     const post = (await response.json()) as Post;
@@ -36,7 +37,7 @@ export async function getPostWithId(postId: string) {
   }
 }
 
-export async function getCommentsForPost(postId: string, limit?: number) {
+export async function getCommentsForPost(postId: PostId, limit?: number) {
   try {
     const response = await fetch(
       await apiUrlFor(
@@ -51,7 +52,7 @@ export async function getCommentsForPost(postId: string, limit?: number) {
   }
 }
 
-export async function getFirstCommentForPost(postId: string) {
+export async function getFirstCommentForPost(postId: PostId) {
   const comments = await getCommentsForPost(postId, 1);
   return comments?.[0];
 }
@@ -81,7 +82,7 @@ export async function commentOnPost(
   return response.json();
 }
 
-export async function deletePost(postId: string) {
+export async function deletePost(postId: PostId) {
   const response = await fetch(await apiUrlFor(`/posts/${postId}`), {
     method: 'DELETE',
   });

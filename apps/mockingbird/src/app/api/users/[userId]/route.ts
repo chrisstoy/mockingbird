@@ -1,19 +1,20 @@
 import { NextResponse } from 'next/server';
 
 import baseLogger from '@/_server/logger';
+import { UserIdSchema } from '@/_types/users';
 import { auth } from '@/app/auth';
 import { AppRouteHandlerFnContext } from 'next-auth/lib/types';
 import { z } from 'zod';
-import { ResponseError } from '../../types';
+import { respondWithError, ResponseError } from '../../errors';
 import { validateAuthentication } from '../../validateAuthentication';
-import { getUserById, respondWithError } from '../service';
+import { getUserById } from '../service';
 
 const logger = baseLogger.child({
   service: 'api:users:user',
 });
 
 const paramsSchema = z.object({
-  userId: z.string().min(1),
+  userId: UserIdSchema,
 });
 
 export const GET = auth(async function GET(

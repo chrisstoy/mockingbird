@@ -1,11 +1,10 @@
-import { User } from 'next-auth';
+import { UserId, UserInfo, UserInfoSchema } from '@/_types/users';
 import { apiUrlFor } from './api';
-import { UserInfo } from '@/_types/users';
 
-export async function getUser(id: string) {
+export async function getUser(id: UserId) {
   try {
     const response = await fetch(await apiUrlFor(`/users/${id}`));
-    const user: User = await response.json();
+    const user = UserInfoSchema.parse(await response.json());
     return user;
   } catch (error) {
     console.error(error);

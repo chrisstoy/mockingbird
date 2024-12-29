@@ -1,5 +1,11 @@
 import { Footer } from '@/_components/Footer';
 import { Header } from '@/_components/Header';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Mockingbird',
+  description: 'Basic Social Media app',
+};
 
 export default async function RoutesLayout({
   children,

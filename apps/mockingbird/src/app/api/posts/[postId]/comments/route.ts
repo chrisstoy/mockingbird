@@ -1,7 +1,6 @@
 import baseLogger from '@/_server/logger';
-import { createCommentDataSchema } from '@/_types/post';
-import { ResponseError } from '@/app/api/types';
-import { respondWithError } from '@/app/api/users/service';
+import { CreateCommentDataSchema } from '@/_types/post';
+import { respondWithError, ResponseError } from '@/app/api/errors';
 import { validateAuthentication } from '@/app/api/validateAuthentication';
 import { auth } from '@/app/auth';
 import { revalidateTag } from 'next/cache';
@@ -52,7 +51,7 @@ export const POST = auth(async function POST(request, context) {
     const { postId } = paramsSchema.parse(context.params);
 
     const body = await request.json();
-    const { posterId, content } = createCommentDataSchema.parse(body);
+    const { posterId, content } = CreateCommentDataSchema.parse(body);
 
     if (request.auth?.user?.id !== posterId) {
       throw new ResponseError(

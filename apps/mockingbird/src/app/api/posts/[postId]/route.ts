@@ -4,8 +4,11 @@ import { auth } from '@/app/auth';
 import { Prisma } from '@prisma/client';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { ResponseError } from '../../types';
-import { createErrorResponse, respondWithError } from '../../users/service';
+import {
+  createErrorResponse,
+  respondWithError,
+  ResponseError,
+} from '../../errors';
 import { validateAuthentication } from '../../validateAuthentication';
 
 const logger = baseLogger.child({

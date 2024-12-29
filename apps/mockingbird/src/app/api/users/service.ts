@@ -1,18 +1,25 @@
 import { prisma } from '@/_server/db';
 import baseLogger from '@/_server/logger';
-import { UserInfo } from '@/_types/users';
+import { createDatabaseIdSchema } from '@/_types/type-utilities';
+import {
+  EmailAddressSchema,
+  UserId,
+  UserIdSchema,
+  UserInfo,
+  UserInfoSchema,
+} from '@/_types/users';
 import bcrypt from 'bcryptjs';
-import { STATUS_CODES } from 'http';
-import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { ResponseError } from '../types';
 
 const logger = baseLogger.child({
   service: 'users:service',
 });
 
+export type FriendshipRequstId = string & { __brand: 'FriendshipRequstId' };
+const FriendshipRequestSchema = createDatabaseIdSchema<FriendshipRequstId>();
+
 export async function requestFriendshipBetweenUsers(
-  userId: string,
+  userId: UserId,
   friendId: string
 ) {
   const friendRequest = {
@@ -27,8 +34,8 @@ export async function requestFriendshipBetweenUsers(
 }
 
 export async function updateFriendshipBetweenUsers(
-  userId: string,
-  friendId: string,
+  userId: UserId,
+  friendId: UserId,
   accepted = true
 ) {
   const result = await prisma.friends.updateMany({
@@ -52,8 +59,8 @@ export async function updateFriendshipBetweenUsers(
 }
 
 export async function deleteFriendshipBetweenUsers(
-  userId: string,
-  friendId: string
+  userId: UserId,
+  friendId: UserId
 ) {
   const result = await prisma.friends.deleteMany({
     where: {
@@ -96,26 +103,36 @@ export async function getUsersMatchingQuery(query: string) {
   return users;
 }
 
-export async function getAcceptedFriendsForUser(userId: string) {
+const AcceptedFriendsSchema = z.array(
+  z.object({
+    userId: UserIdSchema.readonly(),
+    friendId: UserIdSchema.readonly(),
+    accepted: z.boolean().readonly(),
+  })
+);
+
+export async function getAcceptedFriendsForUser(userId: UserId) {
   logger.info(`Getting accepted friends for userId: ${userId}`);
 
-  const allFriends = await prisma.friends.findMany({
-    where: {
-      OR: [
-        {
-          userId,
-        },
-        {
-          friendId: userId,
-        },
-      ],
-    },
-    select: {
-      userId: true,
-      friendId: true,
-      accepted: true,
-    },
-  });
+  const allFriends = AcceptedFriendsSchema.parse(
+    await prisma.friends.findMany({
+      where: {
+        OR: [
+          {
+            userId,
+          },
+          {
+            friendId: userId,
+          },
+        ],
+      },
+      select: {
+        userId: true,
+        friendId: true,
+        accepted: true,
+      },
+    })
+  );
 
   const acceptedFriendIds = allFriends
     .filter((friend) => friend.accepted)
@@ -130,26 +147,28 @@ export async function getAcceptedFriendsForUser(userId: string) {
  * Return set of friends, pending requests, and friend requests for the given user
  * @param userId
  */
-export async function getFriendsForUser(userId: string) {
+export async function getFriendsForUser(userId: UserId) {
   logger.info(`Getting friends for userId: ${userId}`);
 
-  const allFriends = await prisma.friends.findMany({
-    where: {
-      OR: [
-        {
-          userId,
-        },
-        {
-          friendId: userId,
-        },
-      ],
-    },
-    select: {
-      userId: true,
-      friendId: true,
-      accepted: true,
-    },
-  });
+  const allFriends = AcceptedFriendsSchema.parse(
+    await prisma.friends.findMany({
+      where: {
+        OR: [
+          {
+            userId,
+          },
+          {
+            friendId: userId,
+          },
+        ],
+      },
+      select: {
+        userId: true,
+        friendId: true,
+        accepted: true,
+      },
+    })
+  );
 
   const acceptedFriendIds = allFriends
     .filter((friend) => friend.accepted)
@@ -165,44 +184,50 @@ export async function getFriendsForUser(userId: string) {
     .filter((friend) => !friend.accepted && friend.friendId === userId)
     .map(({ userId }) => userId);
 
-  const friends = await prisma.user.findMany({
-    where: {
-      id: {
-        in: acceptedFriendIds,
+  const friends = z.array(UserInfoSchema).parse(
+    await prisma.user.findMany({
+      where: {
+        id: {
+          in: acceptedFriendIds as unknown as string[],
+        },
       },
-    },
-    select: {
-      id: true,
-      name: true,
-      image: true,
-    },
-  });
+      select: {
+        id: true,
+        name: true,
+        image: true,
+      },
+    })
+  );
 
-  const pendingFriends = await prisma.user.findMany({
-    where: {
-      id: {
-        in: pendingFriendIds,
+  const pendingFriends = z.array(UserInfoSchema).parse(
+    await prisma.user.findMany({
+      where: {
+        id: {
+          in: pendingFriendIds as unknown as string[],
+        },
       },
-    },
-    select: {
-      id: true,
-      name: true,
-      image: true,
-    },
-  });
+      select: {
+        id: true,
+        name: true,
+        image: true,
+      },
+    })
+  );
 
-  const friendRequests = await prisma.user.findMany({
-    where: {
-      id: {
-        in: friendRequestIds,
+  const friendRequests = z.array(UserInfoSchema).parse(
+    await prisma.user.findMany({
+      where: {
+        id: {
+          in: friendRequestIds as unknown as string[],
+        },
       },
-    },
-    select: {
-      id: true,
-      name: true,
-      image: true,
-    },
-  });
+      select: {
+        id: true,
+        name: true,
+        image: true,
+      },
+    })
+  );
 
   return {
     friends,
@@ -215,47 +240,63 @@ export async function getFriendsForUser(userId: string) {
  * Return set of users that the given user has sent friend requests to
  * and who have requested the user to be their friend
  */
-export async function getFriendRequestsForUser(userId: string) {
+export async function getFriendRequestsForUser(userId: UserId) {
   logger.info(`Getting friend requests for userId: ${userId}`);
 
-  const pendingFriendRequestIds = await prisma.friends.findMany({
-    where: {
-      userId,
-      accepted: false,
-    },
-    select: {
-      friendId: true,
-    },
-  });
+  const PendingFriendRequestIdsSchema = z.array(
+    z.object({ friendId: UserIdSchema })
+  );
 
-  const pendingRequestsByUser: UserInfo[] = await prisma.user.findMany({
-    where: {
-      id: {
-        in: pendingFriendRequestIds.map(({ friendId }) => friendId),
+  const pendingFriendRequestIds = PendingFriendRequestIdsSchema.parse(
+    await prisma.friends.findMany({
+      where: {
+        userId,
+        accepted: false,
       },
-    },
-    select: {
-      id: true,
-      name: true,
-      image: true,
-    },
-  });
+      select: {
+        friendId: true,
+      },
+    })
+  );
 
-  const requestedToBeMyFriend = await prisma.friends.findMany({
-    where: {
-      friendId: userId,
-      accepted: false,
-    },
-    select: {
-      user: {
-        select: {
-          id: true,
-          name: true,
-          image: true,
+  const pendingRequestsByUser = z.array(UserInfoSchema).parse(
+    await prisma.user.findMany({
+      where: {
+        id: {
+          in: pendingFriendRequestIds.map(({ friendId }) => friendId),
         },
       },
-    },
-  });
+      select: {
+        id: true,
+        name: true,
+        image: true,
+      },
+    })
+  );
+
+  const RequestedToBeMyFriendSchema = z.array(
+    z.object({
+      user: UserInfoSchema,
+    })
+  );
+
+  const requestedToBeMyFriend = RequestedToBeMyFriendSchema.parse(
+    await prisma.friends.findMany({
+      where: {
+        friendId: userId,
+        accepted: false,
+      },
+      select: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+          },
+        },
+      },
+    })
+  );
 
   return {
     pendingRequestsByUser,
@@ -265,25 +306,36 @@ export async function getFriendRequestsForUser(userId: string) {
   };
 }
 
-export async function getUserById(id: string) {
+export async function getUserById(id: UserId) {
   logger.info(`Getting user with id: ${id}`);
-  const user = await prisma.user.findUnique({
-    where: {
-      id,
-    },
-  });
+  const user = UserInfoSchema.optional().parse(
+    await prisma.user.findUnique({
+      where: {
+        id,
+      },
+    })
+  );
   return user;
 }
 
 export async function getUserByEmail(email: string) {
   logger.info(`Getting user with email: ${email}`);
-  const user = await prisma.user.findUnique({
-    where: {
-      email,
-    },
-  });
+  const user = UserInfoSchema.optional().parse(
+    await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    })
+  );
   return user;
 }
+
+const CreateUserInfoSchema = UserInfoSchema.extend({
+  email: EmailAddressSchema.optional(),
+  emailVerified: z.date().optional(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+});
 
 export async function createUser(
   name: string,
@@ -292,12 +344,14 @@ export async function createUser(
 ) {
   logger.info(`Creating new user with name: '${name}' and email: ${email}`);
 
-  const newUser = await prisma.user.create({
-    data: {
-      email,
-      name,
-    },
-  });
+  const newUser = await CreateUserInfoSchema.parse(
+    prisma.user.create({
+      data: {
+        email,
+        name,
+      },
+    })
+  );
 
   const today = new Date();
   const expiresAt = new Date(
@@ -324,25 +378,4 @@ export async function createUser(
     logger.error(err);
     throw new Error('Failed to encrypt password');
   }
-}
-
-export function createErrorResponse(status: number, message: string) {
-  const statusText = STATUS_CODES[status] || 'Error';
-  return NextResponse.json({ message, status, statusText }, { status });
-}
-
-export function respondWithError(error: unknown) {
-  if (error instanceof z.ZodError) {
-    return createErrorResponse(400, `Invalid data: ` + JSON.stringify(error));
-  }
-
-  if (error instanceof ResponseError) {
-    return createErrorResponse(error.status, error.message);
-  }
-
-  if (error instanceof Error) {
-    return createErrorResponse(500, `${error.name}: ${error.message}`);
-  }
-
-  return createErrorResponse(500, `${error}`);
 }

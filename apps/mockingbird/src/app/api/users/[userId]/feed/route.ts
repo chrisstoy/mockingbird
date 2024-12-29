@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
 
 import baseLogger from '@/_server/logger';
+import { UserIdSchema } from '@/_types/users';
+import { respondWithError } from '@/app/api/errors';
 import { validateAuthentication } from '@/app/api/validateAuthentication';
 import { auth } from '@/app/auth';
 import { z } from 'zod';
-import { respondWithError } from '../../service';
 import { getFeedForUser } from './service';
 
 const logger = baseLogger.child({
@@ -12,7 +13,7 @@ const logger = baseLogger.child({
 });
 
 const paramsSchema = z.object({
-  userId: z.string().min(1),
+  userId: UserIdSchema,
 });
 
 export const GET = auth(async function GET(request, context) {

@@ -1,11 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
+import { useSessionUser } from '@/_hooks/useSessionUser';
 import {
   acceptFriendRequest,
   removeFriend,
   requestFriend,
 } from '@/_services/friends';
-import { FriendStatus, UserInfo } from '@/_types/users';
+import { FriendStatus, UserId, UserInfo } from '@/_types/users';
 import { GENERIC_USER_IMAGE_URL } from '@/constants';
 import {
   CheckIcon,
@@ -17,7 +18,6 @@ import {
   ConfirmationDialog,
   ConfirmationDialogResult,
 } from '@mockingbird/stoyponents';
-import { useSession } from 'next-auth/react';
 import { useCallback, useState } from 'react';
 
 type ButtonProps = {
@@ -47,7 +47,7 @@ function FriendActionButton({ label, type, onAction }: ButtonProps) {
 interface Props {
   friend: UserInfo;
   friendStatus: FriendStatus;
-  onFriendStatusChange: (friendId: string, status: FriendStatus) => void;
+  onFriendStatusChange: (friendId: UserId, status: FriendStatus) => void;
 }
 
 export function FriendCard({
@@ -62,8 +62,8 @@ export function FriendCard({
   const [showCancelFriendRequestDialog, setShowCancelFriendRequestDialog] =
     useState(false);
 
-  const { data: session } = useSession();
-  const userId = session?.user?.id;
+  const user = useSessionUser();
+  const userId = user?.id;
 
   const handleRequestFriend = useCallback(async () => {
     console.log(`Request friend: ${name}`);

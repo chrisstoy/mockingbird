@@ -1,20 +1,21 @@
 import { FeedList } from '@/_components/FeedList';
 import { NewPost } from '@/_components/NewPost.client';
+import { sessionUser } from '@/_hooks/sessionUser';
 import { getFeedForUser } from '@/_services/feed';
-import { Post } from '@/_types/post';
-import { auth } from '@/app/auth';
+import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 
 export default async function AppPage() {
-  const session = await auth();
+  const user = await sessionUser();
+  if (!user) {
+    redirect('/auth/signin');
+  }
 
-  const feed: Post[] = session?.user?.id
-    ? await getFeedForUser(session?.user.id)
-    : [];
+  const feed = user.id ? await getFeedForUser(user.id) : [];
 
   return (
     <div className="flex flex-col flex-auto">
-      <NewPost user={session?.user}></NewPost>
+      <NewPost user={user}></NewPost>
       <Suspense
         fallback={
           <div className="text-secondary-content m-2 text-center">
