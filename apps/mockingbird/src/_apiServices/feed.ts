@@ -1,7 +1,8 @@
 import { signIn } from '@/app/auth';
 import { apiUrlFor } from './api';
 import { UserId } from '@/_types/users';
-import { Post } from '@/_types/post';
+import { PostSchema } from '@/_types/post';
+import { z } from 'zod';
 
 export async function getFeedForUser(userId: UserId) {
   try {
@@ -20,7 +21,8 @@ export async function getFeedForUser(userId: UserId) {
       return [];
     }
 
-    const posts = (await response.json()) as Post[];
+    const rawData = await response.json();
+    const posts = z.array(PostSchema).parse(rawData);
     return posts;
   } catch (error) {
     console.error(error);

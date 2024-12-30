@@ -1,15 +1,14 @@
-import { getCommentsForPost } from '@/_services/post';
-import { getUser } from '@/_services/users';
+import { getCommentsForPost } from '@/_apiServices/post';
+import { getUser } from '@/_apiServices/users';
 import { Post } from '@/_types/post';
 import { auth } from '@/app/auth';
+import { GENERIC_USER_IMAGE_URL } from '@/constants';
 import { TextDisplay } from '@mockingbird/stoyponents';
 import Link from 'next/link';
-
 import { Suspense } from 'react';
 import { CommentList } from './CommentList';
 import { PostActionsFooter } from './PostActionsFooter';
 import { PostHeader } from './PostHeader';
-import { GENERIC_USER_IMAGE_URL } from '@/constants';
 
 type Props = {
   post: Post;

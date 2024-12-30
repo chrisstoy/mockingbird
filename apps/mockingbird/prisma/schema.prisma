@@ -98,8 +98,8 @@ model Post {
 
   poster User @relation(fields: [posterId], references: [id], onDelete: Cascade)
 
-  response  Post?  @relation("Responses", fields: [responseToPostId], references: [id])
-  responses Post[] @relation("Responses")
+  responseTo Post?  @relation("Responses", fields: [responseToPostId], references: [id])
+  responses  Post[] @relation("Responses")
 }
 
 model Friends {

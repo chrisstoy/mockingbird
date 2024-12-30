@@ -1,12 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
-import { useSessionUser } from '@/_hooks/useSessionUser';
 import {
   acceptFriendRequest,
   removeFriend,
   requestFriend,
-} from '@/_services/friends';
-import { FriendStatus, UserId, UserInfo } from '@/_types/users';
+} from '@/_apiServices/friends';
+import { useSessionUser } from '@/_hooks/useSessionUser';
+import { FriendStatus, SimpleUserInfo, UserId } from '@/_types/users';
 import { GENERIC_USER_IMAGE_URL } from '@/constants';
 import {
   CheckIcon,
@@ -45,7 +45,7 @@ function FriendActionButton({ label, type, onAction }: ButtonProps) {
 }
 
 interface Props {
-  friend: UserInfo;
+  friend: SimpleUserInfo;
   friendStatus: FriendStatus;
   onFriendStatusChange: (friendId: UserId, status: FriendStatus) => void;
 }

@@ -1,6 +1,9 @@
-import { Post, sortByCreatedAtAsc } from '@/_types/post';
+import { Post } from '@/_types/post';
 import { useMemo } from 'react';
 import { Comment } from './Comment';
+
+const sortByCreatedAtAsc = (a: { createdAt: Date }, b: { createdAt: Date }) =>
+  new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
 
 type Props = {
   feed: Post[];

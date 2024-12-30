@@ -1,6 +1,6 @@
-import { toLocalTime } from '@/_services/toLocalTime';
-import { PostMenu } from './PostMenu.client';
+import { toLocalTime } from '@/_apiServices/toLocalTime';
 import { PostId } from '@/_types/post';
+import { PostMenu } from './PostMenu.client';
 
 type Props = {
   date: Date;

@@ -1,6 +1,7 @@
 'use client';
-import { getUser } from '@/_services/users';
+import { getUser } from '@/_apiServices/users';
 import { Post } from '@/_types/post';
+import { GENERIC_USER_IMAGE_URL } from '@/constants';
 import {
   DialogActions,
   DialogButton,
@@ -9,7 +10,6 @@ import {
 } from '@mockingbird/stoyponents';
 import { useEffect, useRef, useState } from 'react';
 import { PostView } from './PostView';
-import { GENERIC_USER_IMAGE_URL } from '@/constants';
 
 type Props = {
   onSubmitPost: (content: string) => void;
@@ -26,7 +26,10 @@ export function CommentEditorDialog({
   const [posterInfo, setPosterInfo] = useState<{
     userName: string;
     imageSrc: string;
-  }>();
+  }>({
+    userName: 'Unknown',
+    imageSrc: GENERIC_USER_IMAGE_URL,
+  });
   const [newContent, setNewContent] = useState<string>('');
 
   useEffect(() => {
@@ -57,27 +60,29 @@ export function CommentEditorDialog({
       ref={dialogRef}
       className="bg-transparent bg-base-100 open:animate-fade-in open:backdrop:animate-fade-in"
     >
-      <div className="card card-bordered shadow-xl bg-base-100 w-96">
-        <DialogHeader
-          title={`${posterInfo?.userName}'s Post`}
-          onClosed={onClosed}
-        ></DialogHeader>
-        <PostView
-          imageSrc={posterInfo?.imageSrc ?? ''}
-          userName={posterInfo?.userName ?? ''}
-          content={originalPost.content}
-          createdAt={originalPost.createdAt}
-        ></PostView>
-        <TextEditor onChange={setNewContent}></TextEditor>
+      {posterInfo && (
+        <div className="card card-bordered shadow-xl bg-base-100 w-96">
+          <DialogHeader
+            title={`${posterInfo.userName}'s Post`}
+            onClosed={onClosed}
+          ></DialogHeader>
+          <PostView
+            imageSrc={posterInfo.imageSrc}
+            userName={posterInfo.userName}
+            content={originalPost.content}
+            createdAt={originalPost.createdAt}
+          ></PostView>
+          <TextEditor onChange={setNewContent}></TextEditor>
 
-        <DialogActions
-          onClosed={() => {
-            // do nothing
-          }}
-        >
-          <DialogButton title="Post" onClick={handleSubmitPost} />
-        </DialogActions>
-      </div>
+          <DialogActions
+            onClosed={() => {
+              // do nothing
+            }}
+          >
+            <DialogButton title="Post" onClick={handleSubmitPost} />
+          </DialogActions>
+        </div>
+      )}
     </dialog>
   );
 }

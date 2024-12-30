@@ -1,7 +1,7 @@
 'use client';
+import { getUsersMatchingSearchTerm } from '@/_apiServices/users';
 import { useSessionUser } from '@/_hooks/useSessionUser';
-import { getUsersMatchingSearchTerm } from '@/_services/users';
-import { FriendStatus, UserId, UserInfo } from '@/_types/users';
+import { FriendStatus, SimpleUserInfo, UserId } from '@/_types/users';
 import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { useDebounce } from '@uidotdev/usehooks';
 import { useRouter } from 'next/navigation';
@@ -9,8 +9,8 @@ import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { useFriendCollectionStore } from '../_service/state';
 import { FriendCard } from './FriendCard.client';
 
-type ExtendedUserInfo = UserInfo & {
-  friendStatus?: 'friend' | 'pending' | 'requested' | 'none';
+type ExtendedUserInfo = SimpleUserInfo & {
+  friendStatus?: FriendStatus;
 };
 
 type Props = {

@@ -1,7 +1,6 @@
 'use client';
-
-import React, { useEffect, useState } from 'react';
-import { toLocalTime } from '@/_services/toLocalTime';
+import { toLocalTime } from '@/_apiServices/toLocalTime';
+import { useEffect, useState } from 'react';
 
 type Props = {
   date: Date;

@@ -1,19 +1,13 @@
-import { UserInfo } from '@/_types/users';
+import { FriendCollection, SimpleUserInfo, UserInfo } from '@/_types/users';
 import type {} from '@redux-devtools/extension'; // required for devtools typing
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
-export type FriendCollection = {
-  friends: UserInfo[];
-  pendingFriends: UserInfo[];
-  friendRequests: UserInfo[];
-};
-
 export interface FriendCollectionState extends FriendCollection {
   setCollection(all: FriendCollection): void;
-  setFriends(friends: UserInfo[]): void;
-  setPendingFriends(pendingFriends: UserInfo[]): void;
-  setFriendRequests(friendRequests: UserInfo[]): void;
+  setFriends(friends: SimpleUserInfo[]): void;
+  setPendingFriends(pendingFriends: SimpleUserInfo[]): void;
+  setFriendRequests(friendRequests: SimpleUserInfo[]): void;
 }
 
 export const useFriendCollectionStore = create<FriendCollectionState>()(

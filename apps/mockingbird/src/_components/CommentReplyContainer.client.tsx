@@ -1,11 +1,14 @@
 'use client';
+import { commentOnPost, getCommentsForPost } from '@/_apiServices/post';
 import { useSessionUser } from '@/_hooks/useSessionUser';
-import { commentOnPost, getCommentsForPost } from '@/_services/post';
-import { Post, sortByCreatedAtDesc } from '@/_types/post';
+import { Post } from '@/_types/post';
 import { TextEditor } from '@mockingbird/stoyponents';
 import { Suspense, useEffect, useState } from 'react';
 import { CommentReplyList } from './CommentReplyList.client';
 import { ReplyFooter } from './ReplyFooter.client';
+
+const sortByCreatedAtDesc = (a: { createdAt: Date }, b: { createdAt: Date }) =>
+  new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
 
 type Props = {
   originalComment: Post;
@@ -38,12 +41,12 @@ export function CommentReplyContainer({
       return;
     }
 
-    const result = await commentOnPost(
+    const newComment = await commentOnPost(
       user?.id,
       originalComment.id,
       replyContent
     );
-    setReplies([...replies, result]);
+    setReplies([...replies, newComment]);
   };
 
   return (

@@ -1,10 +1,14 @@
 import baseLogger from '@/_server/logger';
+import {
+  createUser,
+  getUserByEmail,
+  getUsersMatchingQuery,
+} from '@/_server/usersService';
 import { CreateUserDataSchema } from '@/_types/createUser';
 import { auth } from '@/app/auth';
 import { NextResponse } from 'next/server';
 import { respondWithError, ResponseError } from '../errors';
 import { validateAuthentication } from '../validateAuthentication';
-import { createUser, getUserByEmail, getUsersMatchingQuery } from './service';
 
 const logger = baseLogger.child({
   service: 'api:users',

@@ -1,24 +1,12 @@
+import { FriendCollectionSchema, UserId } from '@/_types/users';
 import { apiUrlFor } from './api';
-import { UserId, UserInfo } from '@/_types/users';
-
-interface FriendsForUser {
-  friends: UserInfo[];
-  pendingFriends: UserInfo[];
-  friendRequests: UserInfo[];
-}
 
 export async function getFriendsForUser(userId: UserId) {
   try {
     const response = await fetch(await apiUrlFor(`/users/${userId}/friends`));
-    const { friends, pendingFriends, friendRequests } =
-      (await response.json()) as FriendsForUser;
-
-    const result = {
-      friends,
-      pendingFriends,
-      friendRequests,
-    };
-    return result;
+    const rawData = await response.json();
+    const friends = FriendCollectionSchema.parse(rawData);
+    return friends;
   } catch (error) {
     console.error(error);
     return {
@@ -37,8 +25,9 @@ export async function requestFriend(userId: UserId, friendId: UserId) {
         method: 'PUT',
       }
     );
-    const user = await response.json();
-    return user;
+    const rawData = await response.json();
+    const result = rawData;
+    return result;
   } catch (error) {
     console.error(error);
     return undefined;
@@ -56,8 +45,9 @@ export async function acceptFriendRequest(userId: UserId, friendId: UserId) {
         }),
       }
     );
-    const user = await response.json();
-    return user;
+    const rawData = await response.json();
+    const result = rawData;
+    return result;
   } catch (error) {
     console.error(error);
     return undefined;
@@ -72,8 +62,8 @@ export async function removeFriend(userId: UserId, friendId: UserId) {
         method: 'DELETE',
       }
     );
-    const user = await response.json();
-    return user;
+    const result = await response.json();
+    return result;
   } catch (error) {
     console.error(error);
     return undefined;

@@ -1,12 +1,11 @@
-import { NextResponse } from 'next/server';
-
+import { getFeedForUser } from '@/_server/feedService';
 import baseLogger from '@/_server/logger';
 import { UserIdSchema } from '@/_types/users';
 import { respondWithError } from '@/app/api/errors';
 import { validateAuthentication } from '@/app/api/validateAuthentication';
 import { auth } from '@/app/auth';
+import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { getFeedForUser } from './service';
 
 const logger = baseLogger.child({
   service: 'api:users:user:feed',
