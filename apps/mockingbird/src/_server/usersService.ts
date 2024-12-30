@@ -41,6 +41,11 @@ export async function getUserById(id: UserId) {
       id,
     },
   });
+
+  if (!rawData) {
+    return undefined;
+  }
+
   const user = UserInfoSchema.optional().parse(rawData);
   return user;
 }
@@ -101,33 +106,92 @@ export async function createUser(
 }
 
 export async function deleteUser(userId: UserId) {
-  logger.info(`Deleting user with id: ${userId}`);
-
-  const rawData = await prisma.$transaction([
-    // delete comments to Posts by user
-    prisma.post.deleteMany({
-      where: {
-        responseToPostId: {
-          not: null, // ensure it is a response
+  try {
+    const [
+      commentsDeleted,
+      postsDeleted,
+      friendshipsDeleted,
+      sessionsDeleted,
+      accountsDeleted,
+      passwordDeleted,
+      userDeleted,
+    ] = await prisma.$transaction([
+      // delete comments to Posts by user
+      prisma.post.deleteMany({
+        where: {
+          responseToPostId: {
+            not: null, // ensure it is a response
+          },
+          responseTo: {
+            posterId: userId, // original post was by user being deleted
+          },
         },
-        responseTo: {
-          posterId: userId, // original post was by user being deleted
+      }),
+
+      // delete Posts by user
+      prisma.post.deleteMany({
+        where: {
+          posterId: userId,
         },
-      },
-    }),
+      }),
 
-    // delete Posts by user
-    prisma.post.deleteMany({
-      where: {
-        posterId: userId,
-      },
-    }),
+      // delete Friendships
+      prisma.friends.deleteMany({
+        where: {
+          OR: [
+            {
+              userId: userId,
+            },
+            {
+              friendId: userId,
+            },
+          ],
+        },
+      }),
 
-    // delete Friends where userId === userId or friendId === userId
-    // delete Password where userId === userId
-    // delete Account where userId === userId
-    // delete User where id === userId
-  ]);
+      // delete Accounts
+      prisma.session.deleteMany({
+        where: {
+          userId: userId,
+        },
+      }),
 
-  throw new Error('Not implemented');
+      // delete Sessions
+      prisma.account.deleteMany({
+        where: {
+          userId: userId,
+        },
+      }),
+
+      // delete Password
+      prisma.passwords.delete({
+        where: {
+          userId: userId,
+        },
+      }),
+
+      // delete User
+      prisma.user.delete({
+        where: {
+          id: userId,
+        },
+      }),
+    ]);
+
+    const results = {
+      commentsDeleted,
+      postsDeleted,
+      friendshipsDeleted,
+      sessionsDeleted,
+      accountsDeleted,
+      passwordDeleted,
+      userDeleted,
+    };
+
+    logger.info(`DELETE User: ${JSON.stringify(results)}`);
+    return results;
+  } catch (error) {
+    logger.error(`DELETE User: ERROR: ${error}`);
+    throw error;
+  }
 }

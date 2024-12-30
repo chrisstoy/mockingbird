@@ -57,12 +57,9 @@ export const DELETE = auth(async function DELETE({ auth }, context) {
       throw new ResponseError(404, `User '${userId}' does not exist`);
     }
 
-    await deleteUser(userId);
+    const results = await deleteUser(userId);
 
-    return NextResponse.json(
-      { statusText: `Deleted user ${user.name}` },
-      { status: 200 }
-    );
+    return NextResponse.json(results, { status: 200 });
   } catch (error) {
     logger.error(error);
     return respondWithError(error);
