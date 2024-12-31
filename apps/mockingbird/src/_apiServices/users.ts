@@ -25,3 +25,16 @@ export async function getUsersMatchingSearchTerm(searchTerm: string) {
     return [];
   }
 }
+
+export async function deleteUser(userId: UserId) {
+  try {
+    const response = await fetch(await apiUrlFor(`/users/${userId}`), {
+      method: 'DELETE',
+    });
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}

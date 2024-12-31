@@ -4,7 +4,9 @@
     "allowJs": false,
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
-    "strict": true
+    "strict": true,
+    "composite": true,
+    "declaration": true
   },
   "files": [],
   "include": [],
@@ -16,5 +18,5 @@
       "path": "./tsconfig.spec.json"
     }
   ],
-  "extends": "../tsconfig.base.json"
+  "extends": "../tsconfig.base.json",
 }

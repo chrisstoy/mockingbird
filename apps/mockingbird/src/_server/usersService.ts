@@ -58,6 +58,11 @@ export async function getUserByEmail(email: string) {
       email,
     },
   });
+
+  if (!rawData) {
+    return undefined;
+  }
+
   const user = UserInfoSchema.optional().parse(rawData);
   return user;
 }

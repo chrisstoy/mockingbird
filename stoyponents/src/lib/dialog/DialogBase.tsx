@@ -6,6 +6,7 @@ export interface DialogButton<_Result> {
   title: string;
   result?: _Result;
   intent?: 'primary' | 'secondary' | 'accent';
+  disabled?: boolean;
 }
 
 export interface DialogProps<_Result> extends PropsWithChildren {
@@ -51,16 +52,19 @@ interface DialogButtonProps {
   onClick: () => void;
   intent?: DialogButton<unknown>['intent'];
   key?: Key | null | undefined;
+  disabled?: boolean;
 }
 
 export function DialogButton({
   title,
   onClick,
   intent,
+  disabled,
   ...props
 }: DialogButtonProps) {
   return (
     <button
+      disabled={disabled}
       type="button"
       onClick={onClick}
       className={`btn btn-sm bg-${intent ?? 'current'} text-${
@@ -102,8 +106,9 @@ export function DialogActions<_Result>({
     <div className="card-actions justify-end p-1">
       {children}
       {buttons &&
-        buttons.map(({ title, result, intent }, index) => (
+        buttons.map(({ title, result, intent, disabled }, index) => (
           <DialogButton
+            disabled={disabled}
             title={title}
             intent={intent}
             key={index}
