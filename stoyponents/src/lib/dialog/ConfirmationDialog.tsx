@@ -15,7 +15,7 @@ type Props = DialogProps<ConfirmationDialogResult>;
 export function ConfirmationDialog({
   title,
   defaultResult,
-  children: body,
+  children,
   buttons,
   onClosed,
 }: Props) {
@@ -37,7 +37,7 @@ export function ConfirmationDialog({
     >
       <div className="card card-bordered shadow-xl bg-base-100">
         <DialogHeader title={title} onClosed={onClosed}></DialogHeader>
-        <DialogBody>{body}</DialogBody>
+        <DialogBody>{children}</DialogBody>
         <DialogActions
           buttons={buttons}
           onClosed={onClosed}

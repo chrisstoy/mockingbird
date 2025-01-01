@@ -1,3 +1,9 @@
+import {
+  deleteFriendshipBetweenUsers,
+  getAcceptedFriendsForUser,
+  requestFriendshipBetweenUsers,
+  updateFriendshipBetweenUsers,
+} from '@/_server/friendsService';
 import baseLogger from '@/_server/logger';
 import { UserIdSchema } from '@/_types/users';
 import { respondWithError, ResponseError } from '@/app/api/errors';
@@ -5,12 +11,6 @@ import { validateAuthentication } from '@/app/api/validateAuthentication';
 import { auth } from '@/app/auth';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import {
-  deleteFriendshipBetweenUsers,
-  getAcceptedFriendsForUser,
-  requestFriendshipBetweenUsers,
-  updateFriendshipBetweenUsers,
-} from '../../../service';
 
 const logger = baseLogger.child({
   service: 'api:users:user:friends:friend',

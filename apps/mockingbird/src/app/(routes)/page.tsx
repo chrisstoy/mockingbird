@@ -1,7 +1,7 @@
+import { getFeedForUser } from '@/_apiServices/feed';
 import { FeedList } from '@/_components/FeedList';
 import { NewPost } from '@/_components/NewPost.client';
 import { sessionUser } from '@/_hooks/sessionUser';
-import { getFeedForUser } from '@/_services/feed';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 

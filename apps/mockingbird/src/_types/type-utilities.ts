@@ -21,7 +21,7 @@ export function createDatabaseIdSchema<_T>() {
       return z.NEVER;
     }
 
-    if (val.length < 1) {
+    if (val.length < 10 || val.length > 255) {
       ctx.addIssue({
         code: ZodIssueCode.custom,
         message: 'invalid id',

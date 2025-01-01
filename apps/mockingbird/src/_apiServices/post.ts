@@ -1,5 +1,6 @@
-import { Post, PostId } from '@/_types/post';
+import { Post, PostId, PostSchema } from '@/_types/post';
 import { UserId } from '@/_types/users';
+import { z } from 'zod';
 import { apiUrlFor } from './api';
 
 export async function createPost(
@@ -23,13 +24,16 @@ export async function createPost(
     );
   }
 
-  return response.json();
+  const rawData = await response.json();
+  const newPost = PostSchema.parse(rawData);
+  return newPost;
 }
 
-export async function getPostWithId(postId: PostId) {
+export async function getPostWithId(postId: PostId): Promise<Post | undefined> {
   try {
     const response = await fetch(await apiUrlFor(`/posts/${postId}`));
-    const post = (await response.json()) as Post;
+    const rawData = await response.json();
+    const post = PostSchema.parse(rawData);
     return post;
   } catch (error) {
     console.error(error);
@@ -37,14 +41,18 @@ export async function getPostWithId(postId: PostId) {
   }
 }
 
-export async function getCommentsForPost(postId: PostId, limit?: number) {
+export async function getCommentsForPost(
+  postId: PostId,
+  limit?: number
+): Promise<Post[] | undefined> {
   try {
     const response = await fetch(
       await apiUrlFor(
         `/posts/${postId}/comments${limit ? `?limit=${limit}` : ``}`
       )
     );
-    const posts = (await response.json()) as Post[];
+    const rawData = await response.json();
+    const posts = z.array(PostSchema).parse(rawData);
     return posts;
   } catch (error) {
     console.error(error);
@@ -52,14 +60,16 @@ export async function getCommentsForPost(postId: PostId, limit?: number) {
   }
 }
 
-export async function getFirstCommentForPost(postId: PostId) {
+export async function getFirstCommentForPost(
+  postId: PostId
+): Promise<Post | undefined> {
   const comments = await getCommentsForPost(postId, 1);
   return comments?.[0];
 }
 
 export async function commentOnPost(
-  userId: string,
-  postId: string,
+  userId: UserId,
+  postId: PostId,
   content: string
 ): Promise<Post> {
   const response = await fetch(await apiUrlFor(`/posts/${postId}/comments`), {
@@ -79,12 +89,15 @@ export async function commentOnPost(
     );
   }
 
-  return response.json();
+  const rawData = await response.json();
+  const newPost = PostSchema.parse(rawData);
+  return newPost;
 }
 
 export async function deletePost(postId: PostId) {
-  const response = await fetch(await apiUrlFor(`/posts/${postId}`), {
+  const result = await fetch(await apiUrlFor(`/posts/${postId}`), {
     method: 'DELETE',
   });
-  return response;
+
+  return result.status === 204;
 }

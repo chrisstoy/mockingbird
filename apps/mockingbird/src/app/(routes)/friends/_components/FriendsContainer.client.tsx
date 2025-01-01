@@ -1,6 +1,6 @@
 'use client';
+import { getFriendsForUser } from '@/_apiServices/friends';
 import { useSessionUser } from '@/_hooks/useSessionUser';
-import { getFriendsForUser } from '@/_services/friends';
 import { FriendStatus, UserId } from '@/_types/users';
 import { useCallback, useEffect } from 'react';
 import { updateFriendStatusWithUser } from '../_service/service';

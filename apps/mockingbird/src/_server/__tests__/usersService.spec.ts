@@ -18,7 +18,7 @@ jest.mock('@/_server/logger', () => {
 
 // @ts-expect-error - expect import error message
 import { prisma } from '@/_server/db';
-import { requestFriendshipBetweenUsers } from '../service';
+import { requestFriendshipBetweenUsers } from '../friendsService';
 
 const friendsCreateMock = jest.mocked(prisma.friends.create);
 

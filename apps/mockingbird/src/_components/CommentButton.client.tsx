@@ -1,7 +1,7 @@
 'use client';
 
+import { commentOnPost } from '@/_apiServices/post';
 import { useSessionUser } from '@/_hooks/useSessionUser';
-import { commentOnPost } from '@/_services/post';
 import { Post } from '@/_types/post';
 import { ChatBubbleLeftEllipsisIcon } from '@heroicons/react/20/solid';
 import { useRouter } from 'next/navigation';

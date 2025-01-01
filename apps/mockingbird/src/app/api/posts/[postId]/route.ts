@@ -1,5 +1,7 @@
 import { prisma } from '@/_server/db';
 import baseLogger from '@/_server/logger';
+import { getPostWithId } from '@/_server/postsService';
+import { PostIdSchema } from '@/_types/post';
 import { auth } from '@/app/auth';
 import { Prisma } from '@prisma/client';
 import { NextResponse } from 'next/server';
@@ -16,7 +18,7 @@ const logger = baseLogger.child({
 });
 
 const paramsSchema = z.object({
-  postId: z.string().min(1),
+  postId: PostIdSchema,
 });
 
 export const GET = auth(async function GET({ auth }, context) {
@@ -25,11 +27,7 @@ export const GET = auth(async function GET({ auth }, context) {
 
     const { postId } = paramsSchema.parse(context.params);
 
-    const post = await prisma.post.findFirst({
-      where: {
-        id: postId,
-      },
-    });
+    const post = await getPostWithId(postId);
 
     if (!post) {
       throw new ResponseError(404, `Post not found: ${postId}`);

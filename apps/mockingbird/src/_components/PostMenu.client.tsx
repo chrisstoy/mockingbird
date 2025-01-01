@@ -1,5 +1,5 @@
 'use client';
-import { deletePost } from '@/_services/post';
+import { deletePost } from '@/_apiServices/post';
 import { PostId } from '@/_types/post';
 import { EllipsisHorizontalIcon } from '@heroicons/react/24/solid';
 import {
@@ -27,8 +27,8 @@ export function PostMenu({ postId, isComment = false }: Props) {
   async function handleConfirmDelete(result?: ConfirmationDialogResult) {
     setShowConfirmDelete(false);
     if (result === 'ok') {
-      const result = await deletePost(postId);
-      if (result.status === 204) {
+      const wasDeleted = await deletePost(postId);
+      if (wasDeleted) {
         console.log(`Deleted ${isComment ? 'comment' : 'post'}: ${postId}`);
         router.refresh();
       } else {
@@ -51,7 +51,7 @@ export function PostMenu({ postId, isComment = false }: Props) {
         className="dropdown-content menu bg-base-100 rounded-box z-[1] p-2 shadow"
       >
         <li>
-          <a onClick={handleDeleteComment}>Delete</a>
+          <div onClick={handleDeleteComment}>Delete</div>
         </li>
       </ul>
       {showConfirmDelete && (

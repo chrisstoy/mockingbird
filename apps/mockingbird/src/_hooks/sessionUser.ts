@@ -1,4 +1,4 @@
-import { AuthUser, AuthUserSchema } from '@/_types/users';
+import { SessionUser, SessionUserSchema } from '@/_types/users';
 import { auth } from '@/app/auth';
 
 /**
@@ -8,11 +8,12 @@ import { auth } from '@/app/auth';
 export async function sessionUser() {
   const session = await auth();
   try {
-    const user: AuthUser | undefined = AuthUserSchema.optional().parse(
+    const user: SessionUser | undefined = SessionUserSchema.optional().parse(
       session?.user
     );
     return user;
   } catch (error) {
+    console.error(`sessionUser: ${error}`);
     return undefined;
   }
 }

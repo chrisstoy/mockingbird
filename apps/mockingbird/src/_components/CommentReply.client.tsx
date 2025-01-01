@@ -1,6 +1,6 @@
 'use cient';
+import { getUser } from '@/_apiServices/users';
 import { useSessionUser } from '@/_hooks/useSessionUser';
-import { getUser } from '@/_services/users';
 import { Post } from '@/_types/post';
 import { GENERIC_USER_IMAGE_URL } from '@/constants';
 import { TextDisplay } from '@mockingbird/stoyponents';

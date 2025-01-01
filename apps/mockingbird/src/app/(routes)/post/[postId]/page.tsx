@@ -1,5 +1,5 @@
+import { getPostWithId } from '@/_apiServices/post';
 import { SummaryPost } from '@/_components/SummaryPost';
-import { getPostWithId } from '@/_services/post';
 import { PostId } from '@/_types/post';
 
 interface Props {

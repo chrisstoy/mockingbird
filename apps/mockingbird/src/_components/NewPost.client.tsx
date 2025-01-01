@@ -1,6 +1,6 @@
 'use client';
-import { createPost } from '@/_services/post';
-import { AuthUser } from '@/_types/users';
+import { createPost } from '@/_apiServices/post';
+import { SessionUser } from '@/_types/users';
 import { GENERIC_USER_IMAGE_URL } from '@/constants';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -8,7 +8,7 @@ import { useMemo, useState } from 'react';
 import { PostEditorDialog } from './PostEditorDialog.client';
 
 type Props = {
-  user: AuthUser | undefined;
+  user: SessionUser | undefined;
 };
 export function NewPost({ user }: Props) {
   const [showEditor, setShowEditor] = useState(false);

@@ -18,7 +18,7 @@ export function createErrorResponse(status: number, message: string) {
 
 export function respondWithError(error: unknown) {
   if (error instanceof z.ZodError) {
-    return createErrorResponse(400, `Invalid data: ` + JSON.stringify(error));
+    return createErrorResponse(500, `Invalid data: ` + JSON.stringify(error));
   }
 
   if (error instanceof ResponseError) {
