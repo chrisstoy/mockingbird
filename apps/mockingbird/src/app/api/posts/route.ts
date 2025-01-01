@@ -21,7 +21,7 @@ export const POST = auth(async function POST(request) {
     if (request.auth?.user?.id !== posterId) {
       throw new ResponseError(
         400,
-        'posterId does not match the logged in user'
+        `posterId ${posterId} does not match the logged in userId ${request.auth?.user?.id}`
       );
     }
 

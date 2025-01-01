@@ -49,7 +49,10 @@ export const DELETE = auth(async function DELETE({ auth }, context) {
     const { userId } = paramsSchema.parse(context.params);
 
     if (userId !== auth?.user?.id) {
-      throw new ResponseError(403, 'Forbidden');
+      throw new ResponseError(
+        403,
+        `User ${auth?.user?.id} tried to delete user ${userId}`
+      );
     }
 
     const user = await getUserById(userId);
