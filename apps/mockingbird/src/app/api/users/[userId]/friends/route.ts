@@ -3,8 +3,8 @@ import baseLogger from '@/_server/logger';
 import { UserIdSchema } from '@/_types/users';
 import { createErrorResponse, respondWithError } from '@/app/api/errors';
 import { validateAuthentication } from '@/app/api/validateAuthentication';
-import { auth } from '@/app/auth';
-import { NextResponse } from 'next/server';
+import { RouteContext } from '@/app/types';
+import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 const logger = baseLogger.child({
@@ -15,15 +15,15 @@ const ParamsSchema = z.object({
   userId: UserIdSchema,
 });
 
-export const GET = auth(async function GET({ auth }, context) {
+export async function GET(_req: NextRequest, { params }: RouteContext) {
   try {
-    validateAuthentication(auth);
+    await validateAuthentication();
 
-    const result = ParamsSchema.safeParse(context.params);
-    if (!result.success) {
-      return createErrorResponse(400, result.error.message);
+    const { data, success, error } = ParamsSchema.safeParse(params);
+    if (!success) {
+      return createErrorResponse(400, error.message);
     }
-    const { userId } = result.data;
+    const { userId } = data;
 
     const friends = await getFriendsForUser(userId);
     return NextResponse.json(friends, { status: 200 });
@@ -31,4 +31,4 @@ export const GET = auth(async function GET({ auth }, context) {
     logger.error(error);
     return respondWithError(error);
   }
-});
+}

@@ -1,10 +1,9 @@
-import { prisma } from '@/_server/db';
 import baseLogger from '@/_server/logger';
-import { getPostWithId } from '@/_server/postsService';
+import { deletePost, getPostWithId } from '@/_server/postsService';
 import { PostIdSchema } from '@/_types/post';
-import { auth } from '@/app/auth';
+import { RouteContext } from '@/app/types';
 import { Prisma } from '@prisma/client';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import {
   createErrorResponse,
@@ -17,15 +16,15 @@ const logger = baseLogger.child({
   service: 'api:posts:post',
 });
 
-const paramsSchema = z.object({
+const ParamsSchema = z.object({
   postId: PostIdSchema,
 });
 
-export const GET = auth(async function GET({ auth }, context) {
+export async function GET(_req: NextRequest, { params }: RouteContext) {
   try {
-    validateAuthentication(auth);
+    await validateAuthentication();
 
-    const { postId } = paramsSchema.parse(context.params);
+    const { postId } = ParamsSchema.parse(params);
 
     const post = await getPostWithId(postId);
 
@@ -38,21 +37,16 @@ export const GET = auth(async function GET({ auth }, context) {
     logger.error(error);
     return respondWithError(error);
   }
-});
+}
 
-export const DELETE = auth(async function DELETE({ auth }, context) {
+export async function DELETE(_req: NextRequest, { params }: RouteContext) {
   try {
-    validateAuthentication(auth);
+    await validateAuthentication();
 
-    const { postId } = paramsSchema.parse(context.params);
+    const { postId } = ParamsSchema.parse(params);
 
-    const result = await prisma.post.delete({
-      where: {
-        id: postId,
-      },
-    });
-
-    if (!result) {
+    const wasDeleted = await deletePost(postId);
+    if (!wasDeleted) {
       throw new ResponseError(404, `Post not found: ${postId}`);
     }
 
@@ -68,4 +62,4 @@ export const DELETE = auth(async function DELETE({ auth }, context) {
     logger.error(error);
     return respondWithError(error);
   }
-});
+}

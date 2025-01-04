@@ -18,7 +18,10 @@ export function createErrorResponse(status: number, message: string) {
 
 export function respondWithError(error: unknown) {
   if (error instanceof z.ZodError) {
-    return createErrorResponse(500, `Invalid data: ` + JSON.stringify(error));
+    const messages = error.issues.map((issue) => {
+      return `${issue.path.join('.')}: ${issue.message}`;
+    });
+    return createErrorResponse(500, `Invalid data: [${messages.join(', ')}]`);
   }
 
   if (error instanceof ResponseError) {

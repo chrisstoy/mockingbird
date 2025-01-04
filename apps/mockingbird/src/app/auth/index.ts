@@ -32,20 +32,10 @@ const nextAuth = NextAuth({
       return Promise.resolve(session);
     },
     authorized: async ({ auth, request }) => {
-      // TODO - protect API routes
-      // if (request.method === 'POST') {
-      //   const { authToken } = (await request.json()) ?? {};
-      //   // If the request has a valid auth token, it is authorized
-      //   const valid = await validateAuthToken(authToken);
-      //   if (valid) return true;
-      //   return NextResponse.json('Invalid auth token', { status: 401 });
-      // }
-
-      // always allow create-account and public /images.  this is necessary to display
-      // images on the signin page.
       if (
         request.nextUrl.pathname === '/auth/create-account' ||
-        request.nextUrl.pathname.startsWith('/images')
+        request.nextUrl.pathname.startsWith('/images') ||
+        request.nextUrl.pathname.startsWith('/api')
       ) {
         return true;
       }
