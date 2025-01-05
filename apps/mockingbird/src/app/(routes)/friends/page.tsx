@@ -8,5 +8,9 @@ export default async function FriendsPage() {
     redirect('/auth/signin');
   }
 
-  return <FriendsContainer></FriendsContainer>;
+  return (
+    <>
+      <FriendsContainer></FriendsContainer>
+    </>
+  );
 }

@@ -26,6 +26,11 @@ export async function getPostWithId(postId: PostId) {
       id: postId,
     },
   });
+
+  if (!rawData) {
+    return undefined;
+  }
+
   const post = PostSchema.parse(rawData);
   return post;
 }

@@ -1,9 +1,9 @@
 import { FriendCollectionSchema, UserId } from '@/_types/users';
-import { apiUrlFor } from './api';
+import { fetchFromServer } from './fetchFromServer';
 
 export async function getFriendsForUser(userId: UserId) {
   try {
-    const response = await fetch(await apiUrlFor(`/users/${userId}/friends`));
+    const response = await fetchFromServer(`/users/${userId}/friends`);
     const rawData = await response.json();
     const friends = FriendCollectionSchema.parse(rawData);
     return friends;
@@ -19,8 +19,8 @@ export async function getFriendsForUser(userId: UserId) {
 
 export async function requestFriend(userId: UserId, friendId: UserId) {
   try {
-    const response = await fetch(
-      await apiUrlFor(`/users/${userId}/friends/${friendId}`),
+    const response = await fetchFromServer(
+      `/users/${userId}/friends/${friendId}`,
       {
         method: 'PUT',
       }
@@ -36,8 +36,8 @@ export async function requestFriend(userId: UserId, friendId: UserId) {
 
 export async function acceptFriendRequest(userId: UserId, friendId: UserId) {
   try {
-    const response = await fetch(
-      await apiUrlFor(`/users/${userId}/friends/${friendId}`),
+    const response = await fetchFromServer(
+      `/users/${userId}/friends/${friendId}`,
       {
         method: 'POST',
         body: JSON.stringify({
@@ -56,8 +56,8 @@ export async function acceptFriendRequest(userId: UserId, friendId: UserId) {
 
 export async function removeFriend(userId: UserId, friendId: UserId) {
   try {
-    const response = await fetch(
-      await apiUrlFor(`/users/${userId}/friends/${friendId}`),
+    const response = await fetchFromServer(
+      `/users/${userId}/friends/${friendId}`,
       {
         method: 'DELETE',
       }

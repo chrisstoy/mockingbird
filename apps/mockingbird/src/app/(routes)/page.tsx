@@ -1,4 +1,3 @@
-import { getFeedForUser } from '@/_apiServices/feed';
 import { FeedList } from '@/_components/FeedList';
 import { NewPost } from '@/_components/NewPost.client';
 import { sessionUser } from '@/_hooks/sessionUser';
@@ -11,8 +10,6 @@ export default async function AppPage() {
     redirect('/auth/signin');
   }
 
-  const feed = user.id ? await getFeedForUser(user.id) : [];
-
   return (
     <div className="flex flex-col flex-auto">
       <NewPost user={user}></NewPost>
@@ -23,7 +20,7 @@ export default async function AppPage() {
           </div>
         }
       >
-        <FeedList feed={feed}></FeedList>
+        <FeedList userId={user.id}></FeedList>
       </Suspense>
     </div>
   );

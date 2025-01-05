@@ -1,8 +1,8 @@
 import { auth } from '@/app/auth';
 import { GENERIC_USER_IMAGE_URL } from '@/constants';
 import Image from 'next/image';
-import { DeleteAccountButton } from './_components/DeleteAccountButton';
-import { SignOutButton } from './_components/SignOutButton';
+import { DeleteAccountButton } from './_components/DeleteAccountButton.client';
+import { SignOutButton } from './_components/SignOutButton.client';
 
 export default async function UserProfilePage() {
   const session = await auth();

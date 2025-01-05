@@ -1,4 +1,4 @@
-import { getPostWithId } from '@/_apiServices/post';
+import { getPostWithId } from '@/_server/postsService';
 import { SummaryPost } from '@/_components/SummaryPost';
 import { PostId } from '@/_types/post';
 

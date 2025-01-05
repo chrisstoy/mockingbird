@@ -1,5 +1,5 @@
-import { getUser } from '@/_apiServices/users';
 import { sessionUser } from '@/_hooks/sessionUser';
+import { getUserById } from '@/_server/usersService';
 import { Post } from '@/_types/post';
 import { GENERIC_USER_IMAGE_URL } from '@/constants';
 import { TextDisplay } from '@mockingbird/stoyponents';
@@ -25,7 +25,7 @@ export async function Comment({
   if (!user) {
     redirect('/auth/signin');
   }
-  const poster = await getUser(comment.posterId);
+  const poster = await getUserById(comment.posterId);
 
   const userName = poster?.name ?? 'Unknown';
   const imageSrc = poster?.image ?? GENERIC_USER_IMAGE_URL;
