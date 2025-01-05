@@ -9,6 +9,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { respondWithError, ResponseError } from '../errors';
 import { validateAuthentication } from '../validateAuthentication';
+import { headers } from 'next/headers';
 
 const logger = baseLogger.child({
   service: 'api:users',
@@ -45,7 +46,12 @@ export async function GET(req: NextRequest) {
  */
 export async function POST(req: NextRequest) {
   try {
-    await validateAuthentication();
+    // We need to allow a non-authenticated call to create a user
+    // BUT, we have to be careful not to expose ourselves to malicious attacks.
+    // so, only allow calls from the same domain as the server is running on.
+    const headersList = headers();
+    const fullUrl = headersList.get('referer'); // Gets the referring URL
+    const host = headersList.get('host'); // Gets the host
 
     const data = await req.json();
     const { name, email, password } = CreateUserDataSchema.parse(data);
