@@ -1,9 +1,8 @@
 import baseLogger from '@/_server/logger';
 import { createPost } from '@/_server/postsService';
 import { CreatePostDataSchema } from '@/_types/post';
-import { auth } from '@/app/auth';
 import { revalidateTag } from 'next/cache';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { respondWithError, ResponseError } from '../errors';
 import { validateAuthentication } from '../validateAuthentication';
 
@@ -11,17 +10,17 @@ const logger = baseLogger.child({
   service: 'api:posts',
 });
 
-export const POST = auth(async function POST(request) {
+export async function POST(req: NextRequest) {
   try {
-    validateAuthentication(request.auth);
+    const session = await validateAuthentication();
 
-    const body = await request.json();
+    const body = await req.json();
     const { posterId, content } = CreatePostDataSchema.parse(body);
 
-    if (request.auth?.user?.id !== posterId) {
+    if (session.user?.id !== posterId) {
       throw new ResponseError(
         400,
-        `posterId ${posterId} does not match the logged in userId ${request.auth?.user?.id}`
+        `posterId ${posterId} does not match the logged in userId ${session.user?.id}`
       );
     }
 
@@ -38,4 +37,4 @@ export const POST = auth(async function POST(request) {
     logger.error(error);
     return respondWithError(error);
   }
-});
+}

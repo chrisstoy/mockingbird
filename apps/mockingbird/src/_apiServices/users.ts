@@ -1,10 +1,10 @@
 import { UserId, UserInfoSchema } from '@/_types/users';
-import { apiUrlFor } from './api';
 import { z } from 'zod';
+import { fetchFromServer } from './fetchFromServer';
 
 export async function getUser(id: UserId) {
   try {
-    const response = await fetch(await apiUrlFor(`/users/${id}`));
+    const response = await fetchFromServer(`/users/${id}`);
     const rawData = await response.json();
     const user = UserInfoSchema.parse(rawData);
     return user;
@@ -16,7 +16,7 @@ export async function getUser(id: UserId) {
 
 export async function getUsersMatchingSearchTerm(searchTerm: string) {
   try {
-    const response = await fetch(await apiUrlFor(`/users?q=${searchTerm}`));
+    const response = await fetchFromServer(`/users?q=${searchTerm}`);
     const rawData = await response.json();
     const users = z.array(UserInfoSchema).parse(rawData);
     return users;
@@ -28,7 +28,7 @@ export async function getUsersMatchingSearchTerm(searchTerm: string) {
 
 export async function deleteUser(userId: UserId) {
   try {
-    const response = await fetch(await apiUrlFor(`/users/${userId}`), {
+    const response = await fetchFromServer(`/users/${userId}`, {
       method: 'DELETE',
     });
     const result = await response.json();

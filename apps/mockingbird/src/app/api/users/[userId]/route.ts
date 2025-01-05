@@ -1,10 +1,9 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 import baseLogger from '@/_server/logger';
 import { deleteUser, getUserById } from '@/_server/usersService';
 import { UserIdSchema } from '@/_types/users';
-import { auth } from '@/app/auth';
-import { AppRouteHandlerFnContext } from 'next-auth/lib/types';
+import { RouteContext } from '@/app/types';
 import { z } from 'zod';
 import { respondWithError, ResponseError } from '../../errors';
 import { validateAuthentication } from '../../validateAuthentication';
@@ -13,19 +12,15 @@ const logger = baseLogger.child({
   service: 'api:users:user',
 });
 
-const paramsSchema = z.object({
+const ParamsSchema = z.object({
   userId: UserIdSchema,
 });
 
-export const GET = auth(async function GET(
-  { auth },
-  context: AppRouteHandlerFnContext
-) {
+export async function GET(_req: NextRequest, { params }: RouteContext) {
   try {
-    validateAuthentication(auth);
+    await validateAuthentication();
 
-    const { userId } = paramsSchema.parse(context.params);
-
+    const { userId } = ParamsSchema.parse(params);
     const user = await getUserById(userId);
     if (!user) {
       throw new ResponseError(404, `User '${userId}' does not exist`);
@@ -36,22 +31,23 @@ export const GET = auth(async function GET(
     logger.error(error);
     return respondWithError(error);
   }
-});
+}
 
 /**
  * Delete the requested user.
+ *
  * Only the user themselves or an admin can delete their account
  */
-export const DELETE = auth(async function DELETE({ auth }, context) {
+export async function DELETE(_req: NextRequest, { params }: RouteContext) {
   try {
-    validateAuthentication(auth);
+    const session = await validateAuthentication();
 
-    const { userId } = paramsSchema.parse(context.params);
+    const { userId } = ParamsSchema.parse(params);
 
-    if (userId !== auth?.user?.id) {
+    if (userId !== session.user?.id) {
       throw new ResponseError(
         403,
-        `User ${auth?.user?.id} tried to delete user ${userId}`
+        `User ${session.user?.id} tried to delete user ${userId}`
       );
     }
 
@@ -67,4 +63,4 @@ export const DELETE = auth(async function DELETE({ auth }, context) {
     logger.error(error);
     return respondWithError(error);
   }
-});
+}

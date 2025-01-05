@@ -1,13 +1,13 @@
 import { Post, PostId, PostSchema } from '@/_types/post';
 import { UserId } from '@/_types/users';
 import { z } from 'zod';
-import { apiUrlFor } from './api';
+import { fetchFromServer } from './fetchFromServer';
 
 export async function createPost(
   userId: UserId,
   content: string
 ): Promise<Post> {
-  const response = await fetch(await apiUrlFor(`/posts`), {
+  const response = await fetchFromServer(`/posts`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -31,7 +31,7 @@ export async function createPost(
 
 export async function getPostWithId(postId: PostId): Promise<Post | undefined> {
   try {
-    const response = await fetch(await apiUrlFor(`/posts/${postId}`));
+    const response = await fetchFromServer(`/posts/${postId}`);
     const rawData = await response.json();
     const post = PostSchema.parse(rawData);
     return post;
@@ -46,10 +46,8 @@ export async function getCommentsForPost(
   limit?: number
 ): Promise<Post[] | undefined> {
   try {
-    const response = await fetch(
-      await apiUrlFor(
-        `/posts/${postId}/comments${limit ? `?limit=${limit}` : ``}`
-      )
+    const response = await fetchFromServer(
+      `/posts/${postId}/comments${limit ? `?limit=${limit}` : ``}`
     );
     const rawData = await response.json();
     const posts = z.array(PostSchema).parse(rawData);
@@ -72,7 +70,7 @@ export async function commentOnPost(
   postId: PostId,
   content: string
 ): Promise<Post> {
-  const response = await fetch(await apiUrlFor(`/posts/${postId}/comments`), {
+  const response = await fetchFromServer(`/posts/${postId}/comments`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -95,7 +93,7 @@ export async function commentOnPost(
 }
 
 export async function deletePost(postId: PostId) {
-  const result = await fetch(await apiUrlFor(`/posts/${postId}`), {
+  const result = await fetchFromServer(`/posts/${postId}`, {
     method: 'DELETE',
   });
 

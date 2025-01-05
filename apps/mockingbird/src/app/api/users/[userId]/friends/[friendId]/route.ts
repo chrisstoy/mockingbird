@@ -8,19 +8,19 @@ import baseLogger from '@/_server/logger';
 import { UserIdSchema } from '@/_types/users';
 import { respondWithError, ResponseError } from '@/app/api/errors';
 import { validateAuthentication } from '@/app/api/validateAuthentication';
-import { auth } from '@/app/auth';
-import { NextResponse } from 'next/server';
+import { RouteContext } from '@/app/types';
+import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 const logger = baseLogger.child({
   service: 'api:users:user:friends:friend',
 });
 
-const acceptFriendshipSchema = z.object({
+const AcceptFriendshipSchema = z.object({
   accepted: z.boolean(),
 });
 
-const paramsSchema = z.object({
+const ParamsSchema = z.object({
   userId: UserIdSchema,
   friendId: UserIdSchema,
 });
@@ -28,14 +28,14 @@ const paramsSchema = z.object({
 /**
  * Accept/paused a friend
  */
-export const POST = auth(async function POST(request, context) {
+export async function POST(req: NextRequest, { params }: RouteContext) {
   try {
-    validateAuthentication(request.auth);
+    await validateAuthentication();
 
-    const { userId, friendId } = paramsSchema.parse(context.params);
+    const { userId, friendId } = ParamsSchema.parse(params);
 
-    const data = await request.json();
-    const { accepted } = acceptFriendshipSchema.parse(data);
+    const data = await req.json();
+    const { accepted } = AcceptFriendshipSchema.parse(data);
 
     const recordsUpdated = await updateFriendshipBetweenUsers(userId, friendId);
     if (recordsUpdated === 0) {
@@ -52,14 +52,16 @@ export const POST = auth(async function POST(request, context) {
     logger.error(error);
     return respondWithError(error);
   }
-});
+}
 
-/** request a friend */
-export const PUT = auth(async function PUT(request, context) {
+/**
+ * Request a friend
+ */
+export async function PUT(_req: NextRequest, { params }: RouteContext) {
   try {
-    validateAuthentication(request.auth);
+    await validateAuthentication();
 
-    const { userId, friendId } = paramsSchema.parse(context.params);
+    const { userId, friendId } = ParamsSchema.parse(params);
 
     const existingFriends = await getAcceptedFriendsForUser(userId);
 
@@ -85,14 +87,16 @@ export const PUT = auth(async function PUT(request, context) {
     logger.error(error);
     return respondWithError(error);
   }
-});
+}
 
-/** remove a friend */
-export const DELETE = auth(async function DELETE({ auth }, context) {
+/**
+ * Remove a friend
+ */
+export async function DELETE(_req: NextRequest, { params }: RouteContext) {
   try {
-    validateAuthentication(auth);
+    await validateAuthentication();
 
-    const { userId, friendId } = paramsSchema.parse(context.params);
+    const { userId, friendId } = ParamsSchema.parse(params);
 
     const result = await deleteFriendshipBetweenUsers(userId, friendId);
     if (result === 0) {
@@ -109,4 +113,4 @@ export const DELETE = auth(async function DELETE({ auth }, context) {
     logger.error(error);
     return respondWithError(error);
   }
-});
+}

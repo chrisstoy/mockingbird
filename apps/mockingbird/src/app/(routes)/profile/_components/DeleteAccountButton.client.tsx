@@ -11,7 +11,7 @@ import { useCallback, useState } from 'react';
 import {
   FinalConfirmDeleteUserDialog,
   InitialConfirmDeleteUserDialog,
-} from './ConfirmDeleteUserDialog';
+} from './ConfirmDeleteUserDialog.client';
 
 export function DeleteAccountButton() {
   const user = useSessionUser();

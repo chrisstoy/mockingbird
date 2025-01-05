@@ -1,6 +1,6 @@
 import { TextDisplay } from '@mockingbird/stoyponents';
 import Image from 'next/image';
-import { LocalTime } from './LocalTime';
+import { LocalTime } from './LocalTime.client';
 
 type Props = {
   imageSrc: string;

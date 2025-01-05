@@ -8,30 +8,35 @@ import { PostIdSchema } from '@/_types/post';
 import { UserIdSchema } from '@/_types/users';
 import { respondWithError, ResponseError } from '@/app/api/errors';
 import { validateAuthentication } from '@/app/api/validateAuthentication';
-import { auth } from '@/app/auth';
+import { RouteContext } from '@/app/types';
 import { revalidateTag } from 'next/cache';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 const logger = baseLogger.child({
   service: 'api:posts:post:comments',
 });
 
-const paramsSchema = z.object({
+const ParamsSchema = z.object({
   postId: PostIdSchema,
+});
+
+const QueryParamsSchema = z.object({
+  limit: z.string().optional(),
 });
 
 /**
  * Get all Comments on a Post
  */
-export const GET = auth(async function GET({ url: _url, auth }, context) {
+export async function GET(req: NextRequest, context: RouteContext) {
   try {
-    validateAuthentication(auth);
+    await validateAuthentication();
 
-    const { postId } = paramsSchema.parse(context.params);
-    const url = new URL(_url);
-    const _limit = url.searchParams.get('limit');
-    const limit = _limit ? parseInt(_limit) : undefined;
+    const { postId } = ParamsSchema.parse(context.params);
+    const queryParams = QueryParamsSchema.parse(
+      Object.fromEntries(req.nextUrl.searchParams.entries())
+    );
+    const limit = queryParams.limit ? parseInt(queryParams.limit) : undefined;
 
     logger.info(
       `Getting comments for Post: { postId: ${postId}, limit: ${limit} }`
@@ -44,28 +49,29 @@ export const GET = auth(async function GET({ url: _url, auth }, context) {
     logger.error(error);
     return respondWithError(error);
   }
-});
+}
 
 const CreateCommentDataSchema = z.object({
   posterId: UserIdSchema,
   content: z.string().min(1),
 });
+
 /**
  * Create a Comment on a Post
  */
-export const POST = auth(async function POST(request, context) {
+export async function POST(req: NextRequest, context: RouteContext) {
   try {
-    validateAuthentication(request.auth);
+    const session = await validateAuthentication();
 
-    const { postId } = paramsSchema.parse(context.params);
+    const { postId } = ParamsSchema.parse(context.params);
 
-    const body = await request.json();
+    const body = await req.json();
     const { posterId, content } = CreateCommentDataSchema.parse(body);
 
-    if (request.auth?.user?.id !== posterId) {
+    if (session.user?.id !== posterId) {
       throw new ResponseError(
         400,
-        `posterId ${posterId} does not match the logged in userId ${request.auth?.user?.id}`
+        `posterId ${posterId} does not match the logged in userId ${session.user?.id}`
       );
     }
 
@@ -90,4 +96,4 @@ export const POST = auth(async function POST(request, context) {
     logger.error(error);
     return respondWithError(error);
   }
-});
+}

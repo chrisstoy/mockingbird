@@ -5,8 +5,8 @@ import {
   getUsersMatchingQuery,
 } from '@/_server/usersService';
 import { CreateUserDataSchema } from '@/_types/createUser';
-import { auth } from '@/app/auth';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { respondWithError, ResponseError } from '../errors';
 import { validateAuthentication } from '../validateAuthentication';
 
@@ -14,21 +14,20 @@ const logger = baseLogger.child({
   service: 'api:users',
 });
 
+const QueryParamsSchema = z.object({
+  q: z.string().min(1, 'No query provided'),
+});
+
 /**
  * Get users matching the passed query string
  */
-export const GET = auth(async function GET({ url: _url, auth }) {
+export async function GET(req: NextRequest) {
   try {
-    validateAuthentication(auth);
+    await validateAuthentication();
 
-    const url = new URL(_url);
-    const query = url.searchParams.get('q');
-
-    logger.info(`Search for Users with query: ${query}`);
-
-    if (!query?.length) {
-      throw new ResponseError(500, 'No query provided');
-    }
+    const { q: query } = QueryParamsSchema.parse(
+      Object.fromEntries(req.nextUrl.searchParams.entries())
+    );
 
     logger.info(`Getting users that match query: ${query}`);
 
@@ -39,20 +38,20 @@ export const GET = auth(async function GET({ url: _url, auth }) {
     logger.error(error);
     return respondWithError(error);
   }
-});
+}
 
 /**
  * Create a new user
  */
-export const POST = auth(async function POST(request) {
+export async function POST(req: NextRequest) {
   try {
-    validateAuthentication(request.auth);
+    // We need to allow a non-authenticated call to create a user
+    // BUT, we have to be careful not to expose ourselves to malicious attacks.
 
-    const data = await request.json();
+    const data = await req.json();
     const { name, email, password } = CreateUserDataSchema.parse(data);
 
     const existingUser = await getUserByEmail(email);
-
     if (existingUser) {
       throw new ResponseError(409, `User with email '${email}' already exists`);
     }
@@ -63,4 +62,4 @@ export const POST = auth(async function POST(request) {
     logger.error(error);
     return respondWithError(error);
   }
-});
+}

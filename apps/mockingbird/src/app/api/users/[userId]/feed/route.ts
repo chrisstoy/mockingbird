@@ -3,23 +3,23 @@ import baseLogger from '@/_server/logger';
 import { UserIdSchema } from '@/_types/users';
 import { respondWithError } from '@/app/api/errors';
 import { validateAuthentication } from '@/app/api/validateAuthentication';
-import { auth } from '@/app/auth';
-import { NextResponse } from 'next/server';
+import { RouteContext } from '@/app/types';
+import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 const logger = baseLogger.child({
   service: 'api:users:user:feed',
 });
 
-const paramsSchema = z.object({
+const ParamsSchema = z.object({
   userId: UserIdSchema,
 });
 
-export const GET = auth(async function GET(request, context) {
+export async function GET(_req: NextRequest, { params }: RouteContext) {
   try {
-    validateAuthentication(request.auth);
+    await validateAuthentication();
 
-    const { userId } = paramsSchema.parse(context.params);
+    const { userId } = ParamsSchema.parse(params);
 
     logger.info(`Getting feed for userId: ${userId}`);
 
@@ -30,4 +30,4 @@ export const GET = auth(async function GET(request, context) {
     logger.error(error);
     return respondWithError(error);
   }
-});
+}

@@ -1,12 +1,12 @@
 import { signIn } from '@/app/auth';
-import { apiUrlFor } from './api';
+import { fetchFromServer } from './fetchFromServer';
 import { UserId } from '@/_types/users';
 import { PostSchema } from '@/_types/post';
 import { z } from 'zod';
 
 export async function getFeedForUser(userId: UserId) {
   try {
-    const response = await fetch(await apiUrlFor(`/users/${userId}/feed`), {
+    const response = await fetchFromServer(`/users/${userId}/feed`, {
       next: { tags: ['feed'] },
     });
 

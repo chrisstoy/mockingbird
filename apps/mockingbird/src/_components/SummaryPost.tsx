@@ -1,5 +1,5 @@
-import { getCommentsForPost } from '@/_apiServices/post';
-import { getUser } from '@/_apiServices/users';
+import { getCommentsForPost } from '@/_server/postsService';
+import { getUserById } from '@/_server/usersService';
 import { Post } from '@/_types/post';
 import { auth } from '@/app/auth';
 import { GENERIC_USER_IMAGE_URL } from '@/constants';
@@ -22,7 +22,7 @@ export async function SummaryPost({
   showFirstComment = false,
 }: Props) {
   const session = await auth();
-  const poster = await getUser(post.posterId);
+  const poster = await getUserById(post.posterId);
 
   const userName = poster?.name ?? 'Unknown';
   const imageSrc = poster?.image ?? GENERIC_USER_IMAGE_URL;
