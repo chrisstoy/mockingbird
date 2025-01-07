@@ -1,4 +1,14 @@
-import { apiUrlFor } from './apiUrlFor';
+'use client';
+import { baseUrlForApi } from './apiUrlFor';
+
+let baseApiUrl: string;
+
+export async function getBaseApiUrl() {
+  if (!baseApiUrl) {
+    baseApiUrl = await baseUrlForApi();
+  }
+  return baseApiUrl;
+}
 
 /**
  * Fetch data from the server, using the API endpoint
@@ -6,14 +16,10 @@ import { apiUrlFor } from './apiUrlFor';
  * @param options - the fetch options
  */
 export async function fetchFromServer(endpoint: string, options?: RequestInit) {
-  const apiUrl = await apiUrlFor(endpoint);
-  // const headersList = headers();
+  const baseApiUrl = await getBaseApiUrl();
+  const apiUrl = `${baseApiUrl}${endpoint}`;
   const requestInit = {
     ...options,
-    // headers: {
-    //   ...(options?.headers ?? {}),
-    //   Cookie: headersList.get('Cookie') || '',
-    // },
   };
   return await fetch(apiUrl, requestInit);
 }
