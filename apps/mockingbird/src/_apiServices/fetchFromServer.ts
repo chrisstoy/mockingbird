@@ -1,11 +1,15 @@
 'use client';
 import { baseUrlForApi } from './apiUrlFor';
 
-let baseApiUrl: string;
+let baseApiUrl: Promise<string>;
 
 export async function getBaseApiUrl() {
   if (!baseApiUrl) {
-    baseApiUrl = await baseUrlForApi();
+    baseApiUrl = new Promise<string>((resolve) => {
+      baseUrlForApi().then((url) => {
+        resolve(url);
+      });
+    });
   }
   return baseApiUrl;
 }
@@ -18,8 +22,9 @@ export async function getBaseApiUrl() {
 export async function fetchFromServer(endpoint: string, options?: RequestInit) {
   const baseApiUrl = await getBaseApiUrl();
   const apiUrl = `${baseApiUrl}${endpoint}`;
-  const requestInit = {
+  const requestInit: RequestInit = {
     ...options,
+    credentials: 'include',
   };
   return await fetch(apiUrl, requestInit);
 }
