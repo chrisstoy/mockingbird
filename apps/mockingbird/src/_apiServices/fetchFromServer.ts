@@ -7,9 +7,10 @@ let baseApiUrl: Promise<string>;
 export async function getBaseApiUrl() {
   if (!baseApiUrl) {
     baseApiUrl = new Promise<string>((resolve) => {
-      baseUrlForApi().then((url) => {
-        resolve(url);
-      });
+      // baseUrlForApi().then((url) => {
+      //   resolve(url);
+      // });
+      resolve('/api'); // use the base URL for the website as root of API
     });
   }
   return baseApiUrl;

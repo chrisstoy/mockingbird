@@ -4,7 +4,6 @@ import { env } from '@/../env.mjs';
 // the list of all allowed origins
 const allowedOrigins = [
   'http://localhost:3000',
-  'https://mockingbird.chrisstoy.com',
   `https://${env.VERCEL_URL}`,
   `https:.//${env.VERCEL_PROJECT_PRODUCTION_URL}`,
 ];
@@ -15,15 +14,7 @@ export default function middleware(req: NextRequest) {
 
   // Allowed origins check
   const origin = req.headers.get('origin') ?? '';
-  const isOriginAllowed = allowedOrigins.find((o) => {
-    if (typeof o === 'string') {
-      const r = origin.includes(o);
-      return r;
-    } else {
-      const r = origin.search(o);
-      return r !== -1;
-    }
-  });
+  const isOriginAllowed = allowedOrigins.find((o) => o && origin.includes(o));
 
   if (isOriginAllowed) {
     response.headers.set('Access-Control-Allow-Origin', origin);
