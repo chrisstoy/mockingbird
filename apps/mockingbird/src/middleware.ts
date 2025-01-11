@@ -1,10 +1,12 @@
 import { type NextRequest, NextResponse } from 'next/server';
+import { env } from '@/../env.mjs';
 
 // the list of all allowed origins
 const allowedOrigins = [
   'http://localhost:3000',
   'https://mockingbird.chrisstoy.com',
-  /https?:\/\/.*\.vercel\.com/,
+  `https://${env.VERCEL_URL}`,
+  `https:.//${env.VERCEL_PROJECT_PRODUCTION_URL}`,
 ];
 
 export default function middleware(req: NextRequest) {
@@ -43,6 +45,6 @@ export default function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
   runtime: 'nodejs',
 };
