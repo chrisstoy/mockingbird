@@ -1,4 +1,5 @@
 'use client';
+import { ResponseError } from '@/app/api/errors';
 import { baseUrlForApi } from './apiUrlFor';
 
 let baseApiUrl: Promise<string>;
@@ -26,5 +27,9 @@ export async function fetchFromServer(endpoint: string, options?: RequestInit) {
     ...options,
     credentials: 'include',
   };
-  return await fetch(apiUrl, requestInit);
+  const response = await fetch(apiUrl, requestInit);
+  if (!response.ok) {
+    throw new ResponseError(response.status, response.statusText);
+  }
+  return response;
 }
