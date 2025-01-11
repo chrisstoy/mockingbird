@@ -17,15 +17,11 @@ export function CommentButton({ post }: Props) {
   const user = useSessionUser();
   const [showEditor, setShowEditor] = useState(false);
 
-  if (!user) {
-    router.push('/auth/signin');
-  }
-
   async function handleCommentOnPost(content: string) {
     setShowEditor(false);
 
     if (!user || content.length === 0) {
-      return;
+      return null;
     }
 
     const result = await commentOnPost(user.id, post.id, content);

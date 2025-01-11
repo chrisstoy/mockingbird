@@ -1,15 +1,15 @@
-import { auth } from '@/app/auth';
+import { sessionUser } from '@/_hooks/sessionUser';
 import { GENERIC_USER_IMAGE_URL } from '@/constants';
 import Image from 'next/image';
 import { DeleteAccountButton } from './_components/DeleteAccountButton.client';
 import { SignOutButton } from './_components/SignOutButton.client';
 
 export default async function UserProfilePage() {
-  const session = await auth();
+  const user = await sessionUser();
 
-  const userName = session?.user?.name ?? 'Unknown';
-  const email = session?.user?.email;
-  const imageSrc = session?.user?.image ?? GENERIC_USER_IMAGE_URL;
+  const userName = user?.name ?? 'Unknown';
+  const email = user?.email;
+  const imageSrc = user?.image ?? GENERIC_USER_IMAGE_URL;
 
   return (
     <div className="hero bg-base-100">

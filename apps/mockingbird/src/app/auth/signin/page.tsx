@@ -5,24 +5,12 @@ import Link from 'next/link';
 import { redirect, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { SignInButton } from './_components/SignInButton.client';
-
-async function signInWithEmailAndPassword(email: string, password: string) {
-  try {
-    await signIn('credentials', {
-      email,
-      password,
-      callbackUrl: '/',
-    });
-  } catch (error) {
-    if (error instanceof AuthError) {
-      return redirect(`/auth/error?error=${error.type}`);
-    }
-    throw error;
-  }
-}
+import { SignInEmailPassword } from './_components/SignInEmailPassword.client';
 
 export default function SignInPage() {
   const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get('callbackUrl') || '/';
+
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -46,22 +34,28 @@ export default function SignInPage() {
 
   const [selectedProvider, setSelectedProvider] = useState<string>('');
 
-  async function handleSignInWithService(serviceId: string) {
-    setSelectedProvider(serviceId);
-    signIn(serviceId, { callbackUrl: '/' });
+  async function handleSignInWithEmailAndPassword(
+    email: string,
+    password: string
+  ) {
+    try {
+      setSelectedProvider('credentials');
+      await signIn('credentials', {
+        email,
+        password,
+        callbackUrl,
+      });
+    } catch (error) {
+      if (error instanceof AuthError) {
+        return redirect(`/auth/error?error=${error.type}`);
+      }
+      throw error;
+    }
   }
 
-  async function handleSignInWithEmailAndPassword(formData: FormData) {
-    const email = formData.get('email')?.toString();
-    const password = formData.get('password')?.toString();
-
-    if (!email || !password) {
-      return;
-    }
-
-    // TODO: validate inputs
-    setSelectedProvider('credentials');
-    await signInWithEmailAndPassword(email, password);
+  async function handleSignInWithService(serviceId: string) {
+    setSelectedProvider(serviceId);
+    signIn(serviceId, { callbackUrl });
   }
 
   return (
@@ -74,31 +68,10 @@ export default function SignInPage() {
           )}
 
           {includeCredentialProvider && (
-            <>
-              <form action={handleSignInWithEmailAndPassword}>
-                <div className="card-actions flex flex-col items-center">
-                  <input
-                    id="email"
-                    name="email"
-                    type="text"
-                    placeholder="user@example.com"
-                    className="input input-bordered w-full max-w-xs"
-                  />
-                  <input
-                    id="password"
-                    name="password"
-                    type="password"
-                    placeholder="Password"
-                    className="input input-bordered w-full max-w-xs"
-                  />
-                  <button
-                    type="submit"
-                    className="btn btn-primary w-full max-w-xs"
-                  >
-                    Sign In
-                  </button>
-                </div>
-              </form>
+            <div className="text-center">
+              <SignInEmailPassword
+                onSignIn={handleSignInWithEmailAndPassword}
+              ></SignInEmailPassword>
               <div className="flex flex-col items-center space-y-4">
                 <Link className="link link-hover" href="/auth/forgot-password">
                   Forgot Password
@@ -112,7 +85,7 @@ export default function SignInPage() {
               </div>
               <div className="divider"></div>
               <h2 className="text-xl text-center mb-5">or sign in with...</h2>
-            </>
+            </div>
           )}
           <div className="card-actions flex flex-col items-center">
             {providers.map(({ id, name, iconSrc }) => (

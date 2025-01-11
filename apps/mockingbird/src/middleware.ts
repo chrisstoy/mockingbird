@@ -1,5 +1,6 @@
-import { type NextRequest, NextResponse } from 'next/server';
 import { env } from '@/../env.mjs';
+import { NextResponse } from 'next/server';
+import { auth } from './app/auth';
 
 // the list of all allowed origins
 const allowedOrigins = [
@@ -8,8 +9,17 @@ const allowedOrigins = [
   `https:.//${env.VERCEL_PROJECT_PRODUCTION_URL}`,
 ];
 
-export default function middleware(req: NextRequest) {
-  // Response
+export default auth(async (req) => {
+  if (!req.nextUrl.pathname.startsWith('/api') && !req.auth) {
+    // not an API call and not authorized, so require signin before proceeding
+    return NextResponse.redirect(
+      new URL(
+        `/auth/signin?callbackUrl=${encodeURIComponent(req.url)}`,
+        req.url
+      )
+    );
+  }
+
   const response = NextResponse.next();
 
   // Allowed origins check
@@ -33,9 +43,11 @@ export default function middleware(req: NextRequest) {
 
   // Return
   return response;
-}
+});
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
+  matcher: [
+    '/((?!auth|api/auth|_next/static|_next/image|images|favicon.ico).*)',
+  ],
   runtime: 'nodejs',
 };

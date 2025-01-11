@@ -1,14 +1,12 @@
 import { FeedList } from '@/_components/FeedList';
 import { NewPost } from '@/_components/NewPost.client';
 import { sessionUser } from '@/_hooks/sessionUser';
-import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 
 export default async function AppPage() {
   const user = await sessionUser();
-  if (!user) {
-    redirect('/auth/signin');
-  }
+
+  if (!user) return null;
 
   return (
     <div className="flex flex-col flex-auto">

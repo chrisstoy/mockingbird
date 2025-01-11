@@ -35,10 +35,6 @@ export function SearchForUsers({ onFriendStatusChange }: Props) {
 
   const debouncedSearchTerm = useDebounce(searchTerm, 1000);
 
-  if (!user) {
-    router.push('/auth/signin');
-  }
-
   const updateUserFriendStatus = useCallback(
     (user: ExtendedUserInfo): ExtendedUserInfo => {
       const withUserId = ({ id }: ExtendedUserInfo) => id === user.id;

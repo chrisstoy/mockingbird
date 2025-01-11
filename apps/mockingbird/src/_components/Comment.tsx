@@ -4,7 +4,6 @@ import { Post } from '@/_types/post';
 import { GENERIC_USER_IMAGE_URL } from '@/constants';
 import { TextDisplay } from '@mockingbird/stoyponents';
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
 import { CommentReplyContainer } from './CommentReplyContainer.client';
 import { PostHeader } from './PostHeader';
 
@@ -23,7 +22,7 @@ export async function Comment({
 }: Props) {
   const user = await sessionUser();
   if (!user) {
-    redirect('/auth/signin');
+    return null;
   }
   const poster = await getUserById(comment.posterId);
 

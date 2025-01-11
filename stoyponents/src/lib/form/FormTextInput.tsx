@@ -11,7 +11,7 @@ interface Props {
 }
 
 function _FormTextInput(
-  { label, error, ...rest }: Props,
+  { label, error, className, ...rest }: Props,
   ref: LegacyRef<HTMLInputElement> | undefined
 ) {
   return (
@@ -21,7 +21,11 @@ function _FormTextInput(
           <span className="label-text">{label}</span>
         </label>
       )}
-      <input ref={ref} className="input input-bordered w-full" {...rest} />
+      <input
+        ref={ref}
+        className={`input input-bordered w-full ${className}`}
+        {...rest}
+      />
       <FormError error={error} />
     </div>
   );

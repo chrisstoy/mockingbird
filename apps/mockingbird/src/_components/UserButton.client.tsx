@@ -55,7 +55,7 @@ export function UserButton() {
   ) {
     setShowSignout(false);
     if (result === 'ok') {
-      signOut();
+      signOut({ callbackUrl: '/' });
     }
   }
 
