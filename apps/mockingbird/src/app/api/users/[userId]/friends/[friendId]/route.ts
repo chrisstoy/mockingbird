@@ -28,11 +28,11 @@ const ParamsSchema = z.object({
 /**
  * Accept/paused a friend
  */
-export async function POST(req: NextRequest, { params }: RouteContext) {
+export async function POST(req: NextRequest, context: RouteContext) {
   try {
     await validateAuthentication();
 
-    const { userId, friendId } = ParamsSchema.parse(params);
+    const { userId, friendId } = ParamsSchema.parse(await context.params);
 
     const data = await req.json();
     const { accepted } = AcceptFriendshipSchema.parse(data);
@@ -57,11 +57,11 @@ export async function POST(req: NextRequest, { params }: RouteContext) {
 /**
  * Request a friend
  */
-export async function PUT(_req: NextRequest, { params }: RouteContext) {
+export async function PUT(_req: NextRequest, context: RouteContext) {
   try {
     await validateAuthentication();
 
-    const { userId, friendId } = ParamsSchema.parse(params);
+    const { userId, friendId } = ParamsSchema.parse(await context.params);
 
     const existingFriends = await getAcceptedFriendsForUser(userId);
 
@@ -92,11 +92,11 @@ export async function PUT(_req: NextRequest, { params }: RouteContext) {
 /**
  * Remove a friend
  */
-export async function DELETE(_req: NextRequest, { params }: RouteContext) {
+export async function DELETE(_req: NextRequest, context: RouteContext) {
   try {
     await validateAuthentication();
 
-    const { userId, friendId } = ParamsSchema.parse(params);
+    const { userId, friendId } = ParamsSchema.parse(await context.params);
 
     const result = await deleteFriendshipBetweenUsers(userId, friendId);
     if (result === 0) {

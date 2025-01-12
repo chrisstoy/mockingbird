@@ -46,9 +46,6 @@ const nextConfig = {
       },
     ],
   },
-  experimental: {
-    instrumentationHook: true,
-  },
 };
 
 const plugins = [

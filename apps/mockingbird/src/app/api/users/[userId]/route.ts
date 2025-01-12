@@ -16,11 +16,11 @@ const ParamsSchema = z.object({
   userId: UserIdSchema,
 });
 
-export async function GET(_req: NextRequest, { params }: RouteContext) {
+export async function GET(_req: NextRequest, context: RouteContext) {
   try {
     await validateAuthentication();
 
-    const { userId } = ParamsSchema.parse(params);
+    const { userId } = ParamsSchema.parse(await context.params);
     const user = await getUserById(userId);
     if (!user) {
       throw new ResponseError(404, `User '${userId}' does not exist`);
@@ -38,11 +38,11 @@ export async function GET(_req: NextRequest, { params }: RouteContext) {
  *
  * Only the user themselves or an admin can delete their account
  */
-export async function DELETE(_req: NextRequest, { params }: RouteContext) {
+export async function DELETE(_req: NextRequest, context: RouteContext) {
   try {
     const session = await validateAuthentication();
 
-    const { userId } = ParamsSchema.parse(params);
+    const { userId } = ParamsSchema.parse(await context.params);
 
     if (userId !== session.user?.id) {
       throw new ResponseError(

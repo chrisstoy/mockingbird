@@ -15,11 +15,13 @@ const ParamsSchema = z.object({
   userId: UserIdSchema,
 });
 
-export async function GET(_req: NextRequest, { params }: RouteContext) {
+export async function GET(_req: NextRequest, context: RouteContext) {
   try {
     await validateAuthentication();
 
-    const { data, success, error } = ParamsSchema.safeParse(params);
+    const { data, success, error } = ParamsSchema.safeParse(
+      await context.params
+    );
     if (!success) {
       return createErrorResponse(400, error.message);
     }

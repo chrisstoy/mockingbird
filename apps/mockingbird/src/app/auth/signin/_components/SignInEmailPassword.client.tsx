@@ -28,7 +28,7 @@ export function SignInEmailPassword({ onSignIn }: Props) {
   } = form;
 
   const [error, setError] = useState<string | null>(null);
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [_isProcessing, setIsProcessing] = useState(false);
 
   const createLoginHandler = (
     setError: Dispatch<SetStateAction<string | null>>,

@@ -3,7 +3,7 @@ export async function register() {
     await import('./instrumentation-node');
   }
 
-  console.log(`INITIALIZING APP`);
+  console.log(`INITIALIZING CLIENT APP`);
   Object.keys(process.env).forEach((key) => {
     console.log(`${key}: ${process.env[key]}`);
   });

@@ -3,13 +3,13 @@ import { SummaryPost } from '@/_components/SummaryPost';
 import { PostId } from '@/_types/post';
 
 interface Props {
-  params: {
+  params: Promise<{
     postId: PostId;
-  };
+  }>;
 }
 
 export default async function PostDetailPage({ params }: Props) {
-  const postId = params.postId;
+  const postId = (await params).postId;
 
   if (!postId) {
     return <div>No Post Specified</div>;
