@@ -1,5 +1,4 @@
 import { Post } from '@/_types/post';
-import { useMemo } from 'react';
 import { Comment } from './Comment';
 
 const sortByCreatedAtAsc = (a: { createdAt: Date }, b: { createdAt: Date }) =>
@@ -17,9 +16,7 @@ export async function CommentList({
   linkToDetails = false,
   hideReplies = false,
 }: Props) {
-  const sortedFeed = useMemo(() => {
-    return feed.sort(sortByCreatedAtAsc);
-  }, [feed]);
+  const sortedFeed = feed.sort(sortByCreatedAtAsc);
 
   return (
     <ul className="list-none max-w-2xl">
