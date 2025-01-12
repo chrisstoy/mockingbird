@@ -1,5 +1,5 @@
 export type RouteParams = {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
 /**
@@ -9,5 +9,5 @@ export type RouteParams = {
  * a request `/api/posts/123/comments` has the context `{ params: { postId: '123' } }`
  */
 export type RouteContext = {
-  params: { [key: string]: string | string[] | undefined };
+  params: Promise<{ [key: string]: string | string[] | undefined }>;
 };

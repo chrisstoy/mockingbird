@@ -32,7 +32,7 @@ export async function GET(req: NextRequest, context: RouteContext) {
   try {
     await validateAuthentication();
 
-    const { postId } = ParamsSchema.parse(context.params);
+    const { postId } = ParamsSchema.parse(await context.params);
     const queryParams = QueryParamsSchema.parse(
       Object.fromEntries(req.nextUrl.searchParams.entries())
     );
@@ -63,7 +63,7 @@ export async function POST(req: NextRequest, context: RouteContext) {
   try {
     const session = await validateAuthentication();
 
-    const { postId } = ParamsSchema.parse(context.params);
+    const { postId } = ParamsSchema.parse(await context.params);
 
     const body = await req.json();
     const { posterId, content } = CreateCommentDataSchema.parse(body);

@@ -15,11 +15,11 @@ const ParamsSchema = z.object({
   userId: UserIdSchema,
 });
 
-export async function GET(_req: NextRequest, { params }: RouteContext) {
+export async function GET(_req: NextRequest, context: RouteContext) {
   try {
     await validateAuthentication();
 
-    const { userId } = ParamsSchema.parse(params);
+    const { userId } = ParamsSchema.parse(await context.params);
 
     logger.info(`Getting feed for userId: ${userId}`);
 

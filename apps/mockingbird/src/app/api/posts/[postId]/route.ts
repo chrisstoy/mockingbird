@@ -20,11 +20,11 @@ const ParamsSchema = z.object({
   postId: PostIdSchema,
 });
 
-export async function GET(_req: NextRequest, { params }: RouteContext) {
+export async function GET(_req: NextRequest, context: RouteContext) {
   try {
     await validateAuthentication();
 
-    const { postId } = ParamsSchema.parse(params);
+    const { postId } = ParamsSchema.parse(await context.params);
 
     const post = await getPostWithId(postId);
 
@@ -39,11 +39,11 @@ export async function GET(_req: NextRequest, { params }: RouteContext) {
   }
 }
 
-export async function DELETE(_req: NextRequest, { params }: RouteContext) {
+export async function DELETE(_req: NextRequest, context: RouteContext) {
   try {
     await validateAuthentication();
 
-    const { postId } = ParamsSchema.parse(params);
+    const { postId } = ParamsSchema.parse(await context.params);
 
     const wasDeleted = await deletePost(postId);
     if (!wasDeleted) {
