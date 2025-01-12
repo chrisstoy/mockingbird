@@ -9,6 +9,7 @@ import { Suspense } from 'react';
 import { CommentList } from './CommentList';
 import { PostActionsFooter } from './PostActionsFooter';
 import { PostHeader } from './PostHeader';
+import { SkeletonComment } from './SkeletonComment';
 
 type Props = {
   post: Post;
@@ -62,7 +63,11 @@ export async function SummaryPost({
         <Suspense
           fallback={
             <div className="text-secondary-content m-2 text-center">
-              Loading...
+              <ul className="list-none max-w-2xl">
+                <li className="ml-2 mb-3" key="1">
+                  <SkeletonComment></SkeletonComment>
+                </li>
+              </ul>
             </div>
           }
         >

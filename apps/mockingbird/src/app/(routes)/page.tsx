@@ -1,5 +1,6 @@
 import { FeedList } from '@/_components/FeedList';
 import { NewPost } from '@/_components/NewPost.client';
+import { SkeletonSummaryPost } from '@/_components/SkeletonSummaryPost';
 import { sessionUser } from '@/_hooks/sessionUser';
 import { Suspense } from 'react';
 
@@ -14,7 +15,14 @@ export default async function AppPage() {
       <Suspense
         fallback={
           <div className="text-secondary-content m-2 text-center">
-            Loading...
+            <ul>
+              <li className="m-2" key="1">
+                <SkeletonSummaryPost></SkeletonSummaryPost>
+              </li>
+              <li className="m-2" key="2">
+                <SkeletonSummaryPost></SkeletonSummaryPost>
+              </li>
+            </ul>
           </div>
         }
       >
