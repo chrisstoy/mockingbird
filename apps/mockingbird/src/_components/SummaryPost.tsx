@@ -1,4 +1,7 @@
-import { getCommentsForPost } from '@/_server/postsService';
+import {
+  getCommentsForPost,
+  getNumberOfCommentsForPost,
+} from '@/_server/postsService';
 import { getUserById } from '@/_server/usersService';
 import { Post } from '@/_types/post';
 import { auth } from '@/app/auth';
@@ -33,6 +36,8 @@ export async function SummaryPost({
   const comments =
     (await getCommentsForPost(post.id, showFirstComment ? 1 : undefined)) ?? [];
 
+  const numberOfComments = await getNumberOfCommentsForPost(post.id);
+
   return (
     <div className="card bg-base-100 shadow-xl">
       <div className="card-body">
@@ -57,6 +62,11 @@ export async function SummaryPost({
               <TextDisplay data={post.content}></TextDisplay>
             )}
           </div>
+          {numberOfComments > 0 && (
+            <div className="mr-2 text-xs text-end text-info-content">
+              {numberOfComments} Comment{numberOfComments === 1 ? '' : 's'}
+            </div>
+          )}
           <PostActionsFooter post={post}></PostActionsFooter>
         </div>
         <div className="card-actions"></div>
