@@ -6,6 +6,7 @@ import { TextEditor } from '@mockingbird/stoyponents';
 import { Suspense, useEffect, useState } from 'react';
 import { CommentReplyList } from './CommentReplyList.client';
 import { ReplyFooter } from './ReplyFooter.client';
+import { SkeletonCommentReply } from './SkeletonCommentReply';
 
 const sortByCreatedAtDesc = (a: { createdAt: Date }, b: { createdAt: Date }) =>
   new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
@@ -60,7 +61,14 @@ export function CommentReplyContainer({
         <Suspense
           fallback={
             <div className="text-secondary-content m-2 text-center">
-              Loading...
+              <ul className="list-none max-w-2xl">
+                <li className="mt-0 mb-3 ml-6 mr-2" key="1">
+                  <SkeletonCommentReply></SkeletonCommentReply>
+                </li>
+                <li className="mt-0 mb-3 ml-6 mr-2" key="1">
+                  <SkeletonCommentReply></SkeletonCommentReply>
+                </li>
+              </ul>
             </div>
           }
         >

@@ -1,6 +1,8 @@
 import { getPostWithId } from '@/_server/postsService';
 import { SummaryPost } from '@/_components/SummaryPost';
 import { PostId } from '@/_types/post';
+import { Suspense } from 'react';
+import { SkeletonSummaryPost } from '@/_components/SkeletonSummaryPost';
 
 interface Props {
   params: Promise<{
@@ -22,7 +24,9 @@ export default async function PostDetailPage({ params }: Props) {
 
   return (
     <div className="flex flex-col flex-auto bg-transparent">
-      <SummaryPost post={post}></SummaryPost>
+      <Suspense fallback={<SkeletonSummaryPost></SkeletonSummaryPost>}>
+        <SummaryPost post={post}></SummaryPost>
+      </Suspense>
     </div>
   );
 }
