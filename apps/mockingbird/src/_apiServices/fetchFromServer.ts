@@ -1,6 +1,5 @@
 'use client';
 import { ResponseError } from '@/app/api/errors';
-import { baseUrlForApi } from './apiUrlFor';
 
 let baseApiUrl: Promise<string>;
 

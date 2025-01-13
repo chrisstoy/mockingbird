@@ -59,6 +59,17 @@ export async function getCommentsForPost(postId: PostId, limit?: number) {
   return comments;
 }
 
+export async function getNumberOfCommentsForPost(postId: PostId) {
+  const rawData = await prisma.post.count({
+    where: {
+      responseToPostId: postId,
+    },
+  });
+
+  const numberOfComments = z.number().parse(rawData);
+  return numberOfComments;
+}
+
 export async function deletePost(postId: PostId) {
   const result = await prisma.$transaction([
     // delete comments to this Post
