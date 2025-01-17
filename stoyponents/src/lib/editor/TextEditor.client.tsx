@@ -64,7 +64,7 @@ export function TextEditor({
 
   return (
     <div className="flex flex-row flex-auto">
-      <div className="flex-auto" ref={quillRef}></div>
+      <div className="flex-auto" data-testid="post-editor" ref={quillRef}></div>
       {onSubmit && (
         <div className="join">
           <button

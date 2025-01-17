@@ -43,7 +43,12 @@ export function PostMenu({ postId, isComment = false }: Props) {
 
   return (
     <div className="dropdown dropdown-left">
-      <div tabIndex={0} role="button" className="btn btn-circle btn-xs p-1">
+      <div
+        tabIndex={0}
+        role="button"
+        title="Options"
+        className="btn btn-circle btn-xs p-1"
+      >
         <EllipsisHorizontalIcon></EllipsisHorizontalIcon>
       </div>
       <ul
@@ -51,7 +56,9 @@ export function PostMenu({ postId, isComment = false }: Props) {
         className="dropdown-content menu bg-base-100 rounded-box z-[1] p-2 shadow"
       >
         <li>
-          <div onClick={handleDeleteComment}>Delete</div>
+          <div role="button" onClick={handleDeleteComment}>
+            Delete
+          </div>
         </li>
       </ul>
       {showConfirmDelete && (

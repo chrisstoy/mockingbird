@@ -65,6 +65,7 @@ export async function Comment({
       <CommentReplyContainer
         hideReplies={hideReplies}
         originalComment={comment}
+        replyingToName={userName}
         originalPosterId={originalPost.posterId}
       ></CommentReplyContainer>
     </div>
