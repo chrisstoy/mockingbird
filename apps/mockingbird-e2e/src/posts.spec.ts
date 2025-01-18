@@ -1,4 +1,4 @@
-import { test, expect, Page, Locator } from '@playwright/test';
+import { expect, Page, test } from '@playwright/test';
 import {
   getPostEditor,
   pauseFor,
@@ -7,10 +7,13 @@ import {
   performSignIn,
   testUserName,
 } from './utils';
-import { get } from 'http';
 
 const getCreatePostButton = (page: Page) =>
   page.getByRole('button', { name: "What's going on" });
+
+const testPostContent = 'TEST Post 1';
+const testCommentContnet = 'TEST Comment 1';
+const testReplyContent = 'TEST Reply 1';
 
 test.describe('Creating and commenting on posts', () => {
   test.describe.configure({ mode: 'serial' });
@@ -36,7 +39,7 @@ test.describe('Creating and commenting on posts', () => {
 
     const dialog = page.getByRole('dialog');
     await dialog.getByRole('paragraph').click();
-    await getPostEditor(dialog).fill('This is a test post.');
+    await getPostEditor(dialog).fill(testPostContent);
     await dialog.getByRole('button', { name: 'Post' }).click();
 
     await expect(posts).toHaveCount(1);
@@ -45,7 +48,7 @@ test.describe('Creating and commenting on posts', () => {
     const post = posts.first();
     await expect(post).toBeVisible();
     await expect(post.getByText(testUserName)).toBeVisible();
-    await expect(post.getByText('This is a test post.')).toBeVisible();
+    await expect(post.getByText(testPostContent)).toBeVisible();
     await expect(post.getByRole('button', { name: 'Options' })).toBeVisible();
     await expect(post.getByRole('button', { name: 'Comment' })).toBeVisible();
   });
@@ -60,11 +63,36 @@ test.describe('Creating and commenting on posts', () => {
     await post.getByRole('button', { name: 'Comment' }).click();
 
     const dialog = page.getByRole('dialog');
-    expect(dialog.getByText('This is a test post.')).toBeVisible();
+    await expect(dialog.getByText(testPostContent)).toBeVisible();
 
     const editor = getPostEditor(dialog);
-    await editor.fill('Comment for test post.');
+    await editor.fill(testCommentContnet);
     await dialog.getByRole('button', { name: 'Post' }).click();
+  });
+
+  test('reply to comment', async ({ page }) => {
+    await performSignIn(page);
+
+    const posts = page.getByRole('listitem');
+    await expect(posts).toHaveCount(2);
+
+    const replyButton = page.getByRole('button', { name: 'Reply' });
+    const editor = getPostEditor(page);
+
+    await replyButton.click();
+    await expect(editor).toBeVisible();
+    await editor.fill(testReplyContent);
+    await expect(editor).toHaveText(testReplyContent);
+    await page.getByRole('button', { name: 'Cancel' }).click();
+    await expect(editor).not.toBeVisible();
+    await expect(posts).toHaveCount(2);
+
+    await replyButton.click();
+    await editor.fill(testReplyContent);
+    await expect(editor).toHaveText(testReplyContent);
+    await page.getByRole('button', { name: 'Post' }).click();
+    await expect(editor).not.toBeVisible();
+    await expect(posts).toHaveCount(2);
   });
 
   test('delete post', async ({ page }) => {

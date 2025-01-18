@@ -98,7 +98,7 @@ model Post {
 
   poster User @relation(fields: [posterId], references: [id], onDelete: Cascade)
 
-  responseTo Post?  @relation("Responses", fields: [responseToPostId], references: [id])
+  responseTo Post?  @relation("Responses", fields: [responseToPostId], references: [id], onDelete: Cascade)
   responses  Post[] @relation("Responses")
 }
 
@@ -111,7 +111,7 @@ model Friends {
   friendId String // user to be friends with
   accepted Boolean // true if the friendship is accepted
 
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 // #endregion

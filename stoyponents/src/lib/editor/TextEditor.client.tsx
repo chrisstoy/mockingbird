@@ -79,7 +79,7 @@ export function TextEditor({
             className="btn btn-ghost btn-primary"
             onClick={() => onSubmit()}
           >
-            <span className="w-4 h-4 tooltip" data-tip="Send">
+            <span className="w-4 h-4 tooltip" data-tip="Post">
               <PaperAirplaneIcon></PaperAirplaneIcon>
             </span>
           </button>

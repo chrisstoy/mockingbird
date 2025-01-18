@@ -72,14 +72,7 @@ export async function getNumberOfCommentsForPost(postId: PostId) {
 
 export async function deletePost(postId: PostId) {
   const result = await prisma.$transaction([
-    // delete comments to this Post
-    prisma.post.deleteMany({
-      where: {
-        responseToPostId: postId,
-      },
-    }),
-
-    // delete Post
+    // This will also delete comments and replies associated with the post
     prisma.post.delete({
       where: {
         id: postId,

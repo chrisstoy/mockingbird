@@ -15,6 +15,7 @@ export function getPostEditor(parent: Locator | Page) {
 
 /**
  * Pauses for the specified number of milliseconds
+ * @param milliseconds Number of milliseconds to pause
  */
 export async function pauseFor(milliseconds: number) {
   await new Promise((resolve) => setTimeout(resolve, milliseconds));
