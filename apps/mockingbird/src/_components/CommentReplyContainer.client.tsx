@@ -13,11 +13,13 @@ const sortByCreatedAtDesc = (a: { createdAt: Date }, b: { createdAt: Date }) =>
 
 type Props = {
   originalComment: Post;
+  replyingToName: string;
   originalPosterId: string;
   hideReplies: boolean;
 };
 export function CommentReplyContainer({
   originalComment,
+  replyingToName,
   originalPosterId,
   hideReplies = false,
 }: Props) {
@@ -83,7 +85,7 @@ export function CommentReplyContainer({
         <>
           <div className="divider my-0"></div>
           <TextEditor
-            placeholder={`Replying to ${originalComment.posterId}`}
+            placeholder={`Replying to ${replyingToName}`}
             onChange={setReplyContent}
             onSubmit={submitReply}
           ></TextEditor>

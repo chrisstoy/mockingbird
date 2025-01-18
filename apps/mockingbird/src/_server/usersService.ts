@@ -154,14 +154,14 @@ export async function deleteUser(userId: UserId) {
         },
       }),
 
-      // delete Accounts
+      // delete Sessions
       prisma.session.deleteMany({
         where: {
           userId: userId,
         },
       }),
 
-      // delete Sessions
+      // delete Accounts
       prisma.account.deleteMany({
         where: {
           userId: userId,

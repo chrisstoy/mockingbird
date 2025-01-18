@@ -64,7 +64,7 @@ export function TextEditor({
 
   return (
     <div className="flex flex-row flex-auto">
-      <div className="flex-auto" ref={quillRef}></div>
+      <div className="flex-auto" data-testid="post-editor" ref={quillRef}></div>
       {onSubmit && (
         <div className="join">
           <button
@@ -79,7 +79,7 @@ export function TextEditor({
             className="btn btn-ghost btn-primary"
             onClick={() => onSubmit()}
           >
-            <span className="w-4 h-4 tooltip" data-tip="Send">
+            <span className="w-4 h-4 tooltip" data-tip="Post">
               <PaperAirplaneIcon></PaperAirplaneIcon>
             </span>
           </button>
