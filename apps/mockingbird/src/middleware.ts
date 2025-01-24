@@ -1,4 +1,4 @@
-import { env } from '@/../env.mjs';
+import { env } from '@/../env';
 import { NextResponse } from 'next/server';
 import { auth } from './app/auth';
 

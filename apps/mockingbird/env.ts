@@ -1,7 +1,9 @@
 import { createEnv } from '@t3-oss/env-nextjs';
+import { vercel } from '@t3-oss/env-nextjs/presets';
 import { z } from 'zod';
 
 export const env = createEnv({
+  extends: [vercel()],
   /**
    * Specify your server-side environment variables schema here. This way you can ensure the app
    * isn't built with invalid env vars.
@@ -9,10 +11,10 @@ export const env = createEnv({
   server: {
     NODE_ENV: z.enum(['development', 'test', 'production']).optional(),
 
-    VERCEL: z.string().optional(),
-    VECEL_ENV: z.enum(['development', 'preview', 'production']).optional(),
-    VERCEL_URL: z.string().optional(),
-    VERCEL_PROJECT_PRODUCTION_URL: z.string().optional(),
+    // VERCEL: z.string().optional(),
+    // VECEL_ENV: z.enum(['development', 'preview', 'production']).optional(),
+    // VERCEL_URL: z.string().optional(),
+    // VERCEL_PROJECT_PRODUCTION_URL: z.string().optional(),
 
     LOG_LEVEL: z
       .enum(['error', 'warn', 'info', 'debug', 'trace'])
@@ -28,7 +30,7 @@ export const env = createEnv({
 
     AUTH_SECRET:
       process.env.NODE_ENV === 'production' ||
-      process.env.VECEL_ENV === 'production'
+      process.env.VERCEL_ENV === 'production'
         ? z.string().min(1)
         : z.string().min(1).optional(),
 
@@ -63,4 +65,6 @@ export const env = createEnv({
    * This is especially useful for Docker builds.
    */
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
+
+  experimental__runtimeEnv: process.env,
 });
