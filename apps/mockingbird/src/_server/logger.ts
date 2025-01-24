@@ -1,4 +1,4 @@
-import { env } from '@/../env.mjs';
+import { env } from '@/../env';
 import { join } from 'path';
 import winston from 'winston';
 
@@ -7,7 +7,7 @@ const { combine, errors, json, timestamp } = winston.format;
 const createLogFileName = () => {
   const date = new Date();
   const dateString = date.toISOString().split('T')[0];
-  return `mockingbird-${env.NODE_ENV ?? env.VECEL_ENV}-${dateString}.log`;
+  return `mockingbird-${env.NODE_ENV ?? env.VERCEL_ENV}-${dateString}.log`;
 };
 
 const options: winston.LoggerOptions = {

@@ -1,5 +1,5 @@
 'use server';
-import { env } from '@/../env.mjs';
+import { env } from '@/../env';
 
 /**
  * Return the full URL needed to call the API function
