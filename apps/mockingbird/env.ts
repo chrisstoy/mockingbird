@@ -36,6 +36,13 @@ export const env = createEnv({
 
     AUTH_GOOGLE_ID: z.string().min(1),
     AUTH_GOOGLE_SECRET: z.string().min(1),
+
+    CLOUDFLARE_ACCOUNT_ID: z.string().min(1),
+    CLOUDFLARE_R2_ACCESS_KEY_ID: z.string().min(1),
+    CLOUDFLARE_R2_SECRET_ACCESS_KEY: z.string().min(1),
+    CLOUDFLARE_R2_BUCKET_NAME: z.string().min(1),
+
+    IMAGES_BASE_URL: z.string().url(),
   },
 
   /**
@@ -55,11 +62,11 @@ export const env = createEnv({
   //   AUTH_GITHUB_ID: process.env.AUTH_GITHUB_ID,
   //   AUTH_GITHUB_SECRET: process.env.AUTH_GITHUB_SECRET,
   // },
+  experimental__runtimeEnv: process.env,
+
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.
    * This is especially useful for Docker builds.
    */
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
-
-  experimental__runtimeEnv: process.env,
 });

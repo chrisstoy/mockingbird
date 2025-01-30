@@ -1,0 +1,93 @@
+openapi: 3.0.0
+info:
+  title: Mockingbird API
+  version: 0.2.3
+  description: Mockingbird REST API
+  contact:
+    name: Mockingbird
+    url: https://mockingbird.chrisstoy.com
+    email: mockingbird@chrisstoy.com
+tags:
+  - name: Auth
+    description: Authentication API
+  - name: Users
+    description: Manage Users
+  - name: Posts
+    description: Access Posts and Comments
+components:
+  parameters:
+    AcceptJSONHeader:
+      name: Accept
+      in: header
+      required: true
+      schema:
+        type: string
+        description: 'Accept: application/json'
+    ContentTypeJSONHeader:
+      name: Content-Type
+      in: header
+      required: true
+      schema:
+        type: string
+        description: 'Content-Type: application/json'
+    ContentTypeFormDataHeader:
+      name: Content-Type
+      in: header
+      required: true
+      schema:
+        type: string
+        description: 'Content-Type: multipart/form-data'
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Details about the error
+        status:
+          type: number
+          description: HTTP status code
+        statusText:
+          type: string
+          description: HTTP status text
+paths:
+  /api/users:
+    post:
+      summary: Create a new User
+      description: |
+        Create a new User based on email and password.
+      tags:
+        - Users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: user name to display
+                email:
+                  type: string
+                  description: unique email address for the user
+                password:
+                  type: string
+                  description: password for the user
+
+      responses:
+        '201':
+          description: the User was created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userId:
+                    type: string
+                    description: the ID of the User
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'

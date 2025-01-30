@@ -114,4 +114,18 @@ model Friends {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+model Image {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  ownerId String // user that owns this image
+
+  imageUrl     String // URL to the original version of the image
+  thumbnailUrl String // URL to a small, thumbnail version of the image
+
+  description String // description of the image
+  album       String // group image belongs to
+}
+
 // #endregion

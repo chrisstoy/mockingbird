@@ -1,0 +1,21 @@
+meta {
+  name: ADD Image
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{apiHost}}/users/:userId/images
+  body: multipartForm
+  auth: none
+}
+
+params:path {
+  userId: {{loggedInUserId}}
+}
+
+body:multipart-form {
+  description: Me doing a sidekick in S. Korea
+  album: Test Images
+  file: @file(/Users/cstoy/Pictures/tkd/side-kick.jpeg)
+}

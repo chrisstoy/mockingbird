@@ -1,0 +1,22 @@
+meta {
+  name: GET Image
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{apiHost}}/users/:userId/images/:imageId
+  body: multipartForm
+  auth: none
+}
+
+params:path {
+  imageId: cm6h0gogz0000723hmjvtilrb
+  userId: {{loggedInUserId}}
+}
+
+body:multipart-form {
+  description: Me doing a sidekick in S. Korea
+  album: Test Images
+  file: @file(/Users/cstoy/Pictures/tkd/side-kick.jpeg)
+}

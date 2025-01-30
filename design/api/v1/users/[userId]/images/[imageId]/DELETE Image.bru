@@ -1,0 +1,22 @@
+meta {
+  name: DELETE Image
+  type: http
+  seq: 1
+}
+
+delete {
+  url: {{apiHost}}/users/:userId/images/:imageId
+  body: multipartForm
+  auth: none
+}
+
+params:path {
+  imageId: cm6iq14qr0000czu38cw143pk
+  userId: {{loggedInUserId}}
+}
+
+body:multipart-form {
+  description: Me doing a sidekick in S. Korea
+  album: Test Images
+  file: @file(/Users/cstoy/Pictures/tkd/side-kick.jpeg)
+}

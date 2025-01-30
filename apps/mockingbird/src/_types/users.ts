@@ -63,6 +63,6 @@ export const SessionUserSchema = z.object({
 });
 
 /**
- * A more strongly typed version of the User type from AuthJS
+ * A strongly typed version of the User type from AuthJS
  */
 export type SessionUser = z.infer<typeof SessionUserSchema>;

@@ -4,18 +4,18 @@ meta {
   seq: 3
 }
 
-get {
-  url: {{apiHost}}/auth/session
-  body: none
+post {
+  url: {{apiHost}}/auth/callback/credentials
+  body: formUrlEncoded
   auth: none
 }
 
 headers {
-  ~Cache-Control: no-cache
-  ~Content-Type: application/x-www-form-urlencoded
-  ~Cookie: authjs.csrf-token={{csrfToken}}; authjs.callback-url={{host}}
-  ~Referer: {{host}}/auth/signin?callbackUrl={{host}}%2F
-  ~X-Auth-Return-Redirect: 1
+  Cache-Control: no-cache
+  Content-Type: application/x-www-form-urlencoded
+  Cookie: authjs.csrf-token={{csrfToken}}; authjs.callback-url={{host}}
+  Referer: {{host}}/auth/signin?callbackUrl={{host}}%2F
+  X-Auth-Return-Redirect: 1
 }
 
 body:form-urlencoded {
@@ -25,16 +25,17 @@ body:form-urlencoded {
   csrfToken: {{csrfToken}}
 }
 
-script:pre-request {
-  bru.setVar("Cookie", "authjs.csrf-token=2314795f4907432f71e5c19d8fb6a3d57cc90c099022bd1327ce51b43a17d039%7C1dd927450f94ba79e88df57fe12ee18029ae34c19d82e96849649bcd90eecd78; authjs.callback-url=http%3A%2F%2Flocalhost%3A3000%2F; authjs.session-token=eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoiQkx3dlpLMzJzdUh5amthanc3YWhVNURublQ1cXVRd2I0MzV5azJTMlZHQ1RPV3N0YXB3YjdtZlY2LWRZTEdCUW9zVDE0bkZrZEJPNUZCT1VCZS01ZWcifQ..Xc3bX5Z1Yaz9tPMSqhigig.Xq3VFal_kdSe9JoaKgsj_GwUUuo-OOXEZzEZk2wtgdvLOuIqHaQuDWzcSs0KztO91o2_hhrNvMb5gNNMmWnPkUJIlxisqZNQ6765ba5LvaPyu-CaKu1ezLZHthmgoaRgWbh9eWlfDhHEpOFMstQnGj7icDUaGCfDCTf591bj_PGCKbaNLX8G-27TmRqWnYGM8w5IG-nQLe26_rpmdDj9ZhPDKVyjWILTexGNwfxAUfqCjOvC-XYFYhcNyqkewMgdzvGRz65_KDnxjYQ-TPf-6Metyq16DtyKha_kukEQV7BpiZIRzs2IV4_hN9dZbePv2DBksr4ebQSS3J1uMlnv-r2gFfx1t9LRezNCHFQqPdM.ZoifSjyGQCg8z6dKkIuBPm1pFMFBlMpy2DcayzMJgjU");
-  
-}
-
 script:post-response {
-  const cookies = res.getHeader('set-cookie');
+  // const cookies = res.getHeader('set-cookie');
+  // 
+  // if(cookies) {
+    // bru.setVar("cookie", cookies.join('; '));
+  // }
+  // 
   
-  if(cookies) {
-    bru.setVar("cookie", cookies.join('; '));
+  if (res.status === 200 ) {
+    console.log(res.body.user.id);
+    bru.setVar("loggedInUserId", res.body.user.id);
   }
   
 }

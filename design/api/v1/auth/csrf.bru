@@ -13,3 +13,7 @@ get {
 vars:post-response {
   csrfToken: res.body.csrfToken
 }
+
+script:post-response {
+  bru.setEnvVar('csrfToken',res.body.csrfToken)
+}

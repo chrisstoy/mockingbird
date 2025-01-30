@@ -16,6 +16,7 @@ export const PostSchema = CreatePostDataSchema.extend({
   responseToPostId: PostIdSchema.optional().nullable(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
+
   likeCount: z.number(),
   dislikeCount: z.number(),
 });

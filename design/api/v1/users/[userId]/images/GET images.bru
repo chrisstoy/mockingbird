@@ -1,0 +1,15 @@
+meta {
+  name: GET images
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{apiHost}}/users/:userId/images
+  body: none
+  auth: none
+}
+
+params:path {
+  userId: {{loggedInUserId}}
+}

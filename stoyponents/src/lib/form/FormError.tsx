@@ -5,5 +5,7 @@ interface Props {
 }
 
 export function FormError({ error }: Props) {
-  return <>{error && <div className="text-error">{error.message}</div>}</>;
+  if (!error) return null;
+
+  return <div className="text-error">{error.message}</div>;
 }

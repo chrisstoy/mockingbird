@@ -2,13 +2,13 @@
 import Delta from 'quill-delta';
 import { ComponentPropsWithoutRef, useEffect } from 'react';
 import { useQuill } from 'react-quilljs';
-import sanitizeHtml from 'sanitize-html';
 import options from './options';
+import { toEditorDelta } from './utils';
 
 export { Delta };
 
 interface Props extends ComponentPropsWithoutRef<'div'> {
-  data: string | Delta | undefined;
+  data: string | Delta | undefined | null;
 }
 
 export function TextDisplay({ data: content, ...rest }: Props) {
@@ -23,11 +23,8 @@ export function TextDisplay({ data: content, ...rest }: Props) {
 
   useEffect(() => {
     if (quill && content) {
-      if (typeof content === 'string') {
-        quill.clipboard.dangerouslyPasteHTML(sanitizeHtml(content), 'silent');
-      } else {
-        quill.setContents(content);
-      }
+      const delta = toEditorDelta(quill, content);
+      quill.setContents(delta);
     }
   }, [quill, content]);
 
