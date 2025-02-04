@@ -4,7 +4,7 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Mockingbird',
-  description: 'Basic Social Media app',
+  description: 'Basic Social Media App',
 };
 
 export default async function RoutesLayout({

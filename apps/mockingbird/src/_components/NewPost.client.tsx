@@ -4,15 +4,14 @@ import { SessionUser } from '@/_types/users';
 import { GENERIC_USER_IMAGE_URL } from '@/constants';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
-import { PostEditorDialog } from './PostEditorDialog.client';
+import { useMemo } from 'react';
+import { useDialogManager } from './DialogManager.client';
 
 type Props = {
   user: SessionUser | undefined;
 };
 export function NewPost({ user }: Props) {
-  const [showEditor, setShowEditor] = useState(false);
-
+  const dialogManager = useDialogManager();
   const router = useRouter();
 
   const firstName = useMemo(
@@ -26,7 +25,7 @@ export function NewPost({ user }: Props) {
   );
 
   async function handleCreatePost(content: string) {
-    setShowEditor(false);
+    dialogManager.hidePostEditor();
 
     if (!user || !user.id || content.length === 0) {
       return;
@@ -38,7 +37,9 @@ export function NewPost({ user }: Props) {
   }
 
   function handleShowEditor() {
-    setShowEditor(true);
+    dialogManager.showPostEditor({
+      onSubmitPost: handleCreatePost,
+    });
   }
 
   return (
@@ -65,12 +66,6 @@ export function NewPost({ user }: Props) {
           </div>
         </div>
       </div>
-      {showEditor && (
-        <PostEditorDialog
-          onSubmitPost={handleCreatePost}
-          onClosed={() => setShowEditor(false)}
-        ></PostEditorDialog>
-      )}
     </div>
   );
 }

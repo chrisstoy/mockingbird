@@ -24,7 +24,7 @@ export function DialogHeader<_Result>({
 }: Pick<DialogProps<_Result>, 'title' | 'onClosed'>) {
   return (
     <div
-      className={`rounded-t-2xl rounded-b-sm card-title bg-primary text-primary-content`}
+      className={`flex-none block rounded-t-2xl bg-primary text-primary-content`}
     >
       <div
         className={
@@ -44,7 +44,9 @@ export function DialogHeader<_Result>({
 }
 
 export function DialogBody({ children }: PropsWithChildren) {
-  return <div className="card-body text-base-content">{children}</div>;
+  return (
+    <div className="flex-auto bg-base-100 text-base-content">{children}</div>
+  );
 }
 
 interface DialogButtonProps {
@@ -103,7 +105,7 @@ export function DialogActions<_Result>({
   'buttons' | 'onClosed' | 'defaultResult' | 'children'
 >) {
   return (
-    <div className="card-actions justify-end p-1">
+    <div className="flex-none flex rounded-b-2xl bg-primary text-primary-content justify-end p-2">
       {children}
       {buttons &&
         buttons.map(({ title, result, intent, disabled }, index) => (

@@ -1,14 +1,20 @@
 'use client';
+import { uploadImage } from '@/_apiServices/images';
 import { getUser } from '@/_apiServices/users';
+import { useSessionUser } from '@/_hooks/useSessionUser';
 import { Post } from '@/_types/post';
 import { GENERIC_USER_IMAGE_URL } from '@/constants';
 import {
   DialogActions,
+  DialogBody,
   DialogButton,
   DialogHeader,
+  EditorAPI,
+  EditorDelta,
   TextEditor,
 } from '@mockingbird/stoyponents';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { AddToPostOptions } from './AddToPostOptions.client';
 import { PostView } from './PostView';
 
 type Props = {
@@ -22,7 +28,11 @@ export function CommentEditorDialog({
   onClosed,
   originalPost,
 }: Props) {
+  const user = useSessionUser();
+
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const editorApi = useRef<EditorAPI>(null);
+
   const [posterInfo, setPosterInfo] = useState<{
     userName: string;
     imageSrc: string;
@@ -30,7 +40,7 @@ export function CommentEditorDialog({
     userName: 'Unknown',
     imageSrc: GENERIC_USER_IMAGE_URL,
   });
-  const [newContent, setNewContent] = useState<string>('');
+  const [newContent, setNewContent] = useState<EditorDelta>();
 
   useEffect(() => {
     (async () => {
@@ -51,35 +61,65 @@ export function CommentEditorDialog({
     };
   }, []);
 
+  const handleImageUpload = useCallback(
+    async (file: File) => {
+      if (!editorApi.current || !user) {
+        return;
+      }
+
+      const { imageUrl } = await uploadImage(user.id, file);
+      editorApi.current.insertImage(imageUrl);
+    },
+    [editorApi]
+  );
+
   function handleSubmitPost() {
-    onSubmitPost(newContent);
+    if (newContent) {
+      const content = JSON.stringify(newContent);
+      onSubmitPost(content);
+    }
   }
 
   return (
     <dialog
       ref={dialogRef}
-      className="bg-transparent bg-base-100 open:animate-fade-in open:backdrop:animate-fade-in"
+      className="w-full max-w-2xl h-full md:h-[90%] bg-transparent backdrop:backdrop-brightness-50"
     >
       {posterInfo && (
-        <div className="card card-bordered shadow-xl bg-base-100 w-96">
+        <div className="flex flex-col h-full">
           <DialogHeader
             title={`${posterInfo.userName}'s Post`}
             onClosed={onClosed}
           ></DialogHeader>
-          <PostView
-            imageSrc={posterInfo.imageSrc}
-            userName={posterInfo.userName}
-            content={originalPost.content}
-            createdAt={originalPost.createdAt}
-          ></PostView>
-          <TextEditor onChange={setNewContent}></TextEditor>
-
+          <DialogBody>
+            <div className="h-full flex flex-col">
+              <div className="h-[1px] flex flex-col flex-auto overflow-scroll">
+                <PostView
+                  imageSrc={posterInfo.imageSrc}
+                  userName={posterInfo.userName}
+                  content={originalPost.content}
+                  createdAt={originalPost.createdAt}
+                ></PostView>
+                <TextEditor
+                  ref={editorApi}
+                  onChangeDelta={setNewContent}
+                ></TextEditor>
+              </div>
+              <AddToPostOptions
+                onImageSelected={handleImageUpload}
+              ></AddToPostOptions>
+            </div>
+          </DialogBody>
           <DialogActions
             onClosed={() => {
               // do nothing
             }}
           >
-            <DialogButton title="Post" onClick={handleSubmitPost} />
+            <DialogButton
+              disabled={!newContent}
+              title="Post"
+              onClick={handleSubmitPost}
+            />
           </DialogActions>
         </div>
       )}

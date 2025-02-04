@@ -1,12 +1,18 @@
 'use client';
+import { uploadImage } from '@/_apiServices/images';
+import { useSessionUser } from '@/_hooks/useSessionUser';
 import { Post } from '@/_types/post';
 import {
   DialogActions,
+  DialogBody,
   DialogButton,
   DialogHeader,
+  EditorAPI,
+  EditorDelta,
   TextEditor,
 } from '@mockingbird/stoyponents';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { AddToPostOptions } from './AddToPostOptions.client';
 
 type Props = {
   onSubmitPost: (content: string) => void;
@@ -19,8 +25,14 @@ export function PostEditorDialog({
   onClosed,
   originalPost,
 }: Props) {
+  const user = useSessionUser();
+
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const [newContent, setNewContent] = useState<string>('');
+  const editorApi = useRef<EditorAPI>(null);
+
+  const [newContent, setNewContent] = useState<EditorDelta | undefined>(
+    undefined
+  );
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -32,30 +44,56 @@ export function PostEditorDialog({
   }, []);
 
   function handleSubmitPost() {
-    onSubmitPost(newContent);
+    const content = JSON.stringify(newContent);
+    onSubmitPost(content);
   }
+
+  const handleImageUpload = useCallback(
+    async (file: File) => {
+      if (!editorApi.current || !user) {
+        return;
+      }
+
+      const { imageUrl } = await uploadImage(user.id, file);
+      editorApi.current.insertImage(imageUrl);
+    },
+    [editorApi]
+  );
 
   return (
     <dialog
       ref={dialogRef}
-      className="bg-transparent bg-base-100 open:animate-fade-in open:backdrop:animate-fade-in"
+      className="w-full max-w-2xl h-full md:h-[90%] bg-transparent backdrop:backdrop-brightness-50"
     >
-      <div className="card card-bordered shadow-xl bg-base-100 w-96">
+      <div className="flex flex-col h-full">
         <DialogHeader
           title={'Create a Post'}
           onClosed={onClosed}
         ></DialogHeader>
-        <TextEditor
-          initialContent={originalPost?.content}
-          onChange={setNewContent}
-        ></TextEditor>
-
+        <DialogBody>
+          <div className="h-full flex flex-col">
+            <div className="h-[1px] flex flex-col flex-auto overflow-scroll">
+              <TextEditor
+                ref={editorApi}
+                initialContent={originalPost?.content}
+                onChangeDelta={setNewContent}
+              ></TextEditor>
+            </div>
+            <AddToPostOptions
+              onImageSelected={handleImageUpload}
+            ></AddToPostOptions>
+          </div>
+        </DialogBody>
         <DialogActions
           onClosed={() => {
             // do nothing
           }}
         >
-          <DialogButton title="Post" onClick={handleSubmitPost} />
+          <DialogButton
+            disabled={!newContent}
+            title="Post"
+            onClick={handleSubmitPost}
+          />
         </DialogActions>
       </div>
     </dialog>

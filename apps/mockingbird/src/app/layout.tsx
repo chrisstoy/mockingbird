@@ -1,3 +1,4 @@
+import { DialogManager } from '@/_components/DialogManager.client';
 import { auth } from '@/app/auth';
 import { SessionProvider } from 'next-auth/react';
 import { Suspense } from 'react';
@@ -23,7 +24,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <body className="min-h-screen bg-neutral">
+      <body className="h-screen bg-neutral">
         <ErrorBoundary fallbackRender={renderError}>
           <SessionProvider session={session}>
             <div className="w-full h-full bg-neutral">
@@ -34,6 +35,7 @@ export default async function RootLayout({
               ></Suspense>
               {children}
             </div>
+            <DialogManager></DialogManager>
           </SessionProvider>
         </ErrorBoundary>
       </body>
