@@ -5,7 +5,7 @@ import { useSessionUser } from '@/_hooks/useSessionUser';
 import { Post } from '@/_types/post';
 import { ChatBubbleLeftEllipsisIcon } from '@heroicons/react/20/solid';
 import { useRouter } from 'next/navigation';
-import { useDialogManager } from './DialogManager.client';
+import { SubmitPostOptions, useDialogManager } from './DialogManager.client';
 
 type Props = {
   post: Post;
@@ -17,14 +17,14 @@ export function CommentButton({ post }: Props) {
   const router = useRouter();
   const user = useSessionUser();
 
-  async function handleCommentOnPost(content: string) {
+  async function handleCommentOnPost({ message }: SubmitPostOptions) {
     dialogManager.hideCommentEditor();
 
-    if (!user || content.length === 0) {
+    if (!user || message.length === 0) {
       return null;
     }
 
-    const result = await commentOnPost(user.id, post.id, content);
+    const result = await commentOnPost(user.id, post.id, message);
     console.log(`Commented on a post with content: ${JSON.stringify(result)}`);
     router.refresh();
   }

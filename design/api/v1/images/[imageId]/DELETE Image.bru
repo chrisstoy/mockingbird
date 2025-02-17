@@ -5,14 +5,13 @@ meta {
 }
 
 delete {
-  url: {{apiHost}}/users/:userId/images/:imageId
+  url: {{apiHost}}/images/:imageId
   body: multipartForm
   auth: none
 }
 
 params:path {
   imageId: cm6iq14qr0000czu38cw143pk
-  userId: {{loggedInUserId}}
 }
 
 body:multipart-form {

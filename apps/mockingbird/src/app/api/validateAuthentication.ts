@@ -1,4 +1,6 @@
+import { ActiveSession, ActiveSessionSchema } from '@/_types/users';
 import { auth } from '@/app/auth';
+import { Session } from 'next-auth';
 import { ResponseError } from './errors';
 
 /**
@@ -7,10 +9,11 @@ import { ResponseError } from './errors';
  * @returns the active Session
  * @throws {ResponseError}
  */
-export async function validateAuthentication() {
-  const authSession = await auth();
+export async function validateAuthentication(): Promise<ActiveSession> {
+  const authSession: Session | null = await auth();
   if (!authSession?.user) {
     throw new ResponseError(401, 'User not logged in');
   }
-  return authSession;
+
+  return ActiveSessionSchema.parse(authSession);
 }

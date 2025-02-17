@@ -4,7 +4,7 @@ import { UpdateVersionExecutorSchema } from './schema';
 import executor from './executor';
 
 const options: UpdateVersionExecutorSchema = {
-  versionFile: `${process.cwd()}/src/executors/test-version.json`,
+  versionFile: `${__dirname}/test-version.json`,
 };
 const context: ExecutorContext = {
   root: '',

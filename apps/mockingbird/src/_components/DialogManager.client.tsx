@@ -5,8 +5,12 @@ import { PostEditorDialog } from './PostEditorDialog.client';
 import { CommentEditorDialog } from './CommentEditorDialog.client';
 import { Post } from '@/_types/post';
 
+export interface SubmitPostOptions {
+  message: string;
+  imageFile?: File;
+}
 interface PostEditorOptions {
-  onSubmitPost: (content: string) => void;
+  onSubmitPost: (content: SubmitPostOptions) => void;
 }
 
 interface CommentEditorOptions extends PostEditorOptions {
@@ -42,8 +46,11 @@ export function DialogManager() {
     <>
       {state.postEditorOptions && (
         <PostEditorDialog
-          onSubmitPost={(content) => {
-            state.postEditorOptions?.onSubmitPost(content);
+          onSubmitPost={(data) => {
+            state.postEditorOptions?.onSubmitPost({
+              message: data.content,
+              imageFile: data.imageFile,
+            });
           }}
           onClosed={() => state.hidePostEditor()}
         ></PostEditorDialog>
@@ -52,8 +59,10 @@ export function DialogManager() {
       {state.commentEditorOptions && (
         <CommentEditorDialog
           originalPost={state.commentEditorOptions.originalPost}
-          onSubmitPost={(content) => {
-            state.commentEditorOptions?.onSubmitPost(content);
+          onSubmitPost={(message) => {
+            state.commentEditorOptions?.onSubmitPost({
+              message,
+            });
           }}
           onClosed={() => state.hideCommentEditor()}
         ></CommentEditorDialog>

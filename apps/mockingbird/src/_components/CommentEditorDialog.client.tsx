@@ -105,9 +105,9 @@ export function CommentEditorDialog({
                   onChangeDelta={setNewContent}
                 ></TextEditor>
               </div>
-              <AddToPostOptions
+              {/* <AddToPostOptions
                 onImageSelected={handleImageUpload}
-              ></AddToPostOptions>
+              ></AddToPostOptions> */}
             </div>
           </DialogBody>
           <DialogActions
@@ -115,11 +115,9 @@ export function CommentEditorDialog({
               // do nothing
             }}
           >
-            <DialogButton
-              disabled={!newContent}
-              title="Post"
-              onClick={handleSubmitPost}
-            />
+            <DialogButton disabled={!newContent} onClick={handleSubmitPost}>
+              Post
+            </DialogButton>
           </DialogActions>
         </div>
       )}

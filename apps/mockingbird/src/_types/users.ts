@@ -32,12 +32,12 @@ export const EmailAddressSchema = z
 export const SimpleUserInfoSchema = z.object({
   id: UserIdSchema,
   name: z.string(),
-  image: z.string().optional().nullable(),
+  image: z.string().nullish(),
 });
 export type SimpleUserInfo = z.infer<typeof SimpleUserInfoSchema>;
 
 export const UserInfoSchema = SimpleUserInfoSchema.extend({
-  emailVerified: z.coerce.date().optional().nullable(),
+  emailVerified: z.coerce.date().nullish(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
 });
@@ -58,7 +58,7 @@ export type FriendCollection = z.infer<typeof FriendCollectionSchema>;
 export const SessionUserSchema = z.object({
   id: UserIdSchema,
   name: z.string(),
-  image: z.string().optional().nullable(),
+  image: z.string().nullish(), // url to user's profile image
   email: EmailAddressSchema,
 });
 
@@ -66,3 +66,10 @@ export const SessionUserSchema = z.object({
  * A strongly typed version of the User type from AuthJS
  */
 export type SessionUser = z.infer<typeof SessionUserSchema>;
+
+export const ActiveSessionSchema = z.object({
+  user: SessionUserSchema,
+  expires: z.string(),
+});
+
+export type ActiveSession = z.infer<typeof ActiveSessionSchema>;

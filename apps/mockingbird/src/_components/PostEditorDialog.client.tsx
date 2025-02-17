@@ -1,5 +1,4 @@
 'use client';
-import { uploadImage } from '@/_apiServices/images';
 import { useSessionUser } from '@/_hooks/useSessionUser';
 import { Post } from '@/_types/post';
 import {
@@ -13,9 +12,16 @@ import {
 } from '@mockingbird/stoyponents';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AddToPostOptions } from './AddToPostOptions.client';
+import { ImageView } from './ImageView';
 
 type Props = {
-  onSubmitPost: (content: string) => void;
+  onSubmitPost: ({
+    content,
+    imageFile,
+  }: {
+    content: string;
+    imageFile?: File;
+  }) => void;
   onClosed: () => void;
   originalPost?: Post;
 };
@@ -33,6 +39,22 @@ export function PostEditorDialog({
   const [newContent, setNewContent] = useState<EditorDelta | undefined>(
     undefined
   );
+  const [imageFile, setImageFile] = useState<File | undefined>();
+  const [imageUrl, setImageUrl] = useState<string | undefined>();
+
+  useEffect(() => {
+    if (imageUrl) {
+      URL.revokeObjectURL(imageUrl);
+    }
+
+    setImageUrl(imageFile ? URL.createObjectURL(imageFile) : undefined);
+
+    return () => {
+      if (imageUrl) {
+        URL.revokeObjectURL(imageUrl);
+      }
+    };
+  }, [imageFile]);
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -43,22 +65,33 @@ export function PostEditorDialog({
     };
   }, []);
 
-  function handleSubmitPost() {
+  const handleSubmitPost = useCallback(async () => {
+    if (!user) {
+      return;
+    }
+
+    // upload the image and get reference to it
+    // let imageId: ImageId | undefined;
+    // if (imageFile) {
+    //   const { id } = await uploadImage(user.id, imageFile);
+    //   imageId = id;
+    // }
+    // if (imageUrl) {
+    //   URL.revokeObjectURL(imageUrl);
+    // }
+
     const content = JSON.stringify(newContent);
-    onSubmitPost(content);
-  }
+    onSubmitPost({ content, imageFile });
+  }, [user, imageFile, newContent]);
 
-  const handleImageUpload = useCallback(
-    async (file: File) => {
-      if (!editorApi.current || !user) {
-        return;
-      }
+  const handleImageUpload = useCallback((file: File) => {
+    setImageFile(file);
+  }, []);
 
-      const { imageUrl } = await uploadImage(user.id, file);
-      editorApi.current.insertImage(imageUrl);
-    },
-    [editorApi]
-  );
+  const handleRemoveImage = useCallback(() => {
+    setImageFile(undefined);
+    setImageUrl(undefined);
+  }, []);
 
   return (
     <dialog
@@ -78,10 +111,15 @@ export function PostEditorDialog({
                 initialContent={originalPost?.content}
                 onChangeDelta={setNewContent}
               ></TextEditor>
+              <ImageView
+                imageUrl={imageUrl}
+                onRemoveImage={handleRemoveImage}
+              ></ImageView>
             </div>
-            <AddToPostOptions
+            {/* <AddToPostOptions
               onImageSelected={handleImageUpload}
-            ></AddToPostOptions>
+              disableImageSelection={imageFile !== null}
+            ></AddToPostOptions> */}
           </div>
         </DialogBody>
         <DialogActions
@@ -90,10 +128,11 @@ export function PostEditorDialog({
           }}
         >
           <DialogButton
-            disabled={!newContent}
-            title="Post"
+            disabled={!newContent && !imageFile}
             onClick={handleSubmitPost}
-          />
+          >
+            Post
+          </DialogButton>
         </DialogActions>
       </div>
     </dialog>

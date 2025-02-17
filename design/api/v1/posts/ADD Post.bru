@@ -6,14 +6,20 @@ meta {
 
 post {
   url: {{apiHost}}/posts
-  body: json
+  body: multipartForm
   auth: none
 }
 
 body:json {
   {
-    "posterId": "cm1750szo00001ocb5aog8ley",
-    "responseToPostId": "cm1lhw5nq000dvai1cznoi0mx",
-    "content": "Tihs is a response to a post"
+    "posterId": "cm175soco00051ocbbnmnfi42",
+    "content": "This is a post with an iamge",
+    "imageId": "cm6o4jvpx0002d2ecfr7186l9"
   }
+}
+
+body:multipart-form {
+  posterId: cm175soco00051ocbbnmnfi42
+  content: This is a post with an image file
+  ~image: @file()
 }

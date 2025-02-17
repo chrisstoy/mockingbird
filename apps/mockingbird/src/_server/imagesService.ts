@@ -1,5 +1,6 @@
 import { env } from '@/../env';
 import {
+  AlbumId,
   CreateImageDataSchema,
   ImageId,
   ImageMetadata,
@@ -121,14 +122,14 @@ export async function getImage(imageId: ImageId) {
  * @param userId - The ID of the user who owns the image.
  * @param file - The image file to be stored.
  * @param description - Optional description of the image.
- * @param album - Optional album name to associate with the image.
+ * @param albumId - Optional album to associate with the image.
  * @returns The stored image record.
  */
 export async function storeImageForUser(
   userId: UserId,
   file: File,
   description?: string,
-  album?: string
+  albumId?: AlbumId
 ) {
   const getMetadataForImage = async (image: sharp.Sharp, name: string) => {
     const { width, height, format, size, ...rest } = await image.metadata();
@@ -176,7 +177,7 @@ export async function storeImageForUser(
     imageUrl,
     thumbnailUrl,
     description: description ?? '',
-    album: album ?? '',
+    albumId,
   });
 
   const rawData = await prisma.image.create({

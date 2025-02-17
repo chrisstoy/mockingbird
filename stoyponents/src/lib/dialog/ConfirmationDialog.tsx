@@ -37,7 +37,9 @@ export function ConfirmationDialog({
     >
       <div className="card card-bordered shadow-xl bg-base-100">
         <DialogHeader title={title} onClosed={onClosed}></DialogHeader>
-        <DialogBody>{children}</DialogBody>
+        <DialogBody>
+          <div className="m-4">{children}</div>
+        </DialogBody>
         <DialogActions
           buttons={buttons}
           onClosed={onClosed}

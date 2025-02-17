@@ -1,5 +1,6 @@
 import { storeImageForUser } from '@/_server/imagesService';
 import baseLogger from '@/_server/logger';
+import { AlbumIdSchema } from '@/_types/images';
 import { UserIdSchema } from '@/_types/users';
 import {
   createErrorResponse,
@@ -36,7 +37,7 @@ const ParamsSchema = z.object({
  * form data:
  *   - image: File
  *   - description?: string
- *   - album?: string
+ *   - albumId?: AlbumId
  */
 export async function POST(req: NextRequest, context: RouteContext) {
   try {
@@ -69,7 +70,7 @@ export async function POST(req: NextRequest, context: RouteContext) {
     const schema = z.object({
       file: z.instanceof(File),
       description: z.string().optional(),
-      album: z.string().optional(),
+      albumId: AlbumIdSchema.optional(),
     });
 
     const fd = await schema.parse({
@@ -82,7 +83,7 @@ export async function POST(req: NextRequest, context: RouteContext) {
       userId,
       file,
       fd.description,
-      fd.album
+      fd.albumId
     );
 
     return NextResponse.json(result, { status: 201 });

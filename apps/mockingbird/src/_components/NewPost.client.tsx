@@ -5,7 +5,7 @@ import { GENERIC_USER_IMAGE_URL } from '@/constants';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
-import { useDialogManager } from './DialogManager.client';
+import { SubmitPostOptions, useDialogManager } from './DialogManager.client';
 
 type Props = {
   user: SessionUser | undefined;
@@ -24,14 +24,14 @@ export function NewPost({ user }: Props) {
     [user]
   );
 
-  async function handleCreatePost(content: string) {
+  async function handleCreatePost(content: SubmitPostOptions) {
     dialogManager.hidePostEditor();
 
-    if (!user || !user.id || content.length === 0) {
+    if (!user || !user.id || content.message.length === 0) {
       return;
     }
 
-    const result = await createPost(user.id, content);
+    const result = await createPost(user.id, content.message);
     console.log(`Create a post with content: ${JSON.stringify(result)}`);
     router.refresh();
   }

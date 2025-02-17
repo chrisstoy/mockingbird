@@ -5,12 +5,19 @@ import { useCallback, useRef } from 'react';
 interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
   tooltip?: string;
   onFileSelected: (file: File) => void;
+
+  disabled?: boolean;
 }
 
 /**
  * A button that allows the user to select a file.
  */
-export function FileSelectButton({ onFileSelected, tooltip, ...rest }: Props) {
+export function FileSelectButton({
+  onFileSelected,
+  tooltip,
+  disabled,
+  ...rest
+}: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = useCallback(
@@ -33,6 +40,7 @@ export function FileSelectButton({ onFileSelected, tooltip, ...rest }: Props) {
         style={{ display: 'none' }}
       />
       <button
+        disabled={disabled}
         className="btn btn-ghost btn-primary"
         onClick={() => fileInputRef.current?.click()}
       >

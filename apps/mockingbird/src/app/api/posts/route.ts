@@ -1,8 +1,8 @@
 import baseLogger from '@/_server/logger';
 import { createPost } from '@/_server/postsService';
 import { CreatePostDataSchema } from '@/_types/post';
-import { revalidateTag } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { respondWithError, ResponseError } from '../errors';
 import { validateAuthentication } from '../validateAuthentication';
 
@@ -10,12 +10,21 @@ const logger = baseLogger.child({
   service: 'api:posts',
 });
 
+const NewPostFormDataSchema = CreatePostDataSchema.extend({
+  image: z.instanceof(File).optional(),
+});
+
+/**
+ * Create a new Post
+ * @param req
+ * @returns
+ */
 export async function POST(req: NextRequest) {
   try {
     const session = await validateAuthentication();
 
     const body = await req.json();
-    const { posterId, content } = CreatePostDataSchema.parse(body);
+    const { posterId, content } = NewPostFormDataSchema.parse(body);
 
     if (session.user?.id !== posterId) {
       throw new ResponseError(
@@ -25,8 +34,6 @@ export async function POST(req: NextRequest) {
     }
 
     const post = await createPost(posterId, content);
-
-    revalidateTag('feed');
 
     logger.info(
       `Created a new post with id ${post.id} for userId: ${posterId}`

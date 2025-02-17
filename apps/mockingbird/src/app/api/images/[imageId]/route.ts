@@ -1,7 +1,6 @@
 import { deleteImageForUser, getImage } from '@/_server/imagesService';
 import baseLogger from '@/_server/logger';
 import { ImageIdSchema } from '@/_types/images';
-import { UserIdSchema } from '@/_types/users';
 import {
   createErrorResponse,
   respondWithError,
@@ -13,11 +12,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 const logger = baseLogger.child({
-  service: 'api:users:user:images',
+  service: 'api:images:image',
 });
 
 const ParamsSchema = z.object({
-  userId: UserIdSchema,
   imageId: ImageIdSchema,
 });
 
@@ -31,7 +29,7 @@ export async function GET(_req: NextRequest, context: RouteContext) {
     if (!success) {
       return createErrorResponse(400, error.message);
     }
-    const { userId, imageId } = data;
+    const { imageId } = data;
 
     const image = await getImage(imageId);
 
@@ -48,7 +46,7 @@ export async function GET(_req: NextRequest, context: RouteContext) {
 
 export async function DELETE(_req: NextRequest, context: RouteContext) {
   try {
-    await validateAuthentication();
+    const session = await validateAuthentication();
 
     const { data, success, error } = ParamsSchema.safeParse(
       await context.params
@@ -56,9 +54,9 @@ export async function DELETE(_req: NextRequest, context: RouteContext) {
     if (!success) {
       return createErrorResponse(400, error.message);
     }
-    const { userId, imageId } = data;
+    const { imageId } = data;
 
-    const deletedImage = await deleteImageForUser(userId, imageId);
+    const deletedImage = await deleteImageForUser(session.user.id, imageId);
     if (!deletedImage) {
       throw new ResponseError(404, `Image not found: ${imageId}`);
     }

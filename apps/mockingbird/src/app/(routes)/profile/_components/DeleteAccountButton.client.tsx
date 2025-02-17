@@ -41,7 +41,11 @@ export function DeleteAccountButton() {
       if (result === 'ok') {
         setIsDeletingUser(true);
         (async () => {
-          await deleteUser(user.id);
+          try {
+            await deleteUser(user.id);
+          } catch (error) {
+            console.error(error);
+          }
           void signOut({ redirect: true, callbackUrl: '/auth/signin' });
         })();
       }

@@ -1,7 +1,7 @@
 import { type UserId } from '@/_types/users';
 import { fetchFromServer } from './fetchFromServer';
-import { ImageSchema, type Image } from '@/_types/images';
-
+import { ImageId, ImageSchema, type Image } from '@/_types/images';
+import { AlbumId } from '@/_types/images';
 /**
  * Upload the image file and associate it with the specified user
  *
@@ -15,13 +15,13 @@ export async function uploadImage(
   file: File,
   metadata?: {
     description?: string;
-    album?: string;
+    albumId?: AlbumId;
   }
 ): Promise<Image> {
   const formData = new FormData();
   formData.append('file', file);
   formData.append('description', metadata?.description || '');
-  formData.append('album', metadata?.album || '');
+  formData.append('albumId', metadata?.albumId || '');
 
   const response = await fetchFromServer(`/users/${userId}/images`, {
     method: 'POST',
@@ -30,11 +30,33 @@ export async function uploadImage(
 
   if (!response.ok) {
     console.error(
-      `Failed to uload image: ${response.status}: ${response.statusText}`
+      `Failed to upload image: ${response.status}: ${response.statusText}`
     );
   }
 
   const rawData = await response.json();
   const newImage = ImageSchema.parse(rawData);
   return newImage;
+}
+
+/**
+ * Fetches an image by its ID from the server.
+ *
+ * @param imageId - The ID of the image to retrieve.
+ * @returns The image object if found, otherwise logs an error.
+ */
+export async function getImage(imageId: ImageId) {
+  const response = await fetchFromServer(`/images/${imageId}`, {
+    method: 'GET',
+  });
+
+  if (!response.ok) {
+    console.error(
+      `Failed to find image: ${response.status}: ${response.statusText}`
+    );
+  }
+
+  const rawData = await response.json();
+  const image = ImageSchema.parse(rawData);
+  return image;
 }

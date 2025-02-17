@@ -1,6 +1,6 @@
 'use client';
 import { XMarkIcon } from '@heroicons/react/20/solid';
-import { Key, PropsWithChildren, ReactNode } from 'react';
+import { HTMLProps, Key, PropsWithChildren, ReactNode } from 'react';
 
 export interface DialogButton<_Result> {
   title: string;
@@ -49,19 +49,20 @@ export function DialogBody({ children }: PropsWithChildren) {
   );
 }
 
-interface DialogButtonProps {
-  title: DialogProps<unknown>['title'];
+interface DialogButtonProps extends PropsWithChildren {
   onClick: () => void;
   intent?: DialogButton<unknown>['intent'];
   key?: Key | null | undefined;
   disabled?: boolean;
+  className?: string;
 }
 
 export function DialogButton({
-  title,
   onClick,
   intent,
   disabled,
+  className,
+  children,
   ...props
 }: DialogButtonProps) {
   return (
@@ -69,28 +70,29 @@ export function DialogButton({
       disabled={disabled}
       type="button"
       onClick={onClick}
-      className={`btn btn-sm bg-${intent ?? 'current'} text-${
+      className={`${className} btn btn-sm bg-${intent ?? 'current'} text-${
         intent ?? 'current'
       }-content`}
       {...props}
     >
-      {title}
+      {children}
     </button>
   );
 }
 
 export function DialogSubmitButton({
-  title,
   intent,
+  className,
+  children,
   ...props
 }: Omit<DialogButtonProps, 'onClick'>) {
   return (
     <button
       type="submit"
-      className={`btn btn-sm bg-${intent ?? 'current'}`}
+      className={`${className} btn btn-sm bg-${intent ?? 'current'}`}
       {...props}
     >
-      {title}
+      {children}
     </button>
   );
 }
@@ -110,12 +112,14 @@ export function DialogActions<_Result>({
       {buttons &&
         buttons.map(({ title, result, intent, disabled }, index) => (
           <DialogButton
+            className="m-1"
             disabled={disabled}
-            title={title}
             intent={intent}
             key={index}
             onClick={() => onClosed(result ?? defaultResult)}
-          ></DialogButton>
+          >
+            {title}
+          </DialogButton>
         ))}
     </div>
   );
