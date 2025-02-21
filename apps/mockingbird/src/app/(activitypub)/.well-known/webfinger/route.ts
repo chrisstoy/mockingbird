@@ -31,7 +31,11 @@ export async function GET(request: NextRequest) {
     const host = headersList.get('host') || domain;
 
     // Verify the domain matches your server
-    if (domain !== host && domain !== 'mockingbird.club') {
+    if (
+      domain !== host &&
+      domain !== 'mockingbird.club' &&
+      domain !== 'mockingbird.chrisstoy.com'
+    ) {
       throw new ResponseError(404, 'Domain does not match this server');
     }
 
