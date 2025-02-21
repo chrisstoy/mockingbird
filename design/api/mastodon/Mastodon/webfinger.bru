@@ -1,0 +1,15 @@
+meta {
+  name: webfinger
+  type: http
+  seq: 2
+}
+
+get {
+  url: https://mastodon.social/.well-known/webfinger?resource=acct:stoyinator@mastodon.social
+  body: none
+  auth: none
+}
+
+params:query {
+  resource: acct:stoyinator@mastodon.social
+}

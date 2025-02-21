@@ -1,0 +1,19 @@
+meta {
+  name: GET actor
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{apiHost}}/actors/:id
+  body: none
+  auth: none
+}
+
+params:path {
+  id: chrisstoy
+}
+
+headers {
+  accept: application/activity+json
+}
