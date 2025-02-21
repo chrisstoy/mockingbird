@@ -10,7 +10,11 @@ const allowedOrigins = [
 ];
 
 export default auth(async (req) => {
-  if (!req.nextUrl.pathname.startsWith('/api') && !req.auth) {
+  if (
+    !req.nextUrl.pathname.startsWith('/api') &&
+    !req.nextUrl.pathname.startsWith('/.well-known/webfinger') &&
+    !req.auth
+  ) {
     // not an API call and not authorized, so require signin before proceeding
     return NextResponse.redirect(
       new URL(

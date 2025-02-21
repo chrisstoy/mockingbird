@@ -37,6 +37,7 @@ export const SimpleUserInfoSchema = z.object({
 export type SimpleUserInfo = z.infer<typeof SimpleUserInfoSchema>;
 
 export const UserInfoSchema = SimpleUserInfoSchema.extend({
+  email: EmailAddressSchema,
   emailVerified: z.coerce.date().nullish(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
