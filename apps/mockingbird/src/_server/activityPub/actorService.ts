@@ -1,21 +1,71 @@
 import { baseUrlForApi } from '@/_apiServices/apiUrlFor';
 import { prisma } from '@/_server/db';
 import baseLogger from '@/_server/logger';
-import { UserInfoSchema } from '@/_types/users';
-import { APActivity, APActor } from 'activitypub-types';
+import { UserIdSchema } from '@/_types/users';
+import { APActor, APCollection } from 'activitypub-types';
+import { z } from 'zod';
+import { APUIDSchema } from './schemas';
+import { ActorIdSchema } from './types';
+import { Actor } from '@prisma/client';
 
 const logger = baseLogger.child({
   service: 'activitypub:service:actor',
 });
 
-export async function doesActorExist(username: string): Promise<boolean> {
-  // TODO - for now, use the email address as the username
+export const ActorSchema = z.object({
+  id: ActorIdSchema,
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
 
+  userId: UserIdSchema.nullable(),
+
+  actorId: APUIDSchema,
+  preferredUsername: z.string(),
+  name: z.string(),
+  summary: z.string(),
+  icon: z.string().nullable(),
+});
+
+export async function actorIdForName(name: string) {
+  const baseUrl = await baseUrlForApi();
+  return `${baseUrl}/actors/${name}`;
+}
+
+/**
+ * Return a collection of all Actors that have a Local account
+ */
+export async function getLocalActors() {
+  try {
+    const rawActors = await prisma.actor.findMany({
+      where: {
+        userId: {
+          not: null,
+        },
+      },
+    });
+
+    const actors = z.array(ActorSchema).parse(rawActors);
+
+    const actorUIDs = actors.map(({ actorId }) => actorId);
+
+    const actorCollection: APCollection = {
+      type: 'Collection',
+      totalItems: actorUIDs.length,
+      items: actorUIDs,
+    };
+    return actorCollection;
+  } catch (error) {
+    logger.error(error);
+    return undefined;
+  }
+}
+
+export async function doesActorExist(name: string): Promise<boolean> {
   const rawData = await prisma.user.findFirst({
     where: {
-      email: {
-        contains: `${username}@`,
-        mode: 'insensitive',
+      name: {
+        contains: name,
+        // mode: 'insensitive', // not supporte din sqlite
       },
     },
   });
@@ -23,36 +73,42 @@ export async function doesActorExist(username: string): Promise<boolean> {
   return !!rawData;
 }
 
-export async function getActorByName(username: string) {
-  // TODO - for now, use the email address as the username
+export async function getActorByName(name: string) {
+  logger.info(`Search for Actor with username: ${name}`);
 
-  logger.info(`Search for Actor with username: ${username}`);
-
-  const rawData = await prisma.user.findFirst({
+  const rawActor = await prisma.actor.findFirst({
     where: {
-      email: {
-        contains: `${username}@`,
-        mode: 'insensitive',
+      name: {
+        contains: name,
+        // mode: 'insensitive', // not supporte din sqlite
       },
     },
   });
 
-  if (!rawData) {
+  if (!rawActor) {
+    logger.error(`Actor with username: ${name} not found`);
     return undefined;
   }
 
-  const user = UserInfoSchema.parse(rawData);
-  if (!user) {
-    return undefined;
-  }
+  const actor = ActorSchema.parse(rawActor);
 
-  const hostApi = await baseUrlForApi();
+  const apActor = createAPActorFrom(actor);
+  return apActor;
+}
 
-  const actor: APActor = {
-    id: `acct:${username}@mockingbird.club`,
-    name: user.name,
-    inbox: `${hostApi}/api/inbox/${username}`,
-    outbox: `${hostApi}/api/outbox/${username}`,
+function createAPActorFrom(dbActor: Actor) {
+  const apActor: APActor = {
+    type: 'Person',
+    id: dbActor.actorId,
+    name: dbActor.name,
+    preferredUsername: dbActor.preferredUsername,
+    summary: dbActor.summary,
+    icon: dbActor.icon ?? undefined,
+    inbox: `${dbActor.actorId}/inbox`,
+    outbox: `${dbActor.actorId}/outbox`,
+    followers: `${dbActor.actorId}/followers`,
+    following: `${dbActor.actorId}/following`,
+    liked: `${dbActor.actorId}/liked`,
   };
-  return actor;
+  return apActor;
 }

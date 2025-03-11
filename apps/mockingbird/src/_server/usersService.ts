@@ -3,6 +3,8 @@ import baseLogger from '@/_server/logger';
 import { UserId, UserInfoSchema } from '@/_types/users';
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
+import { actorIdForName, ActorSchema } from './activityPub/actorService';
+import { Prisma } from '@prisma/client';
 
 const logger = baseLogger.child({
   service: 'users:service',
@@ -74,40 +76,64 @@ export async function createUser(
 ) {
   logger.info(`Creating new user with name: '${name}' and email: ${email}`);
 
-  const rawData = await prisma.user.create({
-    data: {
-      email,
-      name,
+  const [newUser, newActor, passwordResult] = await prisma.$transaction(
+    async (tx) => {
+      const rawData = await tx.user.create({
+        data: {
+          email,
+          name,
+        },
+      });
+
+      const newUser = UserInfoSchema.parse(rawData);
+
+      // create the activityPub actor for this user
+      const actorId = await actorIdForName(newUser.name);
+      const rawActor = await tx.actor.create({
+        data: {
+          userId: newUser.id,
+          actorId,
+          preferredUsername: newUser.name,
+          name: newUser.name,
+          summary: `Mockingbird created user: ${newUser.name}`,
+          icon: null,
+        },
+      });
+      const newActor = ActorSchema.parse(rawActor);
+
+      // save password
+      const today = new Date();
+      const expiresAt = new Date(
+        today.getFullYear() + 1,
+        today.getMonth(),
+        today.getDate()
+      );
+      try {
+        const salt = await bcrypt.genSalt(10);
+        const encryptedPassword = await bcrypt.hash(password, salt);
+        const passwordResult = await tx.passwords.create({
+          data: {
+            userId: newUser.id,
+            password: encryptedPassword,
+            expiresAt,
+          },
+        });
+
+        return [newUser, newActor, passwordResult];
+      } catch (err) {
+        logger.error(err);
+        throw new Error('Failed to encrypt password');
+      }
     },
-  });
-
-  const newUser = UserInfoSchema.parse(rawData);
-
-  const today = new Date();
-  const expiresAt = new Date(
-    today.getFullYear() + 1,
-    today.getMonth(),
-    today.getDate()
+    {
+      isolationLevel: Prisma.TransactionIsolationLevel.Serializable, // optional, default defined by database configuration
+    }
   );
-
-  try {
-    const salt = await bcrypt.genSalt(10);
-    const encryptedPassword = await bcrypt.hash(password, salt);
-    const passwordResult = await prisma.passwords.create({
-      data: {
-        userId: newUser.id,
-        password: encryptedPassword,
-        expiresAt,
-      },
-    });
-    logger.info(
-      `Created new user: ${newUser} with password expiration: ${passwordResult.expiresAt.toISOString()}`
-    );
-    return newUser.id;
-  } catch (err) {
-    logger.error(err);
-    throw new Error('Failed to encrypt password');
-  }
+  logger.info(
+    `Created new user: ${JSON.stringify(newUser)}, new actor: ${JSON.stringify(
+      newActor
+    )}, with password expiration: ${passwordResult.expiresAt.toISOString()}`
+  );
 }
 
 export async function deleteUser(userId: UserId) {

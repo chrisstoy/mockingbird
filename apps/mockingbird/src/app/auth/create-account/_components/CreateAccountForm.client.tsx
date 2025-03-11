@@ -92,7 +92,7 @@ export function CreateAccountForm() {
         <FormTextInput
           {...register('name')}
           error={errors?.name}
-          placeholder="Full Name"
+          placeholder="Nickname/Handle"
         ></FormTextInput>
         <FormTextInput
           {...register('email')}

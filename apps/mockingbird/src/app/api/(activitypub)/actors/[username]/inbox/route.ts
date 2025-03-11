@@ -1,13 +1,14 @@
 // user-specific inbox
 import { NextRequest } from 'next/server';
-import { respondWithError, ResponseError } from '@/app/api/errors';
+import { respondWithError } from '@/app/api/errors';
 import baseLogger from '@/_server/logger';
 import { RouteContext } from '@/app/types';
 import { z } from 'zod';
 import { APActivity } from 'activitypub-types';
+import { processActivity } from '@/_server/activityPub/activityService';
 
 const logger = baseLogger.child({
-  service: 'api:activitypub:inbox:username',
+  service: 'api:activitypub:actors:inbox',
 });
 
 const ParamsSchema = z.object({
@@ -19,11 +20,12 @@ const ParamsSchema = z.object({
 export async function POST(req: NextRequest, context: RouteContext) {
   try {
     const { username } = ParamsSchema.parse(await context.params);
-
     const rawData = await req.json();
     const activity = rawData as APActivity;
 
-    throw new ResponseError(405, `inbox not supported`);
+    // TODO - handle authentication!
+
+    await processActivity(activity);
   } catch (error) {
     logger.error(error);
     return respondWithError(error);

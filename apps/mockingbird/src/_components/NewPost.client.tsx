@@ -31,7 +31,7 @@ export function NewPost({ user }: Props) {
       return;
     }
 
-    const result = await createPost(user.id, content.message);
+    const result = await createPost(user, content.message);
     console.log(`Create a post with content: ${JSON.stringify(result)}`);
     router.refresh();
   }

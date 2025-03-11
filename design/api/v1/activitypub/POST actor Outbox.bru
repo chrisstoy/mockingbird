@@ -1,0 +1,36 @@
+meta {
+  name: POST actor Outbox
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{apiHost}}/api/actors/:id/outbox
+  body: json
+  auth: none
+}
+
+params:path {
+  id: bilbo
+}
+
+headers {
+  Content-Type: application/activity+json
+}
+
+body:json {
+  {
+    "@context": ["https://www.w3.org/ns/activitystreams",{"@language": "en"}],
+    "type": "Create",
+    "actor": "https://mockingbird.club/api/actors/bilbo",
+    "object": {
+      "type": "Note",
+      "attributedTo": "https://mockingbird.club/api/actors/bilbo",
+      "content": "Hello ActivityPub world! This is my first post.",
+      "to": ["https://www.w3.org/ns/activitystreams#Public"],
+      "cc": ["https://mockingbird.club/api/actors/bilbo/followers"]
+    },
+    "to": ["https://www.w3.org/ns/activitystreams#Public"],
+    "cc": ["https://mockingbird.club/api/actors/bilbo/followers"]
+  }
+}

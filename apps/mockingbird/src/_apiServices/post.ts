@@ -1,22 +1,56 @@
 import { Post, PostId, PostSchema } from '@/_types/post';
-import { UserId } from '@/_types/users';
+import { SessionUser, UserId } from '@/_types/users';
 import { z } from 'zod';
-import { fetchFromServer } from './fetchFromServer';
+import { fetchFromServer, getBaseApiUrl } from './fetchFromServer';
+import { APActivity } from 'activitypub-types';
 
 export async function createPost(
-  userId: UserId,
+  user: SessionUser,
   content: string
 ): Promise<Post> {
-  const response = await fetchFromServer(`/posts`, {
+  // TODO - create an Create Activity with a Note object
+
+  const baseApiUrl = await getBaseApiUrl();
+  const actor = `${baseApiUrl}/api/actors/${user.name}`;
+
+  const activiy: APActivity = {
+    type: 'Create',
+    actor,
+    object: {
+      type: 'Note',
+      attributedTo: actor,
+      content,
+      to: [`${actor}/followers`],
+      cc: [],
+    },
+    to: [`${actor}/followers`],
+    cc: [],
+  };
+
+  const response = await fetchFromServer(`/actors/${user.name}/outbox`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/activity+json',
     },
     body: JSON.stringify({
-      posterId: userId,
-      content,
+      '@context': [
+        'https://www.w3.org/ns/activitystreams',
+        { '@language': 'en' },
+      ],
+      ...activiy,
     }),
   });
+
+  // const response = await fetchFromServer(`/posts`, {
+  //   method: 'POST',
+  //   headers: {
+  //     'Content-Type': 'application/json',
+  //   },
+  //   body: JSON.stringify({
+  //     posterId: userId,
+  //     content,
+  //   }),
+  // });
 
   if (!response.ok) {
     console.error(

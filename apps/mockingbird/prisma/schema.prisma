@@ -7,11 +7,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// datasource db {
+//   provider = "sqlite"
+//   url      = "file:./mockingbird-dev.db"
+// }
+
 // #region -- Next-Auth Tables
 
 model User {
   id            String    @id @default(cuid())
-  name          String
+  name          String    @unique
   email         String?   @unique
   emailVerified DateTime?
   image         String?
@@ -23,8 +28,10 @@ model User {
   updatedAt DateTime @updatedAt
 
   // Mockingbird specific references
-  posts   Post[]
-  friends Friends[]
+  posts    Post[]
+  friends  Friends[]
+  activity Activity[]
+  Actor    Actor[]
 }
 
 model Account {
@@ -144,6 +151,88 @@ model Album {
   name    String
 
   images Image[] // images in this album
+}
+
+// #endregion
+
+// #regio ActivityPub
+model Activity {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  actorId  String? // the User id for this Actor (if local)
+  actorURI String // the URI for this Actor (could be remote)
+
+  type       String // the Type of Activity
+  objectType String // the Type of Object
+  objectId   String // the ID of the Object (depends on the objectType)
+
+  actor User? @relation(fields: [actorId], references: [id], onDelete: Cascade)
+}
+
+// Actors point to either a local user, or represent a remote Actor
+model Actor {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String? // the User id for this Actor, if local
+
+  actorId           String
+  preferredUsername String
+  name              String
+  summary           String
+  icon              String?
+
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Followers {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  actorURI    String // user who is being followed
+  followerURI String // user that is following the actor
+}
+
+model Following {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  actorURI   String // user who is following
+  follingURI String // user that is is being followed
+}
+
+model Note {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  attributedToId String // actor that created the note
+  content        String // the content of the note
+  attachments    String // the attachments of the note
+  tags           String // the tags of the note
+}
+
+model Attachment {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  type String
+}
+
+model Hashtag {
+  id String @id @default(cuid())
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name String
+  href String
 }
 
 // #endregion

@@ -2,6 +2,8 @@ import { APActivity } from 'activitypub-types';
 import { z } from 'zod';
 import baseLogger from '../logger';
 import { queueForFederation } from './federationService';
+import { processFollowActivity } from './followerService';
+import { isAPFollow } from './types';
 
 const logger = baseLogger.child({
   service: 'activitypub:service:activity',
@@ -35,35 +37,30 @@ export async function validateActivity(_activity: APActivity) {
   return context.includes('https://www.w3.org/ns/activitystreams');
 }
 
+/**
+ * Process the delivered Activity
+ * @param activity
+ */
 export async function processActivity(activity: APActivity) {
   if (!validateActivity(activity)) {
     throw new Error('Invalid activity');
   }
 
-  // Process based on activity type
-  switch (activity.type) {
-    // case 'Create':
-    //   await handleCreate(activity);
-    //   break;
-    // case 'Follow':
-    //   await handleFollow(activity);
-    //   break;
-    // case 'Like':
-    //   await handleLike(activity);
-    //   break;
-    // case 'Announce':
-    //   await handleAnnounce(activity);
-    //   break;
-    // case 'Delete':
-    //   await handleDelete(activity);
-    //   break;
-    // case 'Undo':
-    //   await handleUndo(activity);
-    //   break;
-    default:
-      console.log(`Unhandled activity type: ${activity.type}`);
+  if (isAPFollow(activity)) {
+    await processFollowActivity(activity);
   }
 
-  // Queue for federation if needed
-  await queueForFederation(activity);
+  if (isAPAccept(activity)) {
+  }
+
+  logger.error(`Unhandled activity type: ${activity.type}`);
+  throw new Error(`Unhandled activity type: ${activity.type}`);
+}
+
+/**
+ *
+ * @param activity
+ */
+export async function deliverActivity(activity: APActivity) {
+  // TODO - implement this!
 }
