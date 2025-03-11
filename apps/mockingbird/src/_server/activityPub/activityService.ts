@@ -1,8 +1,7 @@
 import { APActivity } from 'activitypub-types';
 import { z } from 'zod';
 import baseLogger from '../logger';
-import { queueForFederation } from './federationService';
-import { processFollowActivity } from './followerService';
+import { processOutboxFollowActivity } from './followerService';
 import { isAPFollow } from './types';
 
 const logger = baseLogger.child({
@@ -47,10 +46,7 @@ export async function processActivity(activity: APActivity) {
   }
 
   if (isAPFollow(activity)) {
-    await processFollowActivity(activity);
-  }
-
-  if (isAPAccept(activity)) {
+    await processOutboxFollowActivity(activity);
   }
 
   logger.error(`Unhandled activity type: ${activity.type}`);
