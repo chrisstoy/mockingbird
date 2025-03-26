@@ -31,3 +31,11 @@ export function createDatabaseIdSchema<_T>() {
     }
   });
 }
+
+/**
+ * Base database schema
+ */
+export const BaseDBSchema = z.object({
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+});

@@ -49,3 +49,7 @@ export async function processCreateActivity(activity: APCreate) {
 
   throw new Error(`Object type nosupported: ${rawObject.type}`);
 }
+
+export async function getOutboxCollectionFor() {
+  
+}

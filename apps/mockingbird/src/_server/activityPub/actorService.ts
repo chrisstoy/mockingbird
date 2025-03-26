@@ -1,10 +1,10 @@
 import { baseUrlForApi } from '@/_apiServices/apiUrlFor';
 import { prisma } from '@/_server/db';
 import baseLogger from '@/_server/logger';
-import { UserIdSchema } from '@/_types/users';
+import { UserId, UserIdSchema } from '@/_types/users';
 import { APActor, APCollection } from 'activitypub-types';
 import { z } from 'zod';
-import { APUIDSchema } from './schemas';
+import { APActorSchema, APUIDSchema } from './schemas';
 import { ActorIdSchema } from './types';
 import { Actor } from '@prisma/client';
 
@@ -60,6 +60,26 @@ export async function getLocalActors() {
   }
 }
 
+export async function getActorByUserId(userId: UserId) {
+  logger.info(`Search for Actor with userId: ${userId}`);
+
+  const rawActor = await prisma.actor.findFirst({
+    where: {
+      id: userId,
+    },
+  });
+
+  if (!rawActor) {
+    logger.warn(`Actor with userId: ${userId} not found`);
+    return undefined;
+  }
+
+  const actor = ActorSchema.parse(rawActor);
+
+  const apActor = createAPActorFrom(actor);
+  return apActor;
+}
+
 export async function doesActorExist(name: string): Promise<boolean> {
   const rawData = await prisma.user.findFirst({
     where: {
@@ -97,7 +117,7 @@ export async function getActorByName(name: string) {
 }
 
 function createAPActorFrom(dbActor: Actor) {
-  const apActor: APActor = {
+  const apActor = APActorSchema.parse({
     type: 'Person',
     id: dbActor.actorId,
     name: dbActor.name,
@@ -109,6 +129,6 @@ function createAPActorFrom(dbActor: Actor) {
     followers: `${dbActor.actorId}/followers`,
     following: `${dbActor.actorId}/following`,
     liked: `${dbActor.actorId}/liked`,
-  };
-  return apActor;
+  });
+  return apActor as unknown as APActor;
 }

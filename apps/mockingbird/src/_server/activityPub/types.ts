@@ -2,6 +2,7 @@ import { createDatabaseIdSchema } from '@/_types/type-utilities';
 import {
   APAccept,
   APActivity,
+  APActor,
   APArticle,
   APAudio,
   APBlock,
@@ -28,6 +29,9 @@ import {
 
 export type ActorId = string & { brand: 'ActorId' };
 export const ActorIdSchema = createDatabaseIdSchema<ActorId>();
+
+export type NoteId = string & { brand: 'NoteId' };
+export const NoteIdSchema = createDatabaseIdSchema<NoteId>();
 
 // #region APActivity types
 export function isAPCreate(object: APActivity): object is APCreate {
@@ -77,6 +81,16 @@ export function isAPLink(object: unknown): object is APLink {
 }
 
 // #region APObject types
+export function isAPActor(object: APObject): object is APActor {
+  return (
+    object.type === 'Application' ||
+    object.type === 'Group' ||
+    object.type === 'Organization' ||
+    object.type === 'Person' ||
+    object.type === 'Service'
+  );
+}
+
 export function isAPArticle(object: APObject): object is APArticle {
   return object.type === 'Article';
 }

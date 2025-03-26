@@ -2,15 +2,15 @@ generator client {
   provider = "prisma-client-js"
 }
 
-datasource db {
-  provider = "cockroachdb"
-  url      = env("DATABASE_URL")
-}
-
 // datasource db {
-//   provider = "sqlite"
-//   url      = "file:./mockingbird-dev.db"
+//   provider = "cockroachdb"
+//   url      = env("DATABASE_URL")
 // }
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./mockingbird-dev.db"
+}
 
 // #region -- Next-Auth Tables
 
@@ -28,10 +28,8 @@ model User {
   updatedAt DateTime @updatedAt
 
   // Mockingbird specific references
-  posts    Post[]
-  friends  Friends[]
   activity Activity[]
-  Actor    Actor[]
+  actor    Actor[]
 }
 
 model Account {
@@ -92,37 +90,6 @@ model Passwords {
 // #endregion
 
 // #region Mockingbird
-model Post {
-  id               String  @id @default(cuid())
-  posterId         String
-  responseToPostId String?
-  content          String
-  likeCount        Int     @default(0)
-  dislikeCount     Int     @default(0)
-  imageId          String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  poster User @relation(fields: [posterId], references: [id], onDelete: Cascade)
-
-  responseTo Post?  @relation("Responses", fields: [responseToPostId], references: [id], onDelete: Cascade)
-  responses  Post[] @relation("Responses")
-
-  image Image? @relation(fields: [imageId], references: [id], onDelete: SetNull)
-}
-
-model Friends {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  userId   String // user who makes the friend request
-  friendId String // user to be friends with
-  accepted Boolean // true if the friendship is accepted
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
 
 model Image {
   id        String   @id @default(cuid())
@@ -138,8 +105,6 @@ model Image {
   albumId     String?
 
   album Album? @relation(fields: [albumId], references: [id], onDelete: SetNull)
-
-  posts Post[] // posts that reference this image
 }
 
 model Album {
@@ -211,28 +176,75 @@ model Note {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  attributedToId String // actor that created the note
-  content        String // the content of the note
-  attachments    String // the attachments of the note
-  tags           String // the tags of the note
+  // ActivityPub fields
+  activityId String   @unique // ActivityPub ID URI
+  content    String
+  published  DateTime
+  url        String
+  isPublic   Boolean  @default(true)
+
+  // Relationships
+  attributedTo String // the ID of the Author that created the Note
+  audiences    Audience[]
+  attachments  Attachment[]
+  noteTags     NoteTag[]
+
+  @@index([published])
+  @@index([activityId])
+  @@index([attributedTo])
+}
+
+model Audience {
+  id           String @id @default(cuid())
+  noteId       String
+  audienceType String // 'to', 'cc', 'bto', 'bcc'
+  audienceUri  String
+
+  // Relationships
+  note Note @relation(fields: [noteId], references: [id], onDelete: Cascade)
+
+  @@index([noteId, audienceType])
 }
 
 model Attachment {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        String  @id @default(cuid())
+  noteId    String
+  type      String // 'Image', 'Video', 'Audio', etc.
+  mediaType String // MIME type
+  url       String
+  name      String?
+  width     Int?
+  height    Int?
+  fileSize  BigInt?
 
-  type String
+  // Relationships
+  note Note @relation(fields: [noteId], references: [id], onDelete: Cascade)
+
+  @@index([noteId])
 }
 
-model Hashtag {
-  id String @id @default(cuid())
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
+model Tag {
+  id   String @id @default(cuid())
   name String
-  href String
+  type String // 'Hashtag', 'Mention', 'Emoji', etc.
+
+  // Relationships
+  noteTags NoteTag[]
+
+  @@unique([name, type])
+}
+
+model NoteTag {
+  noteId String
+  tagId  String
+  href   String? // Optional link for the tag
+
+  // Relationships
+  note Note @relation(fields: [noteId], references: [id], onDelete: Cascade)
+  tag  Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([noteId, tagId])
+  @@index([tagId])
 }
 
 // #endregion

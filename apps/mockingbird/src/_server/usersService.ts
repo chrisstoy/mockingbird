@@ -19,13 +19,13 @@ export async function getUsersMatchingQuery(query: string) {
         {
           name: {
             contains: query,
-            mode: 'insensitive',
+            // mode: 'insensitive',
           },
         },
         {
           email: {
             contains: query,
-            mode: 'insensitive',
+            // mode: 'insensitive',
           },
         },
       ],
@@ -143,42 +143,42 @@ export async function deleteUser(userId: UserId) {
       postsDeleted,
       friendshipsDeleted,
       sessionsDeleted,
-      accountsDeleted,
-      passwordDeleted,
-      userDeleted,
+      // accountsDeleted,
+      // passwordDeleted,
+      // userDeleted,
     ] = await prisma.$transaction([
       // delete comments to Posts by user
-      prisma.post.deleteMany({
-        where: {
-          responseToPostId: {
-            not: null, // ensure it is a response
-          },
-          responseTo: {
-            posterId: userId, // original post was by user being deleted
-          },
-        },
-      }),
+      // prisma.post.deleteMany({
+      //   where: {
+      //     responseToPostId: {
+      //       not: null, // ensure it is a response
+      //     },
+      //     responseTo: {
+      //       posterId: userId, // original post was by user being deleted
+      //     },
+      //   },
+      // }),
 
       // delete Posts by user
-      prisma.post.deleteMany({
-        where: {
-          posterId: userId,
-        },
-      }),
+      // prisma.post.deleteMany({
+      //   where: {
+      //     posterId: userId,
+      //   },
+      // }),
 
       // delete Friendships
-      prisma.friends.deleteMany({
-        where: {
-          OR: [
-            {
-              userId: userId,
-            },
-            {
-              friendId: userId,
-            },
-          ],
-        },
-      }),
+      // prisma.friends.deleteMany({
+      //   where: {
+      //     OR: [
+      //       {
+      //         userId: userId,
+      //       },
+      //       {
+      //         friendId: userId,
+      //       },
+      //     ],
+      //   },
+      // }),
 
       // delete Sessions
       prisma.session.deleteMany({
@@ -214,9 +214,9 @@ export async function deleteUser(userId: UserId) {
       postsDeleted,
       friendshipsDeleted,
       sessionsDeleted,
-      accountsDeleted,
-      passwordDeleted,
-      userDeleted,
+      // accountsDeleted,
+      // passwordDeleted,
+      // userDeleted,
     };
 
     logger.info(`DELETE User: ${JSON.stringify(results)}`);

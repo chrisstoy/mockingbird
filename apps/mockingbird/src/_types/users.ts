@@ -1,5 +1,7 @@
 import { z, ZodIssueCode } from 'zod';
 import { createDatabaseIdSchema } from './type-utilities';
+import { APActorSchema } from '@/_server/activityPub/schemas';
+import { APActor } from 'activitypub-types';
 
 export type UserId = string & { __brand: 'UserId' };
 export const UserIdSchema = createDatabaseIdSchema<UserId>();

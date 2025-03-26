@@ -66,7 +66,7 @@ export const APObjectSchema = z.union([z.literal('Note'), z.literal('Create')]);
 /**
  * Supported Object types
  */
-export const APobjectTypeSchema = z.union([
+export const APObjectTypeSchema = z.union([
   z.literal('Note'),
   z.literal('Actor'),
   z.literal('Like'),
@@ -76,4 +76,30 @@ export const APActivitySchema = z.object({
   '@context': z.string().or(z.string().array()),
   type: APActivityTypeSchema,
   actor: z.string(),
+});
+
+export const APImageSchema = z.object({
+  type: z.literal('Image'),
+  url: z.string().url(),
+});
+
+export const APLinkSchema = z.object({
+  type: z.literal('Link'),
+  href: z.string().url(),
+});
+
+export const IconFieldSchema = z.string().or(APImageSchema).or(APLinkSchema);
+
+export const APActorSchema = z.object({
+  id: APUIDSchema.optional(),
+  preferredUsername: z.string().optional(),
+  name: z.string(),
+  summary: z.string().optional(),
+  icon: IconFieldSchema.or(z.array(IconFieldSchema)).optional(),
+  type: z.string().or(z.string().array()).optional(),
+  inbox: z.string().url(),
+  outbox: z.string().url(),
+  followers: z.string().url().optional(),
+  following: z.string().url().optional(),
+  liked: z.string().url().optional(),
 });
