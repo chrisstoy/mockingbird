@@ -1,4 +1,5 @@
 'use client';
+import { uploadImage } from '@/_apiServices/images';
 import { createPost } from '@/_apiServices/post';
 import { SessionUser } from '@/_types/users';
 import { GENERIC_USER_IMAGE_URL } from '@/constants';
@@ -27,11 +28,21 @@ export function NewPost({ user }: Props) {
   async function handleCreatePost(content: SubmitPostOptions) {
     dialogManager.hidePostEditor();
 
-    if (!user || !user.id || content.message.length === 0) {
+    if (!user || (!content.message?.length && !content.image)) {
       return;
     }
 
-    const result = await createPost(user.id, content.message);
+    const uploadNewImage = async (imageFile: File) => {
+      const image = await uploadImage(user.id, imageFile);
+      return image.id;
+    };
+
+    const imageId =
+      content.image instanceof File
+        ? await uploadNewImage(content.image)
+        : content.image;
+
+    const result = await createPost(user.id, content.message, imageId);
     console.log(`Create a post with content: ${JSON.stringify(result)}`);
     router.refresh();
   }

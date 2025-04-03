@@ -1,18 +1,20 @@
 'use client';
+import { getUser } from '@/_apiServices/users';
 import { useSessionUser } from '@/_hooks/useSessionUser';
-import { Post } from '@/_types/post';
+import { type Post } from '@/_types/post';
+import { GENERIC_USER_IMAGE_URL } from '@/constants';
 import {
   DialogActions,
   DialogBody,
   DialogButton,
   DialogHeader,
-  EditorAPI,
-  EditorDelta,
+  type EditorDelta,
   TextEditor,
 } from '@mockingbird/stoyponents';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AddToPostOptions } from './AddToPostOptions.client';
 import { ImageView } from './ImageView';
+import { PostView } from './PostView';
 
 type Props = {
   onSubmitPost: ({
@@ -34,28 +36,43 @@ export function PostEditorDialog({
   const user = useSessionUser();
 
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const editorApi = useRef<EditorAPI>(null);
 
-  const [newContent, setNewContent] = useState<EditorDelta | undefined>(
-    undefined
-  );
-  const [imageFile, setImageFile] = useState<File | undefined>();
-  const [imageUrl, setImageUrl] = useState<string | undefined>();
+  const [newContent, setNewContent] = useState<EditorDelta>();
 
+  const [imageFile, setImageFile] = useState<File>();
+  const [imageUrl, setImageUrl] = useState<string>();
+
+  const [posterInfo, setPosterInfo] = useState<{
+    userName: string;
+    imageSrc: string;
+  }>({
+    userName: 'Unknown',
+    imageSrc: GENERIC_USER_IMAGE_URL,
+  });
+
+  // release the url when the component unmounts
   useEffect(() => {
-    if (imageUrl) {
-      URL.revokeObjectURL(imageUrl);
-    }
-
-    setImageUrl(imageFile ? URL.createObjectURL(imageFile) : undefined);
-
     return () => {
       if (imageUrl) {
         URL.revokeObjectURL(imageUrl);
       }
     };
-  }, [imageFile]);
+  }, [imageUrl]);
 
+  // if there is an original post, get the poster's info
+  useEffect(() => {
+    if (originalPost) {
+      (async () => {
+        const poster = await getUser(originalPost.posterId);
+        setPosterInfo({
+          userName: poster?.name ?? 'Unknown',
+          imageSrc: poster?.image ?? GENERIC_USER_IMAGE_URL,
+        });
+      })();
+    }
+  }, [originalPost]);
+
+  // open the dialog and close it automatically
   useEffect(() => {
     const dialog = dialogRef.current;
     dialog?.showModal();
@@ -70,22 +87,22 @@ export function PostEditorDialog({
       return;
     }
 
-    // upload the image and get reference to it
-    // let imageId: ImageId | undefined;
-    // if (imageFile) {
-    //   const { id } = await uploadImage(user.id, imageFile);
-    //   imageId = id;
-    // }
-    // if (imageUrl) {
-    //   URL.revokeObjectURL(imageUrl);
-    // }
+    if (imageUrl) {
+      URL.revokeObjectURL(imageUrl);
+    }
 
-    const content = JSON.stringify(newContent);
+    const content = JSON.stringify(newContent ?? { ops: [] });
     onSubmitPost({ content, imageFile });
-  }, [user, imageFile, newContent]);
+  }, [user, imageFile, imageUrl, newContent, onSubmitPost]);
 
-  const handleImageUpload = useCallback((file: File) => {
+  const handleImageSelected = useCallback((file: File) => {
     setImageFile(file);
+    setImageUrl((oldUrl) => {
+      if (oldUrl) {
+        URL.revokeObjectURL(oldUrl);
+      }
+      return URL.createObjectURL(file);
+    });
   }, []);
 
   const handleRemoveImage = useCallback(() => {
@@ -100,26 +117,31 @@ export function PostEditorDialog({
     >
       <div className="flex flex-col h-full">
         <DialogHeader
-          title={'Create a Post'}
+          title={
+            originalPost ? `${posterInfo.userName}'s Post` : `Create a Post`
+          }
           onClosed={onClosed}
         ></DialogHeader>
         <DialogBody>
           <div className="h-full flex flex-col">
             <div className="h-[1px] flex flex-col flex-auto overflow-scroll">
-              <TextEditor
-                ref={editorApi}
-                initialContent={originalPost?.content}
-                onChangeDelta={setNewContent}
-              ></TextEditor>
+              {originalPost && (
+                <PostView
+                  posterInfo={posterInfo}
+                  post={originalPost}
+                ></PostView>
+              )}
+
               <ImageView
                 imageUrl={imageUrl}
                 onRemoveImage={handleRemoveImage}
               ></ImageView>
+              <TextEditor onChangeDelta={setNewContent}></TextEditor>
             </div>
-            {/* <AddToPostOptions
-              onImageSelected={handleImageUpload}
-              disableImageSelection={imageFile !== null}
-            ></AddToPostOptions> */}
+            <AddToPostOptions
+              onImageSelected={handleImageSelected}
+              disableImageSelection={!!imageFile}
+            ></AddToPostOptions>
           </div>
         </DialogBody>
         <DialogActions

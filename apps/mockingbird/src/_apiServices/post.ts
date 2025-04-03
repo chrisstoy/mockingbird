@@ -2,10 +2,12 @@ import { Post, PostId, PostSchema } from '@/_types/post';
 import { UserId } from '@/_types/users';
 import { z } from 'zod';
 import { fetchFromServer } from './fetchFromServer';
+import { ImageId } from '@/_types/images';
 
 export async function createPost(
   userId: UserId,
-  content: string
+  content: string,
+  imageId?: ImageId
 ): Promise<Post> {
   const response = await fetchFromServer(`/posts`, {
     method: 'POST',
@@ -15,6 +17,7 @@ export async function createPost(
     body: JSON.stringify({
       posterId: userId,
       content,
+      imageId,
     }),
   });
 
@@ -68,7 +71,8 @@ export async function getFirstCommentForPost(
 export async function commentOnPost(
   userId: UserId,
   postId: PostId,
-  content: string
+  content: string,
+  imageId?: ImageId
 ): Promise<Post> {
   const response = await fetchFromServer(`/posts/${postId}/comments`, {
     method: 'POST',
@@ -78,6 +82,7 @@ export async function commentOnPost(
     body: JSON.stringify({
       posterId: userId,
       content,
+      imageId,
     }),
   });
 

@@ -2,6 +2,7 @@ import { type UserId } from '@/_types/users';
 import { fetchFromServer } from './fetchFromServer';
 import { ImageId, ImageSchema, type Image } from '@/_types/images';
 import { AlbumId } from '@/_types/images';
+
 /**
  * Upload the image file and associate it with the specified user
  *

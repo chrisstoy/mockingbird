@@ -1,7 +1,7 @@
 import { prisma } from '@/_server/db';
 import baseLogger from '@/_server/logger';
 import { ImageId } from '@/_types/images';
-import { CreatePostDataSchema, PostId, PostSchema } from '@/_types/post';
+import { PostId, PostSchema } from '@/_types/post';
 import { UserId } from '@/_types/users';
 import { errorToString } from '@/_utils/errorToString';
 import { z } from 'zod';
@@ -13,13 +13,15 @@ const logger = baseLogger.child({
 export async function createPost(
   posterId: UserId,
   content: string,
-  responseToPostId?: PostId | null
+  responseToPostId?: PostId | null,
+  imageId?: ImageId
 ) {
   try {
     const data = {
       posterId,
       content,
       responseToPostId,
+      imageId,
     };
 
     const rawData = await prisma.post.create({

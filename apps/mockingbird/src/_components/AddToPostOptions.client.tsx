@@ -1,4 +1,6 @@
+'use client';
 import { FileSelectButton } from '@mockingbird/stoyponents';
+import { PhotoIcon } from '@heroicons/react/24/solid';
 
 interface Props {
   onImageSelected: (file: File) => void;
@@ -15,9 +17,12 @@ export function AddToPostOptions({
       <FileSelectButton
         className="join-item"
         tooltip="Add Image"
+        accept="image/*"
         onFileSelected={onImageSelected}
         disabled={disableImageSelection}
-      ></FileSelectButton>
+      >
+        <PhotoIcon></PhotoIcon>
+      </FileSelectButton>
     </div>
   );
 }
