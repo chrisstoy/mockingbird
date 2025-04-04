@@ -1,23 +1,26 @@
 'use client';
-import { ImageId } from '@/_types/images';
-import { Post } from '@/_types/post';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { PostEditorDialog } from './PostEditorDialog.client';
+import { SelectImageDialog } from './SelectImageDialog.client';
 
-export interface SubmitPostOptions {
-  message: string;
-  image?: File | ImageId;
-}
-interface PostEditorOptions {
-  onSubmitPost: (content: SubmitPostOptions) => void;
-  originalPost?: Post;
-}
+type PostEditorOptions = Omit<
+  Parameters<typeof PostEditorDialog>[0],
+  'onClosed'
+>;
+type SelectImageOptions = Omit<
+  Parameters<typeof SelectImageDialog>[0],
+  'onClosed'
+>;
 
 export interface DialogManagerState {
   postEditorOptions: PostEditorOptions | undefined;
   showPostEditor(options: PostEditorOptions): void;
   hidePostEditor(): void;
+
+  selectImageOptions: SelectImageOptions | undefined;
+  showSelectImage(options: SelectImageOptions): void;
+  hideSelectImage(): void;
 }
 
 export const useDialogManager = create<DialogManagerState>()(
@@ -35,15 +38,25 @@ export function DialogManager() {
     <>
       {state.postEditorOptions && (
         <PostEditorDialog
-          onSubmitPost={(data) => {
+          onSubmitPost={({ content, image: imageFile }) => {
             state.postEditorOptions?.onSubmitPost({
-              message: data.content,
-              image: data.imageFile,
+              content,
+              image: imageFile,
             });
           }}
           onClosed={() => state.hidePostEditor()}
           originalPost={state.postEditorOptions?.originalPost}
         ></PostEditorDialog>
+      )}
+      {state.selectImageOptions && (
+        <SelectImageDialog
+          onImageSelected={({ imageId }) => {
+            state.selectImageOptions?.onImageSelected({
+              imageId,
+            });
+          }}
+          onClosed={() => state.hideSelectImage()}
+        ></SelectImageDialog>
       )}
     </>
   );

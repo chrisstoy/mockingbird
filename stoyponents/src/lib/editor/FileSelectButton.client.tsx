@@ -18,6 +18,7 @@ export function FileSelectButton({
   accept,
   disabled,
   children,
+  className,
   ...rest
 }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -43,7 +44,7 @@ export function FileSelectButton({
       />
       <button
         disabled={disabled}
-        className="btn btn-ghost btn-primary"
+        className={`${className} btn btn-ghost btn-primary`}
         onClick={() => fileInputRef.current?.click()}
       >
         <span className="w-6 h-6 tooltip" data-tip={tooltip ?? 'Select File'}>

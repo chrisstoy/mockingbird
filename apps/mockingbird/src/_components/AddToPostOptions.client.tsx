@@ -1,14 +1,16 @@
 'use client';
+import { PhotoIcon, SquaresPlusIcon } from '@heroicons/react/24/solid';
 import { FileSelectButton } from '@mockingbird/stoyponents';
-import { PhotoIcon } from '@heroicons/react/24/solid';
 
 interface Props {
-  onImageSelected: (file: File) => void;
   disableImageSelection?: boolean;
+  onImageSelected: (file: File) => void;
+  onPickImage: () => void;
 }
 
 export function AddToPostOptions({
   onImageSelected,
+  onPickImage,
   disableImageSelection,
 }: Props) {
   return (
@@ -16,13 +18,22 @@ export function AddToPostOptions({
       <div className="content-center pr-2 join-item">Add...</div>
       <FileSelectButton
         className="join-item"
-        tooltip="Add Image"
+        tooltip="Upload Image"
         accept="image/*"
         onFileSelected={onImageSelected}
         disabled={disableImageSelection}
       >
         <PhotoIcon></PhotoIcon>
       </FileSelectButton>
+      <button
+        className="join-item btn btn-ghost btn-primary"
+        disabled={disableImageSelection}
+        onClick={() => onPickImage()}
+      >
+        <span className="w-6 h-6 tooltip" data-tip="Select Image">
+          <SquaresPlusIcon></SquaresPlusIcon>
+        </span>
+      </button>
     </div>
   );
 }

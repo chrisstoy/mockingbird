@@ -2,6 +2,7 @@
 'use client';
 import { getImage } from '@/_apiServices/images';
 import { Image, ImageId } from '@/_types/images';
+import { MISSING_IMAGE_URL } from '@/constants';
 import { PhotoIcon } from '@heroicons/react/24/solid';
 import { useEffect, useState } from 'react';
 
@@ -45,6 +46,10 @@ export function ImageDisplay({ imageId }: Props) {
           src={image.imageUrl}
           alt={image.description}
           className="max-w-[50%] m-auto"
+          onError={(event) => {
+            event.currentTarget.onerror = null;
+            event.currentTarget.src = MISSING_IMAGE_URL;
+          }}
         />
       ) : (
         <div className="skeleton flex flex-col max-w-[50%] m-auto items-center">

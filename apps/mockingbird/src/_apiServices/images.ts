@@ -1,7 +1,12 @@
+import {
+  type AlbumId,
+  type ImageId,
+  type ImageSchema,
+  type Image,
+} from '@/_types/images';
 import { type UserId } from '@/_types/users';
+import { z } from 'zod';
 import { fetchFromServer } from './fetchFromServer';
-import { ImageId, ImageSchema, type Image } from '@/_types/images';
-import { AlbumId } from '@/_types/images';
 
 /**
  * Upload the image file and associate it with the specified user
@@ -60,4 +65,29 @@ export async function getImage(imageId: ImageId) {
   const rawData = await response.json();
   const image = ImageSchema.parse(rawData);
   return image;
+}
+
+/**
+ * Fetches a list of images for a user by their ID.
+ *
+ * @param userId - The ID of the user to retrieve images for.
+ * @returns A list of image objects if found, otherwise logs an error.
+ */
+export async function getImagesForUser(userId: UserId) {
+  // TODO - support paging and albums since user may have a LOT of images.
+  const response = await fetchFromServer(`/users/${userId}/images`, {
+    method: 'GET',
+  });
+
+  if (!response.ok) {
+    console.error(
+      `Failed to find images for user ${userId}: ${response.status}: ${response.statusText}`
+    );
+    // TODO - better error handling!
+    return [];
+  }
+
+  const rawData = await response.json();
+  const images = z.array(ImageSchema).parse(rawData);
+  return images;
 }

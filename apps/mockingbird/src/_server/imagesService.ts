@@ -17,6 +17,7 @@ import {
 } from '@aws-sdk/client-s3';
 import { randomUUID } from 'crypto';
 import sharp from 'sharp';
+import { z } from 'zod';
 import { prisma } from './db';
 import baseLogger from './logger';
 
@@ -263,6 +264,20 @@ export async function deleteImageForUser(userId: UserId, imageId: ImageId) {
     const deletedImage = ImageSchema.parse(rawData);
     logger.info(`DELETE Image: ${JSON.stringify(deletedImage)}`);
     return deletedImage;
+  } catch (error) {
+    logger.error(`DELETE Image Error: ${error}`);
+    throw error;
+  }
+}
+
+export async function listImagesForUser(userId: UserId) {
+  try {
+    const rawData = await prisma.image.findMany({
+      where: { ownerId: userId },
+    });
+
+    const images = z.array(ImageSchema).parse(rawData);
+    return images;
   } catch (error) {
     logger.error(`DELETE Image Error: ${error}`);
     throw error;

@@ -1,12 +1,13 @@
 'use client';
 import { uploadImage } from '@/_apiServices/images';
 import { createPost } from '@/_apiServices/post';
-import { SessionUser } from '@/_types/users';
+import { type SessionUser } from '@/_types/users';
 import { GENERIC_USER_IMAGE_URL } from '@/constants';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
-import { SubmitPostOptions, useDialogManager } from './DialogManager.client';
+import { useDialogManager } from './DialogManager.client';
+import { type SubmitPostParams } from './PostEditorDialog.client';
 
 type Props = {
   user: SessionUser | undefined;
@@ -25,10 +26,10 @@ export function NewPost({ user }: Props) {
     [user]
   );
 
-  async function handleCreatePost(content: SubmitPostOptions) {
+  async function handleCreatePost({ content, image }: SubmitPostParams) {
     dialogManager.hidePostEditor();
 
-    if (!user || (!content.message?.length && !content.image)) {
+    if (!user || (!content?.length && !image)) {
       return;
     }
 
@@ -37,12 +38,9 @@ export function NewPost({ user }: Props) {
       return image.id;
     };
 
-    const imageId =
-      content.image instanceof File
-        ? await uploadNewImage(content.image)
-        : content.image;
+    const imageId = image instanceof File ? await uploadNewImage(image) : image;
 
-    const result = await createPost(user.id, content.message, imageId);
+    const result = await createPost(user.id, content, imageId);
     console.log(`Create a post with content: ${JSON.stringify(result)}`);
     router.refresh();
   }

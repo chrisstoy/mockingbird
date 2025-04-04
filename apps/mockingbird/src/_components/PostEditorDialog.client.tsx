@@ -1,6 +1,7 @@
 'use client';
 import { getUser } from '@/_apiServices/users';
 import { useSessionUser } from '@/_hooks/useSessionUser';
+import { type ImageId } from '@/_types/images';
 import { type Post } from '@/_types/post';
 import { GENERIC_USER_IMAGE_URL } from '@/constants';
 import {
@@ -13,20 +14,23 @@ import {
 } from '@mockingbird/stoyponents';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AddToPostOptions } from './AddToPostOptions.client';
-import { ImageView } from './ImageView';
+import { ImageView } from './ImageView.client';
 import { PostView } from './PostView';
+import { SelectExistingImage } from './SelectExistingImage.client';
 
 type Props = {
   onSubmitPost: ({
     content,
-    imageFile,
+    image,
   }: {
     content: string;
-    imageFile?: File;
+    image?: File | ImageId;
   }) => void;
   onClosed: () => void;
   originalPost?: Post;
 };
+
+export type SubmitPostParams = Parameters<Props['onSubmitPost']>[0];
 
 export function PostEditorDialog({
   onSubmitPost,
@@ -41,6 +45,9 @@ export function PostEditorDialog({
 
   const [imageFile, setImageFile] = useState<File>();
   const [imageUrl, setImageUrl] = useState<string>();
+  const [imageId, setImageId] = useState<ImageId>();
+
+  const [isPickingImage, setIsPickingImage] = useState(false);
 
   const [posterInfo, setPosterInfo] = useState<{
     userName: string;
@@ -92,23 +99,40 @@ export function PostEditorDialog({
     }
 
     const content = JSON.stringify(newContent ?? { ops: [] });
-    onSubmitPost({ content, imageFile });
-  }, [user, imageFile, imageUrl, newContent, onSubmitPost]);
+    onSubmitPost({ content, image: imageFile ?? imageId });
+  }, [user, imageFile, imageUrl, imageId, newContent, onSubmitPost]);
 
-  const handleImageSelected = useCallback((file: File) => {
-    setImageFile(file);
-    setImageUrl((oldUrl) => {
-      if (oldUrl) {
-        URL.revokeObjectURL(oldUrl);
-      }
-      return URL.createObjectURL(file);
-    });
-  }, []);
+  const handleImageSelected = useCallback(
+    (file: File) => {
+      setImageId(undefined);
+      setImageFile(file);
+      setImageUrl((oldUrl) => {
+        if (oldUrl) {
+          URL.revokeObjectURL(oldUrl);
+        }
+        return URL.createObjectURL(file);
+      });
+    },
+    [setImageFile, setImageUrl, setImageId]
+  );
 
   const handleRemoveImage = useCallback(() => {
     setImageFile(undefined);
     setImageUrl(undefined);
-  }, []);
+    setImageId(undefined);
+  }, [setImageFile, setImageUrl, setImageId]);
+
+  const handleExistingImageSelected = useCallback(
+    (imageId: ImageId | undefined) => {
+      setImageId(imageId);
+      if (imageId) {
+        setImageFile(undefined);
+        setImageUrl(undefined);
+      }
+      setIsPickingImage(false);
+    },
+    [setImageFile, setImageUrl]
+  );
 
   return (
     <dialog
@@ -123,26 +147,34 @@ export function PostEditorDialog({
           onClosed={onClosed}
         ></DialogHeader>
         <DialogBody>
-          <div className="h-full flex flex-col">
-            <div className="h-[1px] flex flex-col flex-auto overflow-scroll">
-              {originalPost && (
-                <PostView
-                  posterInfo={posterInfo}
-                  post={originalPost}
-                ></PostView>
-              )}
+          {isPickingImage ? (
+            <SelectExistingImage
+              onImageSelected={handleExistingImageSelected}
+            ></SelectExistingImage>
+          ) : (
+            <div className="h-full flex flex-col">
+              <div className="h-[1px] flex flex-col flex-auto overflow-scroll">
+                {originalPost && (
+                  <PostView
+                    posterInfo={posterInfo}
+                    post={originalPost}
+                  ></PostView>
+                )}
 
-              <ImageView
-                imageUrl={imageUrl}
-                onRemoveImage={handleRemoveImage}
-              ></ImageView>
-              <TextEditor onChangeDelta={setNewContent}></TextEditor>
+                <ImageView
+                  imageUrl={imageUrl}
+                  imageId={imageId}
+                  onRemoveImage={handleRemoveImage}
+                ></ImageView>
+                <TextEditor onChangeDelta={setNewContent}></TextEditor>
+              </div>
+              <AddToPostOptions
+                onImageSelected={handleImageSelected}
+                onPickImage={() => setIsPickingImage(true)}
+                disableImageSelection={!!imageFile || !!imageId}
+              ></AddToPostOptions>
             </div>
-            <AddToPostOptions
-              onImageSelected={handleImageSelected}
-              disableImageSelection={!!imageFile}
-            ></AddToPostOptions>
-          </div>
+          )}
         </DialogBody>
         <DialogActions
           onClosed={() => {
@@ -150,7 +182,7 @@ export function PostEditorDialog({
           }}
         >
           <DialogButton
-            disabled={!newContent && !imageFile}
+            disabled={!newContent && !imageFile && !imageId}
             onClick={handleSubmitPost}
           >
             Post

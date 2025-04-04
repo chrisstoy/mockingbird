@@ -1,4 +1,4 @@
-import { storeImageForUser } from '@/_server/imagesService';
+import { listImagesForUser, storeImageForUser } from '@/_server/imagesService';
 import baseLogger from '@/_server/logger';
 import { AlbumIdSchema } from '@/_types/images';
 import { UserIdSchema } from '@/_types/users';
@@ -20,17 +20,17 @@ const ParamsSchema = z.object({
   userId: UserIdSchema,
 });
 
-// export async function GET(_req: NextRequest, context: RouteContext) {
-//   try {
-//     const { userId } = ParamsSchema.parse(await context.params);
+export async function GET(_req: NextRequest, context: RouteContext) {
+  try {
+    const { userId } = ParamsSchema.parse(await context.params);
 
-//     const result = await listImagesForUser(userId);
-//     return NextResponse.json(result, { status: 200 });
-//   } catch (error) {
-//     logger.error(error);
-//     return respondWithError(error);
-//   }
-// }
+    const result = await listImagesForUser(userId);
+    return NextResponse.json(result, { status: 200 });
+  } catch (error) {
+    logger.error(error);
+    return respondWithError(error);
+  }
+}
 
 /**
  * Upload an image for the user
