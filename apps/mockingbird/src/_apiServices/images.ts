@@ -1,8 +1,8 @@
 import {
+  ImageSchema,
   type AlbumId,
-  type ImageId,
-  type ImageSchema,
   type Image,
+  type ImageId,
 } from '@/_types/images';
 import { type UserId } from '@/_types/users';
 import { z } from 'zod';

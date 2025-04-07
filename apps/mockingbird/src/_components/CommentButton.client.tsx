@@ -1,11 +1,12 @@
 'use client';
+import { uploadImage } from '@/_apiServices/images';
 import { commentOnPost } from '@/_apiServices/post';
 import { useSessionUser } from '@/_hooks/useSessionUser';
 import { Post } from '@/_types/post';
 import { ChatBubbleLeftEllipsisIcon } from '@heroicons/react/20/solid';
 import { useRouter } from 'next/navigation';
-import { SubmitPostOptions, useDialogManager } from './DialogManager.client';
-import { uploadImage } from '@/_apiServices/images';
+import { useDialogManager } from './DialogManager.client';
+import { SubmitPostParams } from './PostEditorDialog.client';
 
 type Props = {
   post: Post;
@@ -16,10 +17,10 @@ export function CommentButton({ post }: Props) {
   const router = useRouter();
   const user = useSessionUser();
 
-  async function handleCommentOnPost(content: SubmitPostOptions) {
+  async function handleCommentOnPost({ content, image }: SubmitPostParams) {
     dialogManager.hidePostEditor();
 
-    if (!user || (!content.message?.length && !content.image)) {
+    if (!user || (!content?.length && !image)) {
       return;
     }
 
@@ -28,15 +29,12 @@ export function CommentButton({ post }: Props) {
       return image.id;
     };
 
-    const imageId =
-      content.image instanceof File
-        ? await uploadNewImage(content.image)
-        : content.image;
+    const imageId = image instanceof File ? await uploadNewImage(image) : image;
 
     const result = await commentOnPost(
       user.id,
       post.id,
-      content.message ?? '',
+      content ?? '',
       imageId
     );
     console.log(`Commented on a post with content: ${JSON.stringify(result)}`);

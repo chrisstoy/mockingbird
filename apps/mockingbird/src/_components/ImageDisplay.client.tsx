@@ -34,21 +34,20 @@ export function ImageDisplay({ imageId }: Props) {
 
   return (
     <div className={`flex flex-col content-center`}>
-      {missingImage && (
+      {missingImage ? (
         <img
-          src="/images/missing-image.png"
+          src={MISSING_IMAGE_URL}
           alt="Missing Image"
           className="max-w-[50%] m-auto"
         />
-      )}
-      {image ? (
+      ) : image ? (
         <img
           src={image.imageUrl}
           alt={image.description}
           className="max-w-[50%] m-auto"
           onError={(event) => {
             event.currentTarget.onerror = null;
-            event.currentTarget.src = MISSING_IMAGE_URL;
+            setMissingImage(true);
           }}
         />
       ) : (
