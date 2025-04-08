@@ -1,3 +1,9 @@
+# Release notes - Mockingbird - 0.2.4
+
+### Task
+
+- [MOC-19](https://stoy.atlassian.net/browse/MOC-19) Support embedding an Image in a Post
+
 # Release notes - Mockingbird - 0.2.3
 
 ### Task
