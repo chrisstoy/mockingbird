@@ -1,8 +1,8 @@
 'use client';
 import { commentOnPost, getCommentsForPost } from '@/_apiServices/post';
 import { useSessionUser } from '@/_hooks/useSessionUser';
-import { Post } from '@/_types/post';
-import { TextEditor } from '@mockingbird/stoyponents';
+import { type Post } from '@/_types/post';
+import { type EditorDelta, TextEditor } from '@mockingbird/stoyponents';
 import { Suspense, useEffect, useState } from 'react';
 import { CommentReplyList } from './CommentReplyList.client';
 import { ReplyFooter } from './ReplyFooter.client';
@@ -25,7 +25,7 @@ export function CommentReplyContainer({
 }: Props) {
   const user = useSessionUser();
   const [showReplyEditor, setShowReplyEditor] = useState(false);
-  const [replyContent, setReplyContent] = useState<string>('');
+  const [replyContent, setReplyContent] = useState<EditorDelta>();
 
   const [replies, setReplies] = useState<Post[]>([]);
 
@@ -40,14 +40,14 @@ export function CommentReplyContainer({
   const submitReply = async (canceled?: boolean) => {
     setShowReplyEditor(false);
 
-    if (canceled || replyContent.length === 0 || user?.id === undefined) {
+    if (canceled || !user?.id || !replyContent?.length()) {
       return;
     }
 
     const newComment = await commentOnPost(
       user?.id,
       originalComment.id,
-      replyContent
+      JSON.stringify(replyContent)
     );
     setReplies([...replies, newComment]);
   };
@@ -86,7 +86,7 @@ export function CommentReplyContainer({
           <div className="divider my-0"></div>
           <TextEditor
             placeholder={`Replying to ${replyingToName}`}
-            onChange={setReplyContent}
+            onChangeDelta={setReplyContent}
             onSubmit={submitReply}
           ></TextEditor>
         </>

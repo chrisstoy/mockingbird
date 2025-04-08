@@ -2,29 +2,25 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { PostEditorDialog } from './PostEditorDialog.client';
-import { CommentEditorDialog } from './CommentEditorDialog.client';
-import { Post } from '@/_types/post';
+import { SelectImageDialog } from './SelectImageDialog.client';
 
-export interface SubmitPostOptions {
-  message: string;
-  imageFile?: File;
-}
-interface PostEditorOptions {
-  onSubmitPost: (content: SubmitPostOptions) => void;
-}
-
-interface CommentEditorOptions extends PostEditorOptions {
-  originalPost: Post;
-}
+type PostEditorOptions = Omit<
+  Parameters<typeof PostEditorDialog>[0],
+  'onClosed'
+>;
+type SelectImageOptions = Omit<
+  Parameters<typeof SelectImageDialog>[0],
+  'onClosed'
+>;
 
 export interface DialogManagerState {
   postEditorOptions: PostEditorOptions | undefined;
   showPostEditor(options: PostEditorOptions): void;
   hidePostEditor(): void;
 
-  commentEditorOptions: CommentEditorOptions | undefined;
-  showCommentEditor(options: CommentEditorOptions): void;
-  hideCommentEditor(): void;
+  selectImageOptions: SelectImageOptions | undefined;
+  showSelectImage(options: SelectImageOptions): void;
+  hideSelectImage(): void;
 }
 
 export const useDialogManager = create<DialogManagerState>()(
@@ -32,10 +28,6 @@ export const useDialogManager = create<DialogManagerState>()(
     postEditorOpen: undefined,
     showPostEditor: (options) => set({ postEditorOptions: options }),
     hidePostEditor: () => set({ postEditorOptions: undefined }),
-
-    commentEditorOptions: undefined,
-    showCommentEditor: (options) => set({ commentEditorOptions: options }),
-    hideCommentEditor: () => set({ commentEditorOptions: undefined }),
   }))
 );
 
@@ -46,26 +38,25 @@ export function DialogManager() {
     <>
       {state.postEditorOptions && (
         <PostEditorDialog
-          onSubmitPost={(data) => {
+          onSubmitPost={({ content, image: imageFile }) => {
             state.postEditorOptions?.onSubmitPost({
-              message: data.content,
-              imageFile: data.imageFile,
+              content,
+              image: imageFile,
             });
           }}
           onClosed={() => state.hidePostEditor()}
+          originalPost={state.postEditorOptions?.originalPost}
         ></PostEditorDialog>
       )}
-
-      {state.commentEditorOptions && (
-        <CommentEditorDialog
-          originalPost={state.commentEditorOptions.originalPost}
-          onSubmitPost={(message) => {
-            state.commentEditorOptions?.onSubmitPost({
-              message,
+      {state.selectImageOptions && (
+        <SelectImageDialog
+          onImageSelected={({ imageId }) => {
+            state.selectImageOptions?.onImageSelected({
+              imageId,
             });
           }}
-          onClosed={() => state.hideCommentEditor()}
-        ></CommentEditorDialog>
+          onClosed={() => state.hideSelectImage()}
+        ></SelectImageDialog>
       )}
     </>
   );

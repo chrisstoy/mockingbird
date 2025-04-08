@@ -5,6 +5,7 @@ import { GENERIC_USER_IMAGE_URL } from '@/constants';
 import { TextDisplay } from '@mockingbird/stoyponents';
 import Link from 'next/link';
 import { CommentReplyContainer } from './CommentReplyContainer.client';
+import { ImageDisplay } from './ImageDisplay.client';
 import { PostHeader } from './PostHeader';
 
 type Props = {
@@ -42,7 +43,8 @@ export async function Comment({
         isComment
         showOptionsMenu={showOptionsMenu}
       ></PostHeader>
-      <div className="text-sm bg-transparent rounded-lg">
+      <div className="text-sm bg-transparent rounded-lg my-1">
+        <ImageDisplay imageId={comment.imageId}></ImageDisplay>
         <TextDisplay data={comment.content}></TextDisplay>
       </div>
     </>

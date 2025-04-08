@@ -10,6 +10,7 @@ import { TextDisplay } from '@mockingbird/stoyponents';
 import Link from 'next/link';
 import { Suspense } from 'react';
 import { CommentList } from './CommentList';
+import { ImageDisplay } from './ImageDisplay.client';
 import { PostActionsFooter } from './PostActionsFooter';
 import { PostHeader } from './PostHeader';
 import { SkeletonComment } from './SkeletonComment';
@@ -56,10 +57,14 @@ export async function SummaryPost({
           <div className="card-body">
             {linkToDetails ? (
               <Link href={`/post/${post.id}`}>
+                <ImageDisplay imageId={post.imageId}></ImageDisplay>
                 <TextDisplay data={post.content}></TextDisplay>
               </Link>
             ) : (
-              <TextDisplay data={post.content}></TextDisplay>
+              <div>
+                <ImageDisplay imageId={post.imageId}></ImageDisplay>
+                <TextDisplay data={post.content}></TextDisplay>
+              </div>
             )}
           </div>
           {numberOfComments > 0 && (

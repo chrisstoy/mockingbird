@@ -1,6 +1,6 @@
 'use client';
 import { XMarkIcon } from '@heroicons/react/20/solid';
-import { HTMLProps, Key, PropsWithChildren, ReactNode } from 'react';
+import { Key, PropsWithChildren, ReactNode } from 'react';
 
 export interface DialogButton<_Result> {
   title: string;

@@ -4,12 +4,12 @@ import {
   doesPostExist,
   getCommentsForPost,
 } from '@/_server/postsService';
+import { ImageIdSchema } from '@/_types/images';
 import { PostIdSchema } from '@/_types/post';
 import { UserIdSchema } from '@/_types/users';
 import { respondWithError, ResponseError } from '@/app/api/errors';
 import { validateAuthentication } from '@/app/api/validateAuthentication';
 import { RouteContext } from '@/app/types';
-import { revalidateTag } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
@@ -51,10 +51,20 @@ export async function GET(req: NextRequest, context: RouteContext) {
   }
 }
 
-const CreateCommentDataSchema = z.object({
-  posterId: UserIdSchema,
-  content: z.string().min(1),
-});
+const CreateCommentDataSchema = z
+  .object({
+    posterId: UserIdSchema,
+    content: z.string().min(1, 'Must provide content'),
+    imageId: ImageIdSchema.optional(),
+  })
+  .superRefine((val, ctx) => {
+    if (!val.imageId && !val.content?.length) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'must provide content and/or imageId',
+      });
+    }
+  });
 
 /**
  * Create a Comment on a Post
@@ -66,7 +76,7 @@ export async function POST(req: NextRequest, context: RouteContext) {
     const { postId } = ParamsSchema.parse(await context.params);
 
     const body = await req.json();
-    const { posterId, content } = CreateCommentDataSchema.parse(body);
+    const { posterId, content, imageId } = CreateCommentDataSchema.parse(body);
 
     if (session.user?.id !== posterId) {
       throw new ResponseError(
@@ -83,12 +93,14 @@ export async function POST(req: NextRequest, context: RouteContext) {
       );
     }
 
-    const post = await createPost(posterId, content, postId);
-
-    revalidateTag('feed');
+    const post = await createPost(posterId, content, postId, imageId);
 
     logger.info(
-      `Commented on a Post: {postId: ${post.id}, posterId: ${posterId}, content: ${content}, responseToPostId: ${postId}} `
+      `Commented on a Post: {${{
+        commentId: post.id,
+        posterId: post.posterId,
+        responseToPostId: post.responseToPostId,
+      }}}`
     );
 
     return NextResponse.json(post, { status: 201 });
