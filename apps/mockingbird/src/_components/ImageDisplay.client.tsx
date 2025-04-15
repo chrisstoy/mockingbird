@@ -38,13 +38,13 @@ export function ImageDisplay({ imageId }: Props) {
         <img
           src={MISSING_IMAGE_URL}
           alt="Missing Image"
-          className="max-w-[50%] m-auto"
+          className="max-w-[50%] max-h-96 m-auto"
         />
       ) : image ? (
         <img
           src={image.imageUrl}
           alt={image.description}
-          className="max-w-[50%] m-auto"
+          className="max-w-[50%] max-h-96 m-auto"
           onError={(event) => {
             event.currentTarget.onerror = null;
             setMissingImage(true);

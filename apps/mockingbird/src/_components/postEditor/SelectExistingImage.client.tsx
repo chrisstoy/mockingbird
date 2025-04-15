@@ -39,7 +39,7 @@ export function SelectExistingImage({ onImageSelected }: Props) {
 
   return (
     <div className="card flex flex-col h-full">
-      <div className="card-title">Select existing image</div>
+      <div className="card-title mx-4 mt-4 mb-2">Select existing image</div>
       <div className="card-body flex-auto h-[1px] overflow-y-scroll">
         <div className="grid-cols-3 grid gap-2">
           {images.length > 0 ? (
@@ -66,7 +66,7 @@ export function SelectExistingImage({ onImageSelected }: Props) {
           )}
         </div>
       </div>
-      <div className="card-actions m-1">
+      <div className="card-actions m-1 mt-2 justify-end">
         <button
           className="btn btn-secondary btn-outline"
           onClick={() => onImageSelected(undefined)}

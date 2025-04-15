@@ -7,7 +7,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import { useDialogManager } from './DialogManager.client';
-import { type SubmitPostParams } from './PostEditorDialog.client';
+import { type SubmitPostParams } from './postEditor/PostEditorDialog.client';
 
 type Props = {
   user: SessionUser | undefined;

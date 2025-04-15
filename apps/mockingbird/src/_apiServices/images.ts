@@ -45,6 +45,35 @@ export async function uploadImage(
   return newImage;
 }
 
+export async function addExternalImage(
+  userId: UserId,
+  imageUrl: string,
+  metadata?: {
+    description?: string;
+    albumId?: AlbumId;
+  }
+): Promise<Image> {
+  const formData = new FormData();
+  formData.append('imageUrl', imageUrl);
+  formData.append('description', metadata?.description || '');
+  formData.append('albumId', metadata?.albumId || '');
+
+  const response = await fetchFromServer(`/users/${userId}/images`, {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!response.ok) {
+    console.error(
+      `Failed to upload image: ${response.status}: ${response.statusText}`
+    );
+  }
+
+  const rawData = await response.json();
+  const newImage = ImageSchema.parse(rawData);
+  return newImage;
+}
+
 /**
  * Fetches an image by its ID from the server.
  *

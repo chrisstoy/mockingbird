@@ -1,4 +1,8 @@
-import { listImagesForUser, storeImageForUser } from '@/_server/imagesService';
+import {
+  listImagesForUser,
+  storeExternalImageForUser,
+  storeImageForUser,
+} from '@/_server/imagesService';
 import baseLogger from '@/_server/logger';
 import { AlbumIdSchema } from '@/_types/images';
 import { UserIdSchema } from '@/_types/users';
@@ -63,30 +67,42 @@ export async function POST(req: NextRequest, context: RouteContext) {
 
     const fileBlob = formData.get('file');
     const file = fileBlob instanceof File ? fileBlob : undefined;
-    if (!file) {
-      throw new ResponseError(409, 'No Image Provided');
-    }
 
     const schema = z.object({
-      file: z.instanceof(File),
+      file: z.instanceof(File).optional(),
+      imageUrl: z.string().url().optional(),
       description: z.string().optional(),
       albumId: AlbumIdSchema.optional(),
     });
 
-    const fd = await schema.parse({
-      file: file,
+    const fd = schema.parse({
+      file,
+      imageUrl: formData.get('imageUrl'),
       description: formData.get('description'),
       album: formData.get('album'),
     });
 
-    const result = await storeImageForUser(
-      userId,
-      file,
-      fd.description,
-      fd.albumId
-    );
+    if (fd.imageUrl) {
+      const result = await storeExternalImageForUser(
+        userId,
+        fd.imageUrl,
+        fd.description,
+        fd.albumId
+      );
+      return NextResponse.json(result, { status: 201 });
+    }
 
-    return NextResponse.json(result, { status: 201 });
+    if (file) {
+      const result = await storeImageForUser(
+        userId,
+        file,
+        fd.description,
+        fd.albumId
+      );
+      return NextResponse.json(result, { status: 201 });
+    }
+
+    throw new ResponseError(409, 'No Image Provided');
   } catch (error) {
     logger.error(error);
     return respondWithError(error);

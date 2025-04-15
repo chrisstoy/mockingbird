@@ -21,6 +21,10 @@ import { z } from 'zod';
 import { prisma } from './db';
 import baseLogger from './logger';
 
+const MAX_IMAGE_SIZE = env.IMAGES_MAX_SIZE_IN_BYTES
+  ? Number(env.IMAGES_MAX_SIZE_IN_BYTES)
+  : 2 * 1024 * 1024; // 2MB
+
 const logger = baseLogger.child({
   service: 'images:service',
 });
@@ -117,6 +121,39 @@ export async function getImage(imageId: ImageId) {
 }
 
 /**
+ * Stores an external image URL for a user by creating a record in the database.
+ *
+ * @param userId - The ID of the user who owns the image.
+ * @param imageUrl - The URL of the external image to be stored.
+ * @param description - Optional description of the image.
+ * @param albumId - Optional album to associate with the image.
+ * @returns The stored image record.
+ */
+
+export async function storeExternalImageForUser(
+  userId: UserId,
+  imageUrl: string,
+  description?: string,
+  albumId?: AlbumId
+) {
+  // create a record in the database
+  const imageData = CreateImageDataSchema.parse({
+    ownerId: userId,
+    imageUrl,
+    thumbnailUrl: imageUrl,
+    description: description ?? '',
+    albumId,
+  });
+
+  const rawData = await prisma.image.create({
+    data: imageData,
+  });
+
+  const image = ImageSchema.parse(rawData);
+  return image;
+}
+
+/**
  * Stores an image for a user by uploading the original and a thumbnail
  * to the remote storage, and creates a record in the database.
  *
@@ -150,6 +187,15 @@ export async function storeImageForUser(
 
   const originalImage = sharp(originalBuffer);
   const originalMetadata = await getMetadataForImage(originalImage, filename);
+  const sizeInBytes = Number(originalMetadata.size);
+  if (sizeInBytes === 0) {
+    throw new Error('Invalid image file. Size is 0 bytes.');
+  }
+  if (sizeInBytes > MAX_IMAGE_SIZE) {
+    throw new Error(
+      `Invalid image file. Size ${sizeInBytes} exceeds maximum image size of ${MAX_IMAGE_SIZE} bytes.`
+    );
+  }
 
   const thumbnailImage = originalImage
     .resize(120, 120, { fit: 'inside' })
@@ -252,7 +298,7 @@ export async function deleteImageForUser(userId: UserId, imageId: ImageId) {
       `Deleting image: ${image.imageUrl} and thumbnail: ${image.thumbnailUrl}`
     );
 
-    const [original, thumbnail] = await Promise.all([
+    await Promise.all([
       deleteImage(image.imageUrl),
       deleteImage(image.thumbnailUrl),
     ]);
