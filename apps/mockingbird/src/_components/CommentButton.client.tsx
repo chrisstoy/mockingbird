@@ -6,7 +6,7 @@ import { Post } from '@/_types/post';
 import { ChatBubbleLeftEllipsisIcon } from '@heroicons/react/20/solid';
 import { useRouter } from 'next/navigation';
 import { useDialogManager } from './DialogManager.client';
-import { SubmitPostParams } from './PostEditorDialog.client';
+import { SubmitPostParams } from './postEditor/PostEditorDialog.client';
 
 type Props = {
   post: Post;

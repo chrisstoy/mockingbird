@@ -43,6 +43,7 @@ export const env = createEnv({
     CLOUDFLARE_R2_BUCKET_NAME: z.string().min(1),
 
     IMAGES_BASE_URL: z.string().url(),
+    IMAGES_MAX_SIZE_IN_BYTES: z.string(),
   },
 
   /**

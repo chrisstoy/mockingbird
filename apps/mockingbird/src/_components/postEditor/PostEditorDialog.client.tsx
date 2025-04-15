@@ -13,9 +13,10 @@ import {
   TextEditor,
 } from '@mockingbird/stoyponents';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { ImageView } from '../ImageView.client';
+import { PostView } from '../PostView';
+import { AddImageUrl } from './AddImageUrl.client';
 import { AddToPostOptions } from './AddToPostOptions.client';
-import { ImageView } from './ImageView.client';
-import { PostView } from './PostView';
 import { SelectExistingImage } from './SelectExistingImage.client';
 
 type Props = {
@@ -32,6 +33,12 @@ type Props = {
 
 export type SubmitPostParams = Parameters<Props['onSubmitPost']>[0];
 
+enum EditorMode {
+  EDITING,
+  SELECT_IMAGE,
+  ADD_IMAGE_URL,
+}
+
 export function PostEditorDialog({
   onSubmitPost,
   onClosed,
@@ -47,7 +54,7 @@ export function PostEditorDialog({
   const [imageUrl, setImageUrl] = useState<string>();
   const [imageId, setImageId] = useState<ImageId>();
 
-  const [isPickingImage, setIsPickingImage] = useState(false);
+  const [editorMode, setEditorMode] = useState<EditorMode>(EditorMode.EDITING);
 
   const [posterInfo, setPosterInfo] = useState<{
     userName: string;
@@ -129,7 +136,7 @@ export function PostEditorDialog({
         setImageFile(undefined);
         setImageUrl(undefined);
       }
-      setIsPickingImage(false);
+      setEditorMode(EditorMode.EDITING);
     },
     [setImageFile, setImageUrl]
   );
@@ -147,10 +154,14 @@ export function PostEditorDialog({
           onClosed={onClosed}
         ></DialogHeader>
         <DialogBody>
-          {isPickingImage ? (
+          {editorMode === EditorMode.SELECT_IMAGE ? (
             <SelectExistingImage
               onImageSelected={handleExistingImageSelected}
             ></SelectExistingImage>
+          ) : editorMode === EditorMode.ADD_IMAGE_URL ? (
+            <AddImageUrl
+              onImageSelected={handleExistingImageSelected}
+            ></AddImageUrl>
           ) : (
             <div className="h-full flex flex-col">
               <div className="h-[1px] flex flex-col flex-auto overflow-scroll">
@@ -170,7 +181,8 @@ export function PostEditorDialog({
               </div>
               <AddToPostOptions
                 onImageSelected={handleImageSelected}
-                onPickImage={() => setIsPickingImage(true)}
+                onPickImage={() => setEditorMode(EditorMode.SELECT_IMAGE)}
+                onAddImageURL={() => setEditorMode(EditorMode.ADD_IMAGE_URL)}
                 disableImageSelection={!!imageFile || !!imageId}
               ></AddToPostOptions>
             </div>

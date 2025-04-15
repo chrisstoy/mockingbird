@@ -1,7 +1,7 @@
 'use client';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import { PostEditorDialog } from './PostEditorDialog.client';
+import { PostEditorDialog } from './postEditor/PostEditorDialog.client';
 import { SelectImageDialog } from './SelectImageDialog.client';
 
 type PostEditorOptions = Omit<
