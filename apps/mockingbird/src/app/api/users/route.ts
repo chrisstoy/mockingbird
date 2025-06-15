@@ -1,4 +1,5 @@
 import baseLogger from '@/_server/logger';
+import { verifyTurnstile } from '@/_server/turnstileService';
 import {
   createUser,
   getUserByEmail,
@@ -49,7 +50,21 @@ export async function POST(req: NextRequest) {
     // BUT, we have to be careful not to expose ourselves to malicious attacks.
 
     const data = await req.json();
-    const { name, email, password } = CreateUserDataSchema.parse(data);
+    const { name, email, password, turnstileToken } =
+      CreateUserDataSchema.parse(data);
+
+    const isTurnstileValid = req.url.includes('localhost')
+      ? true
+      : turnstileToken
+      ? await verifyTurnstile(turnstileToken)
+      : false;
+
+    if (!isTurnstileValid) {
+      return NextResponse.json(
+        { success: false, message: 'CAPTCHA verification failed' },
+        { status: 400 }
+      );
+    }
 
     const existingUser = await getUserByEmail(email);
     if (existingUser) {

@@ -9,6 +9,7 @@
     "@aws-sdk/client-s3": "^3.735.0",
     "@heroicons/react": "^2.1.5",
     "@hookform/resolvers": "^3.9.0",
+    "@marsidev/react-turnstile": "^1.1.0",
     "@prisma/client": "^5.22.0",
     "@redux-devtools/extension": "^3.3.0",
     "@tailwindcss/typography": "^0.5.15",

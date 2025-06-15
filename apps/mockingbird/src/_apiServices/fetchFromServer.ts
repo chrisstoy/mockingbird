@@ -29,6 +29,11 @@ export async function fetchFromServer(endpoint: string, options?: RequestInit) {
   };
   const response = await fetch(apiUrl, requestInit);
   if (!response.ok) {
+    const { message } = await response.json();
+    if (message) {
+      throw new ResponseError(response.status, message);
+    }
+
     throw new ResponseError(response.status, response.statusText);
   }
   return response;

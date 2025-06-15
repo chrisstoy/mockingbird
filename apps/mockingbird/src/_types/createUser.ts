@@ -8,6 +8,7 @@ export const CreateUserDataSchema = z.object({
     .max(100, { message: 'Name is too long' }),
   email: z.string().email(),
   password: PasswordSchema,
+  turnstileToken: z.string().optional(),
 });
 export type CreateUserData = z.infer<typeof CreateUserDataSchema>;
 
