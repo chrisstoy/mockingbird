@@ -44,6 +44,9 @@ export const env = createEnv({
 
     IMAGES_BASE_URL: z.string().url(),
     IMAGES_MAX_SIZE_IN_BYTES: z.string(),
+
+    TURNSTILE_SITE_KEY: z.string().min(1),
+    TURNSTILE_SECRET_KEY: z.string().min(1),
   },
 
   /**

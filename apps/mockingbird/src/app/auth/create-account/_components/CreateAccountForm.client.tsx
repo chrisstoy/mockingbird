@@ -2,22 +2,44 @@
 import { fetchFromServer } from '@/_apiServices/fetchFromServer';
 import { CreateUser, CreateUserSchema } from '@/_types/createUser';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Turnstile } from '@marsidev/react-turnstile';
 import { FormTextInput } from '@mockingbird/stoyponents';
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
-import { Dispatch, SetStateAction, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useEffect, useState } from 'react';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { getTurnstileSiteKey } from './getTurnstileSiteKey';
 
-const createNewAccountHandler = (
-  setError: Dispatch<SetStateAction<string | null>>,
-  setIsProcessing: Dispatch<SetStateAction<boolean>>
-) =>
-  async function createNewAccount({
-    name,
-    email,
-    password,
-    confirmPassword,
-  }: CreateUser) {
+export function CreateAccountForm() {
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+  } = useForm<CreateUser>({
+    resolver: zodResolver(CreateUserSchema),
+  });
+
+  const [error, setError] = useState<string | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string>('');
+
+  const [turnstileSiteKey, setTurnstileSiteKey] = useState<string>('');
+
+  useEffect(() => {
+    (async () => {
+      const siteKey = await getTurnstileSiteKey();
+      setTurnstileSiteKey(siteKey);
+    })();
+  }, []);
+
+  const onSubmit: SubmitHandler<CreateUser> = async (data: CreateUser) => {
+    const { name, email, password, confirmPassword } = data;
+
+    if (!turnstileToken) {
+      setError('Please complete the CAPTCHA verification.');
+      return;
+    }
+
     setError(``);
     setIsProcessing(true);
 
@@ -41,6 +63,7 @@ const createNewAccountHandler = (
           name,
           email,
           password,
+          turnstileToken,
         }),
       });
 
@@ -66,69 +89,94 @@ const createNewAccountHandler = (
     }
   };
 
-export function CreateAccountForm() {
-  const form = useForm<CreateUser>({
-    resolver: zodResolver(CreateUserSchema),
-  });
-  const {
-    register,
-    formState: { errors },
-    handleSubmit,
-  } = form;
+  const handleTurnstileVerify = (token: string) => {
+    setTurnstileToken(token);
+    setError('');
+  };
 
-  const [error, setError] = useState<string | null>(null);
-  const [isProcessing, setIsProcessing] = useState(false);
+  const handleTurnstileError = () => {
+    setError('CAPTCHA verification failed. Please refresh page and again.');
+    setTurnstileToken('');
+  };
+
+  const handleTurnstileExpire = () => {
+    setError('CAPTCHA expired. Please refresh page and try again.');
+    setTurnstileToken('');
+  };
 
   return (
-    <form
-      onSubmit={handleSubmit(
-        createNewAccountHandler(setError, setIsProcessing)
-      )}
-      className="flex flex-col text-center"
-      autoComplete="off"
-    >
-      <h1 className="font-bold mb-2 text-lg">Join the Mockingbird Community</h1>
-      <div className="card-actions flex flex-col text-start">
-        <FormTextInput
-          {...register('name')}
-          error={errors?.name}
-          placeholder="Full Name"
-        ></FormTextInput>
-        <FormTextInput
-          {...register('email')}
-          error={errors?.email}
-          placeholder="user@example.com"
-        />
-        <FormTextInput
-          {...register('password')}
-          error={errors?.password}
-          placeholder="Password"
-          type="password"
-        />
-        <FormTextInput
-          {...register('confirmPassword')}
-          error={errors?.confirmPassword}
-          placeholder="Confirm Password"
-          type="password"
-        />
+    <>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col text-center"
+        autoComplete="off"
+      >
+        <h1 className="font-bold mb-2 text-lg">
+          Join the Mockingbird Community
+        </h1>
+        <div className="card-actions flex flex-col text-start">
+          <FormTextInput
+            {...register('name')}
+            error={errors?.name}
+            placeholder="Full Name"
+          ></FormTextInput>
+          <FormTextInput
+            {...register('email')}
+            error={errors?.email}
+            placeholder="user@example.com"
+          />
+          <FormTextInput
+            {...register('password')}
+            error={errors?.password}
+            placeholder="Password"
+            type="password"
+          />
+          <FormTextInput
+            {...register('confirmPassword')}
+            error={errors?.confirmPassword}
+            placeholder="Confirm Password"
+            type="password"
+          />
 
-        {isProcessing ? (
-          <div className="justify-center w-full flex m-8">
-            <div className="loading loading-spinner mr-4"></div>
-            Creating account...
-          </div>
-        ) : (
-          <>
-            <button type="submit" className="btn btn-primary w-full">
-              Create Account
-            </button>
-            <Link className="link link-hover self-center" href="/auth/signin">
-              Cancel
-            </Link>
-          </>
-        )}
-      </div>
-      {error && <div className="text-error p-1">{error}</div>}
-    </form>
+          {isProcessing ? (
+            <div className="justify-center w-full flex m-8">
+              <div className="loading loading-spinner mr-4"></div>
+              Creating account...
+            </div>
+          ) : (
+            <>
+              <button
+                type="submit"
+                disabled={!turnstileToken}
+                className="btn btn-primary w-full"
+              >
+                Create Account
+              </button>
+              <Link className="link link-hover self-center" href="/auth/signin">
+                Cancel
+              </Link>
+            </>
+          )}
+        </div>
+        {error && <div className="text-error p-1">{error}</div>}
+      </form>
+      {turnstileSiteKey && (
+        <div id="test" className="w-full">
+          <Turnstile
+            className="w-full"
+            options={{
+              theme: 'light',
+              size: 'flexible',
+              responseField: false,
+              appearance: 'always',
+            }}
+            siteKey={turnstileSiteKey}
+            onError={handleTurnstileError}
+            onExpire={handleTurnstileExpire}
+            onSuccess={handleTurnstileVerify}
+          />
+        </div>
+      )}
+    </>
   );
 }
