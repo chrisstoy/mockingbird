@@ -1,5 +1,7 @@
 import { toLocalTime } from '@/_apiServices/toLocalTime';
+import { Audience } from '@/_types/audience';
 import { PostId } from '@/_types/post';
+import { toCapitalized } from '@/_utils/toCapitalized';
 import { PostMenu } from './PostMenu.client';
 
 type Props = {
@@ -11,6 +13,7 @@ type Props = {
   isComment?: boolean;
   showOptionsMenu?: boolean;
   small?: boolean;
+  audience?: Audience;
 };
 
 export function PostHeader({
@@ -18,6 +21,7 @@ export function PostHeader({
   image,
   name,
   postId,
+  audience,
 
   isComment = false,
   showOptionsMenu = false,
@@ -41,6 +45,13 @@ export function PostHeader({
           </div>
         </div>
       </div>
+      {audience && (
+        <div className="">
+          <div className="font-semibold self-center text-sm px-4 opacity-40">
+            {toCapitalized(audience)}
+          </div>
+        </div>
+      )}
       {showOptionsMenu && (
         <PostMenu isComment={isComment} postId={postId}></PostMenu>
       )}

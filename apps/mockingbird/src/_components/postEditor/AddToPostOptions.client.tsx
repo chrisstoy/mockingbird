@@ -20,7 +20,7 @@ export function AddToPostOptions({
   disableImageSelection,
 }: Props) {
   return (
-    <div className="flex flex-none join border-2 border-b-2 pl-2">
+    <div className="flex flex-none join">
       <div className="content-center pr-2 join-item">Add...</div>
       <FileSelectButton
         className="join-item"

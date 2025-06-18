@@ -85,10 +85,17 @@ model Passwords {
 // #endregion
 
 // #region Mockingbird
+
+enum Audience {
+  PUBLIC    // anyone can see this post
+  PRIVATE   // only people on user's friends list can see this post
+}
+
 model Post {
   id               String  @id @default(cuid())
   posterId         String
   responseToPostId String?
+  audience         Audience @default(PUBLIC)
   content          String
   likeCount        Int     @default(0)
   dislikeCount     Int     @default(0)

@@ -1,8 +1,8 @@
 import baseLogger from '@/_server/logger';
 import {
   createPost,
-  doesPostExist,
   getCommentsForPost,
+  getPostWithId,
 } from '@/_server/postsService';
 import { ImageIdSchema } from '@/_types/images';
 import { PostIdSchema } from '@/_types/post';
@@ -85,15 +85,21 @@ export async function POST(req: NextRequest, context: RouteContext) {
       );
     }
 
-    const exists = await doesPostExist(postId);
-    if (!exists) {
+    const originalPost = await getPostWithId(postId);
+    if (!originalPost) {
       throw new ResponseError(
         400,
         `Post being commented on does not exist: ${postId}`
       );
     }
 
-    const post = await createPost(posterId, content, postId, imageId);
+    const post = await createPost(
+      posterId,
+      originalPost.audience,
+      content,
+      postId,
+      imageId
+    );
 
     logger.info(
       `Commented on a Post: {${{
