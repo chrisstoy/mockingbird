@@ -170,7 +170,7 @@ export async function storeImageForUser(
   albumId?: AlbumId
 ) {
   const getMetadataForImage = async (image: sharp.Sharp, name: string) => {
-    const { width, height, format, size, ...rest } = await image.metadata();
+    const { width, height, format, size } = await image.metadata();
     return {
       filename: name,
       width: `${width}`,

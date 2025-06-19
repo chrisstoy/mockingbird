@@ -18,7 +18,7 @@ export function AddImageUrl({ onImageSelected }: Props) {
     try {
       new URL(imageUrl);
       return true;
-    } catch (error) {
+    } catch {
       return false;
     }
   }, [imageUrl]);

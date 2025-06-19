@@ -14,7 +14,7 @@ export function useSessionUser() {
         session?.user
       );
       return user;
-    } catch (error) {
+    } catch {
       return undefined;
     }
   }, [session?.user]);
