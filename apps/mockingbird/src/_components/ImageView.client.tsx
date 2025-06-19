@@ -42,7 +42,6 @@ export function ImageView({ imageUrl, imageId, onRemoveImage }: Props) {
             <XMarkIcon />
           </button>
           <div className="flex-auto">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={urlForImage}
               alt="New Image"

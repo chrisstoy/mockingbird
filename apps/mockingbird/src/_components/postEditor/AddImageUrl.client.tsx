@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 'use client';
 import { addExternalImage } from '@/_apiServices/images';
 import { useSessionUser } from '@/_hooks/useSessionUser';
