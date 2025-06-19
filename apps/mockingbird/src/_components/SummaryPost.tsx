@@ -48,6 +48,7 @@ export async function SummaryPost({
           date={post.createdAt}
           postId={post.id}
           showOptionsMenu={showOptionsMenu}
+          audience={post.audience}
         />
         <div
           className={`card bg-base-100 shadow-md ${

@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 'use client';
 import { addExternalImage } from '@/_apiServices/images';
 import { useSessionUser } from '@/_hooks/useSessionUser';
@@ -19,7 +18,7 @@ export function AddImageUrl({ onImageSelected }: Props) {
     try {
       new URL(imageUrl);
       return true;
-    } catch (error) {
+    } catch {
       return false;
     }
   }, [imageUrl]);

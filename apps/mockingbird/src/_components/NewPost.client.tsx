@@ -26,7 +26,11 @@ export function NewPost({ user }: Props) {
     [user]
   );
 
-  async function handleCreatePost({ content, image }: SubmitPostParams) {
+  async function handleCreatePost({
+    audience,
+    content,
+    image,
+  }: SubmitPostParams) {
     dialogManager.hidePostEditor();
 
     if (!user || (!content?.length && !image)) {
@@ -40,7 +44,7 @@ export function NewPost({ user }: Props) {
 
     const imageId = image instanceof File ? await uploadNewImage(image) : image;
 
-    const result = await createPost(user.id, content, imageId);
+    const result = await createPost(user.id, content, audience, imageId);
     console.log(`Create a post with content: ${JSON.stringify(result)}`);
     router.refresh();
   }

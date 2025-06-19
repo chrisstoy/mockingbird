@@ -38,8 +38,9 @@ export function DialogManager() {
     <>
       {state.postEditorOptions && (
         <PostEditorDialog
-          onSubmitPost={({ content, image: imageFile }) => {
+          onSubmitPost={({ content, image: imageFile, audience }) => {
             state.postEditorOptions?.onSubmitPost({
+              audience,
               content,
               image: imageFile,
             });

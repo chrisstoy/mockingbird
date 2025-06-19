@@ -19,7 +19,7 @@ export function SelectImageDialog({ onImageSelected, onClosed }: Props) {
 
   const dialogRef = useRef<HTMLDialogElement>(null);
 
-  const [selectedImage, setSelectedImage] = useState<ImageId>();
+  const [selectedImage, _setSelectedImage] = useState<ImageId>();
 
   // if there is an original post, get the poster's info
   useEffect(() => {
@@ -44,7 +44,7 @@ export function SelectImageDialog({ onImageSelected, onClosed }: Props) {
     }
 
     onImageSelected({ imageId: selectedImage });
-  }, [onImageSelected]);
+  }, [onImageSelected, selectedImage, user]);
 
   return (
     <dialog

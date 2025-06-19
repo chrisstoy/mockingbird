@@ -22,7 +22,8 @@ export async function POST(req: NextRequest) {
     const session = await validateAuthentication();
 
     const body = await req.json();
-    const { posterId, content, imageId } = NewPostFormDataSchema.parse(body);
+    const { posterId, content, imageId, audience } =
+      NewPostFormDataSchema.parse(body);
 
     if (session.user?.id !== posterId) {
       throw new ResponseError(
@@ -31,7 +32,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const post = await createPost(posterId, content, null, imageId);
+    const post = await createPost(posterId, audience, content, null, imageId);
 
     logger.info(
       `Created a new post: {${{ postId: post.id, posterId: post.posterId }}}`

@@ -1,3 +1,3 @@
-export * from './ConfirmationDialog';
+export * from './ConfirmationDialog.client';
 export * from './DialogBase';
-export * from './ConfirmSignOutDialog';
+export * from './ConfirmSignOutDialog.client';

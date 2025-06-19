@@ -31,7 +31,7 @@ export function TestEditor() {
       const { imageUrl } = await uploadImage(user.id, file);
       editorApi.current.insertImage(imageUrl);
     },
-    [editorApi]
+    [user]
   );
 
   return (

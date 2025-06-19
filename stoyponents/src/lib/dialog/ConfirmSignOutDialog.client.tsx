@@ -3,7 +3,7 @@
 import {
   ConfirmationDialog,
   ConfirmationDialogResult,
-} from './ConfirmationDialog';
+} from './ConfirmationDialog.client';
 
 interface Props {
   onClosed: (result: ConfirmationDialogResult) => void;

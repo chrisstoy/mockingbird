@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 'use client';
 import { getImage } from '@/_apiServices/images';
 import { Image, ImageId } from '@/_types/images';

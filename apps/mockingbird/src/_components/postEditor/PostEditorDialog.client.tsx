@@ -1,6 +1,7 @@
 'use client';
 import { getUser } from '@/_apiServices/users';
 import { useSessionUser } from '@/_hooks/useSessionUser';
+import { Audience } from '@/_types/audience';
 import { type ImageId } from '@/_types/images';
 import { type Post } from '@/_types/post';
 import { GENERIC_USER_IMAGE_URL } from '@/constants';
@@ -13,6 +14,7 @@ import {
   TextEditor,
 } from '@mockingbird/stoyponents';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { AudienceSelector } from '../AudienceSelector.client';
 import { ImageView } from '../ImageView.client';
 import { PostView } from '../PostView';
 import { AddImageUrl } from './AddImageUrl.client';
@@ -21,9 +23,11 @@ import { SelectExistingImage } from './SelectExistingImage.client';
 
 type Props = {
   onSubmitPost: ({
+    audience,
     content,
     image,
   }: {
+    audience: Audience;
     content: string;
     image?: File | ImageId;
   }) => void;
@@ -64,6 +68,10 @@ export function PostEditorDialog({
     imageSrc: GENERIC_USER_IMAGE_URL,
   });
 
+  const [audience, setAudience] = useState<Audience>(
+    originalPost?.audience ?? 'PUBLIC'
+  );
+
   // release the url when the component unmounts
   useEffect(() => {
     return () => {
@@ -75,6 +83,7 @@ export function PostEditorDialog({
 
   // if there is an original post, get the poster's info
   useEffect(() => {
+    setAudience(originalPost?.audience ?? 'PUBLIC');
     if (originalPost) {
       (async () => {
         const poster = await getUser(originalPost.posterId);
@@ -106,8 +115,8 @@ export function PostEditorDialog({
     }
 
     const content = JSON.stringify(newContent ?? { ops: [] });
-    onSubmitPost({ content, image: imageFile ?? imageId });
-  }, [user, imageFile, imageUrl, imageId, newContent, onSubmitPost]);
+    onSubmitPost({ content, image: imageFile ?? imageId, audience });
+  }, [user, imageFile, imageUrl, imageId, newContent, audience, onSubmitPost]);
 
   const handleImageSelected = useCallback(
     (file: File) => {
@@ -179,12 +188,20 @@ export function PostEditorDialog({
                 ></ImageView>
                 <TextEditor onChangeDelta={setNewContent}></TextEditor>
               </div>
-              <AddToPostOptions
-                onImageSelected={handleImageSelected}
-                onPickImage={() => setEditorMode(EditorMode.SELECT_IMAGE)}
-                onAddImageURL={() => setEditorMode(EditorMode.ADD_IMAGE_URL)}
-                disableImageSelection={!!imageFile || !!imageId}
-              ></AddToPostOptions>
+              <div className="flex flex-row border-2 border-b-2 px-2">
+                <AddToPostOptions
+                  onImageSelected={handleImageSelected}
+                  onPickImage={() => setEditorMode(EditorMode.SELECT_IMAGE)}
+                  onAddImageURL={() => setEditorMode(EditorMode.ADD_IMAGE_URL)}
+                  disableImageSelection={!!imageFile || !!imageId}
+                ></AddToPostOptions>
+                <div className="flex-auto"></div>
+                <AudienceSelector
+                  disabled={!!originalPost}
+                  onChange={setAudience}
+                  audience={audience}
+                ></AudienceSelector>
+              </div>
             </div>
           )}
         </DialogBody>

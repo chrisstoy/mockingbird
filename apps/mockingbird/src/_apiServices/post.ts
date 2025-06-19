@@ -1,12 +1,14 @@
+import { Audience } from '@/_types/audience';
+import { ImageId } from '@/_types/images';
 import { Post, PostId, PostSchema } from '@/_types/post';
 import { UserId } from '@/_types/users';
 import { z } from 'zod';
 import { fetchFromServer } from './fetchFromServer';
-import { ImageId } from '@/_types/images';
 
 export async function createPost(
   userId: UserId,
   content: string,
+  audience: Audience,
   imageId?: ImageId
 ): Promise<Post> {
   const response = await fetchFromServer(`/posts`, {
@@ -16,6 +18,7 @@ export async function createPost(
     },
     body: JSON.stringify({
       posterId: userId,
+      audience,
       content,
       imageId,
     }),
