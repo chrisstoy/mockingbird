@@ -69,8 +69,8 @@ export async function POST(req: NextRequest, context: RouteContext) {
     const file = fileBlob instanceof File ? fileBlob : undefined;
 
     const schema = z.object({
-      file: z.instanceof(File).optional(),
-      imageUrl: z.string().url().optional(),
+      file: z.instanceof(File).nullable(),
+      imageUrl: z.string().url().nullable(),
       description: z.string().optional(),
       albumId: AlbumIdSchema.optional(),
     });
