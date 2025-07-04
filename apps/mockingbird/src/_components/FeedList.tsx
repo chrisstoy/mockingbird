@@ -1,24 +1,37 @@
-import { getFeedForUser } from '@/_server/feedService';
+import { getFeed } from '@/_server/feedService';
+import { FeedSource } from '@/_types/feeds';
+import { Post } from '@/_types/post';
 import { UserId } from '@/_types/users';
+import { NoPostsInFeed } from './NoPostsInFeed';
 import { SummaryPost } from './SummaryPost';
 
 type Props = {
   userId: UserId;
+  feedSource: FeedSource;
 };
-export async function FeedList({ userId }: Props) {
-  const feed = await getFeedForUser(userId);
+export async function FeedList({ userId, feedSource }: Props) {
+  let feed: Array<Post> = [];
 
-  const sortedFeed = feed.sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  );
+  try {
+    feed = await getFeed({ userId, feedSource });
+  } catch (error) {
+    console.error(error);
+    feed = [];
+  }
 
   return (
     <ul className="list-none max-w-2xl">
-      {sortedFeed.map((post) => (
-        <li className="m-2" key={post.id}>
-          <SummaryPost post={post} linkToDetails showFirstComment />
+      {feed.length > 0 ? (
+        feed.map((post) => (
+          <li className="m-2" key={post.id}>
+            <SummaryPost post={post} linkToDetails showFirstComment />
+          </li>
+        ))
+      ) : (
+        <li className="m-2">
+          <NoPostsInFeed></NoPostsInFeed>
         </li>
-      ))}
+      )}
     </ul>
   );
 }
