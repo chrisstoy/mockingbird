@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export type FeedSource = 'public' | 'private' | (string & {});
+export type FeedSource = 'public' | 'private' | string;
 
 export const FeedSourceSchema = z
   .enum(['public', 'private'])
