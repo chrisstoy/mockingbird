@@ -1,11 +1,12 @@
 import Image from 'next/image';
-import { UserButton } from './UserButton.client';
 import Link from 'next/link';
+import { FeedSelector } from './FeedSelector.client';
+import { UserButton } from './UserButton.client';
 
 export function Header() {
   return (
     <div className="navbar bg-neutral text-neutral-content w-full">
-      <Link href="/">
+      <Link href="/" className="w-1/3 flex justify-start">
         <Image
           className={'ml-2 w-auto h-auto'}
           src="/images/mockingbird-white.png"
@@ -15,8 +16,12 @@ export function Header() {
         />
         Mockingbird
       </Link>
-      <div className="flex-grow"></div>
-      <UserButton></UserButton>
+      <div className="flex-grow flex justify-center">
+        <FeedSelector />
+      </div>
+      <div className="w-1/3 flex justify-end">
+        <UserButton />
+      </div>
     </div>
   );
 }
