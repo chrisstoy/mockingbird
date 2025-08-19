@@ -1,4 +1,7 @@
 {
   "typescript.tsdk": "node_modules/typescript/lib",
-  "eslint.validate": ["json"]
+  "eslint.validate": [
+    "json"
+  ],
+  "nxConsole.generateAiAgentRules": true
 }
