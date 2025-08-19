@@ -1,6 +1,6 @@
 'use client';
 import { getImage } from '@/_apiServices/images';
-import { Image, ImageId } from '@/_types/images';
+import { Image, ImageId } from '@/_types';
 import { MISSING_IMAGE_URL } from '@/constants';
 import { PhotoIcon } from '@heroicons/react/24/solid';
 import { useEffect, useState } from 'react';

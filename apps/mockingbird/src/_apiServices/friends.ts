@@ -1,4 +1,4 @@
-import { FriendCollectionSchema, UserId } from '@/_types/users';
+import { FriendCollectionSchema, UserId } from '@/_types';
 import { fetchFromServer } from './fetchFromServer';
 
 export async function getFriendsForUser(userId: UserId) {

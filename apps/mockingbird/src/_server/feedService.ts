@@ -1,7 +1,5 @@
 import { prisma } from '@/_server/db';
-import { FeedSource } from '@/_types/feeds';
-import { PostSchema } from '@/_types/post';
-import { UserId } from '@/_types/users';
+import { FeedSource, PostSchema, UserId } from '@/_types';
 import { z } from 'zod';
 import { getAcceptedFriendsForUser } from './friendsService';
 

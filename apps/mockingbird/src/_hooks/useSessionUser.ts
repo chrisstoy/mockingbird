@@ -1,6 +1,6 @@
-import { SessionUser, SessionUserSchema } from '@/_types/users';
-import { useSession } from 'next-auth/react';
+import { SessionUser, SessionUserSchema } from '@/_types';
 import { useMemo } from 'react';
+import { useSession } from 'next-auth/react';
 
 /**
  * hook to get the SessionUser from the current auth session

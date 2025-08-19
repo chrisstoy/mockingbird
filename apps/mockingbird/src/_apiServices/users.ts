@@ -1,6 +1,6 @@
-import { UserId, UserInfoSchema } from '@/_types/users';
-import { z } from 'zod';
+import { UserId, UserInfoSchema } from '@/_types';
 import { fetchFromServer } from './fetchFromServer';
+import { z } from 'zod';
 
 export async function getUser(id: UserId) {
   try {

@@ -1,5 +1,5 @@
 'use client';
-import { PasswordSchema } from '@/_types/password';
+import { PasswordSchema } from '@/_types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormTextInput } from '@mockingbird/stoyponents';
 import { Dispatch, SetStateAction, useState } from 'react';

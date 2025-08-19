@@ -1,6 +1,6 @@
 import { prisma } from '@/_server/db';
 import baseLogger from '@/_server/logger';
-import { UserId, UserInfoSchema } from '@/_types/users';
+import { UserId, UserInfoSchema } from '@/_types';
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 

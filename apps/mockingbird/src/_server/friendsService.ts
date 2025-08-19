@@ -5,7 +5,7 @@ import {
   SimpleUserInfoSchema,
   UserId,
   UserIdSchema,
-} from '@/_types/users';
+} from '@/_types';
 import { z } from 'zod';
 
 const logger = baseLogger.child({

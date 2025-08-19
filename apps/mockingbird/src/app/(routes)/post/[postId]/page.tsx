@@ -1,8 +1,8 @@
-import { getPostWithId } from '@/_server/postsService';
-import { SummaryPost } from '@/_components/SummaryPost';
-import { PostId } from '@/_types/post';
-import { Suspense } from 'react';
 import { SkeletonSummaryPost } from '@/_components/SkeletonSummaryPost';
+import { SummaryPost } from '@/_components/SummaryPost';
+import { getPostWithId } from '@/_server/postsService';
+import { PostId } from '@/_types';
+import { Suspense } from 'react';
 
 interface Props {
   params: Promise<{

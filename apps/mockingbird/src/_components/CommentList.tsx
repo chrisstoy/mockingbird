@@ -1,4 +1,4 @@
-import { Post } from '@/_types/post';
+import { Post } from '@/_types';
 import { Comment } from './Comment';
 
 const sortByCreatedAtAsc = (a: { createdAt: Date }, b: { createdAt: Date }) =>

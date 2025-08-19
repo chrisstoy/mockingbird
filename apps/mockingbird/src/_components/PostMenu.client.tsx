@@ -1,6 +1,6 @@
 'use client';
 import { deletePost } from '@/_apiServices/post';
-import { PostId } from '@/_types/post';
+import { PostId } from '@/_types';
 import { EllipsisHorizontalIcon } from '@heroicons/react/24/solid';
 import {
   ConfirmationDialog,

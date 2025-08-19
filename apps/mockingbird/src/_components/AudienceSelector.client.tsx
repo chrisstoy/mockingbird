@@ -1,6 +1,6 @@
 'use client';
 
-import { Audience, audienceValues } from '@/_types/audience';
+import { Audience, audienceValues } from '@/_types';
 import { toCapitalized } from '@/_utils/toCapitalized';
 import { useRef, useState } from 'react';
 

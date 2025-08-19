@@ -1,7 +1,7 @@
 'use client';
 import { getUsersMatchingSearchTerm } from '@/_apiServices/users';
 import { useSessionUser } from '@/_hooks/useSessionUser';
-import { FriendStatus, SimpleUserInfo, UserId } from '@/_types/users';
+import { FriendStatus, SimpleUserInfo, UserId } from '@/_types';
 import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { useDebounce } from '@uidotdev/usehooks';
 import { ChangeEvent, useCallback, useEffect, useState } from 'react';

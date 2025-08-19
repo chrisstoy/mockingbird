@@ -1,4 +1,4 @@
-import { Post } from '@/_types/post';
+import { Post } from '@/_types';
 import { TextDisplay } from '@mockingbird/stoyponents';
 import Image from 'next/image';
 import { ImageDisplay } from './ImageDisplay.client';

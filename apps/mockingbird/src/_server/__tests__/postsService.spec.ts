@@ -29,7 +29,6 @@ const postsCreateMock = jest.mocked<PrismaClient['post']['create']>(
 
 describe('createPost', () => {
   beforeAll(() => {
-    // @ts-expect-error - return type does not match
     postsCreateMock.mockImplementation(({ data }) => {
       return Promise.resolve({
         id: 'cm5t7b2da0001nkm167ecyq58',

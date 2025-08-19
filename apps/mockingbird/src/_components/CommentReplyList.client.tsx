@@ -1,5 +1,5 @@
 'use client';
-import { Post } from '@/_types/post';
+import { Post } from '@/_types';
 import { CommentReply } from './CommentReply.client';
 
 type Props = {

@@ -1,8 +1,5 @@
 import { z, ZodIssueCode } from 'zod';
-import { createDatabaseIdSchema } from './type-utilities';
-
-export type UserId = string & { __brand: 'UserId' };
-export const UserIdSchema = createDatabaseIdSchema<UserId>();
+import { UserIdSchema } from './ids';
 
 export type EmailAddress = string & { __brand: 'EmailAddress' };
 export const EmailAddressSchema = z

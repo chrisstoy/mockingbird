@@ -1,6 +1,6 @@
 import { deleteImageForUser, getImage } from '@/_server/imagesService';
 import baseLogger from '@/_server/logger';
-import { ImageIdSchema } from '@/_types/images';
+import { ImageIdSchema } from '@/_types';
 import {
   createErrorResponse,
   respondWithError,

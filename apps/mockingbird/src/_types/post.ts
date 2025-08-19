@@ -1,11 +1,6 @@
 import { z } from 'zod';
 import { AudienceSchema } from './audience';
-import { ImageIdSchema } from './images';
-import { createDatabaseIdSchema } from './type-utilities';
-import { UserIdSchema } from './users';
-
-export type PostId = string & { __brand: 'PostId' };
-export const PostIdSchema = createDatabaseIdSchema<PostId>();
+import { ImageIdSchema, PostIdSchema, UserIdSchema } from './ids';
 
 export const CreatePostDataSchema = z.object({
   posterId: UserIdSchema,

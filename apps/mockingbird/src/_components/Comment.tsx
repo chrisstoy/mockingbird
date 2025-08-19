@@ -1,6 +1,6 @@
 import { sessionUser } from '@/_hooks/sessionUser';
 import { getUserById } from '@/_server/usersService';
-import { Post } from '@/_types/post';
+import { Post } from '@/_types';
 import { GENERIC_USER_IMAGE_URL } from '@/constants';
 import { TextDisplay } from '@mockingbird/stoyponents';
 import Link from 'next/link';

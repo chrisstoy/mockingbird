@@ -1,7 +1,4 @@
-import { Audience } from '@/_types/audience';
-import { ImageId } from '@/_types/images';
-import { Post, PostId, PostSchema } from '@/_types/post';
-import { UserId } from '@/_types/users';
+import { Audience, ImageId, Post, PostId, PostSchema, UserId } from '@/_types';
 import { z } from 'zod';
 import { fetchFromServer } from './fetchFromServer';
 

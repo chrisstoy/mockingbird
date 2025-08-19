@@ -1,7 +1,7 @@
 'use client';
 import { getImagesForUser } from '@/_apiServices/images';
 import { useSessionUser } from '@/_hooks/useSessionUser';
-import { type Image, type ImageId } from '@/_types/images';
+import { type Image, type ImageId } from '@/_types';
 import { PhotoIcon } from '@heroicons/react/24/solid';
 import { useEffect, useState } from 'react';
 

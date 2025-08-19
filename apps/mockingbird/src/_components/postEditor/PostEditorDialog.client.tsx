@@ -1,9 +1,7 @@
 'use client';
 import { getUser } from '@/_apiServices/users';
 import { useSessionUser } from '@/_hooks/useSessionUser';
-import { Audience } from '@/_types/audience';
-import { type ImageId } from '@/_types/images';
-import { type Post } from '@/_types/post';
+import { Audience, type ImageId, type Post } from '@/_types';
 import { GENERIC_USER_IMAGE_URL } from '@/constants';
 import {
   DialogActions,

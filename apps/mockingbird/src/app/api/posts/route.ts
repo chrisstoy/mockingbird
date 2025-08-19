@@ -1,7 +1,6 @@
 import baseLogger from '@/_server/logger';
 import { createPost } from '@/_server/postsService';
-import { ImageIdSchema } from '@/_types/images';
-import { CreatePostDataSchema } from '@/_types/post';
+import { CreatePostDataSchema, ImageIdSchema } from '@/_types';
 import { NextRequest, NextResponse } from 'next/server';
 import { respondWithError, ResponseError } from '../errors';
 import { validateAuthentication } from '../validateAuthentication';

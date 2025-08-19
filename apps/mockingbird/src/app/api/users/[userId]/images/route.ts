@@ -4,8 +4,7 @@ import {
   storeImageForUser,
 } from '@/_server/imagesService';
 import baseLogger from '@/_server/logger';
-import { AlbumIdSchema } from '@/_types/images';
-import { UserIdSchema } from '@/_types/users';
+import { AlbumIdSchema, UserIdSchema } from '@/_types';
 import {
   createErrorResponse,
   respondWithError,

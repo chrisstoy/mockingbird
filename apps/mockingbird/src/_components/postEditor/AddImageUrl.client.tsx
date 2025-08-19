@@ -1,7 +1,7 @@
 'use client';
 import { addExternalImage } from '@/_apiServices/images';
 import { useSessionUser } from '@/_hooks/useSessionUser';
-import { type ImageId } from '@/_types/images';
+import { type ImageId } from '@/_types';
 import { TrashIcon } from '@heroicons/react/20/solid';
 import { useCallback, useMemo, useState } from 'react';
 

@@ -1,5 +1,5 @@
 'use client';
-import { FriendStatus, UserId } from '@/_types/users';
+import { FriendStatus, UserId } from '@/_types';
 import { useFriendCollectionStore } from '../_service/state';
 import { FriendCard } from './FriendCard.client';
 
