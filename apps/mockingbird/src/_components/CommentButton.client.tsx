@@ -2,7 +2,7 @@
 import { uploadImage } from '@/_apiServices/images';
 import { commentOnPost } from '@/_apiServices/post';
 import { useSessionUser } from '@/_hooks/useSessionUser';
-import { Post } from '@/_types/post';
+import { Post } from '@/_types';
 import { ChatBubbleLeftEllipsisIcon } from '@heroicons/react/20/solid';
 import { useRouter } from 'next/navigation';
 import { useDialogManager } from './DialogManager.client';

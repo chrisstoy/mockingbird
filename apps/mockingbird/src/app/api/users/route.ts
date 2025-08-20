@@ -5,7 +5,7 @@ import {
   getUserByEmail,
   getUsersMatchingQuery,
 } from '@/_server/usersService';
-import { CreateUserDataSchema } from '@/_types/createUser';
+import { CreateUserDataSchema } from '@/_types';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { respondWithError, ResponseError } from '../errors';

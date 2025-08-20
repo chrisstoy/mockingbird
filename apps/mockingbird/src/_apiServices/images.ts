@@ -3,8 +3,8 @@ import {
   type AlbumId,
   type Image,
   type ImageId,
-} from '@/_types/images';
-import { type UserId } from '@/_types/users';
+  type UserId,
+} from '@/_types';
 import { z } from 'zod';
 import { fetchFromServer } from './fetchFromServer';
 

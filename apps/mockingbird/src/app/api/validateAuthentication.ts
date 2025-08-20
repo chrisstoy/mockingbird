@@ -1,4 +1,4 @@
-import { ActiveSession, ActiveSessionSchema } from '@/_types/users';
+import { ActiveSession, ActiveSessionSchema } from '@/_types';
 import { auth } from '@/app/auth';
 import { Session } from 'next-auth';
 import { ResponseError } from './errors';

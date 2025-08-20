@@ -3,7 +3,7 @@ import {
   getNumberOfCommentsForPost,
 } from '@/_server/postsService';
 import { getUserById } from '@/_server/usersService';
-import { Post } from '@/_types/post';
+import { Post } from '@/_types';
 import { auth } from '@/app/auth';
 import { GENERIC_USER_IMAGE_URL } from '@/constants';
 import { TextDisplay } from '@mockingbird/stoyponents';

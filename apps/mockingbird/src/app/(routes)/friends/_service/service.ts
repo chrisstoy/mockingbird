@@ -5,7 +5,7 @@ import {
   removeFriend,
   requestFriend,
 } from '@/_apiServices/friends';
-import { FriendStatus, UserId } from '@/_types/users';
+import { FriendStatus, UserId } from '@/_types';
 
 export async function updateFriendStatusWithUser(
   userId: UserId,

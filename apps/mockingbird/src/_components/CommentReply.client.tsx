@@ -1,7 +1,7 @@
 'use cient';
 import { getUser } from '@/_apiServices/users';
 import { useSessionUser } from '@/_hooks/useSessionUser';
-import { Post } from '@/_types/post';
+import { Post } from '@/_types';
 import { GENERIC_USER_IMAGE_URL } from '@/constants';
 import { TextDisplay } from '@mockingbird/stoyponents';
 import { useEffect, useMemo, useState } from 'react';

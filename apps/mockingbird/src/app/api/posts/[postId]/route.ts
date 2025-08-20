@@ -1,6 +1,6 @@
 import baseLogger from '@/_server/logger';
 import { deletePost, getPostWithId } from '@/_server/postsService';
-import { PostIdSchema } from '@/_types/post';
+import { PostIdSchema } from '@/_types';
 import { RouteContext } from '@/app/types';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { NextRequest, NextResponse } from 'next/server';

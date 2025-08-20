@@ -1,9 +1,6 @@
 import { prisma } from '@/_server/db';
 import baseLogger from '@/_server/logger';
-import { Audience } from '@/_types/audience';
-import { ImageId } from '@/_types/images';
-import { PostId, PostSchema } from '@/_types/post';
-import { UserId } from '@/_types/users';
+import { Audience, ImageId, PostId, PostSchema, UserId } from '@/_types';
 import { errorToString } from '@/_utils/errorToString';
 import { z } from 'zod';
 

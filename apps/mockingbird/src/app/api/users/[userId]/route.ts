@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import baseLogger from '@/_server/logger';
 import { deleteUser, getUserById } from '@/_server/usersService';
-import { UserIdSchema } from '@/_types/users';
+import { UserIdSchema } from '@/_types';
 import { RouteContext } from '@/app/types';
 import { z } from 'zod';
 import { respondWithError, ResponseError } from '../../errors';

@@ -1,4 +1,4 @@
-import { SessionUser, SessionUserSchema } from '@/_types/users';
+import { SessionUser, SessionUserSchema } from '@/_types';
 import { auth } from '@/app/auth';
 
 /**

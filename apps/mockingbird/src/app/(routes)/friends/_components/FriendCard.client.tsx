@@ -5,7 +5,7 @@ import {
   requestFriend,
 } from '@/_apiServices/friends';
 import { useSessionUser } from '@/_hooks/useSessionUser';
-import { FriendStatus, SimpleUserInfo, UserId } from '@/_types/users';
+import { FriendStatus, SimpleUserInfo, UserId } from '@/_types';
 import { GENERIC_USER_IMAGE_URL } from '@/constants';
 import {
   CheckIcon,

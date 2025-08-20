@@ -1,5 +1,5 @@
 'use client';
-import { FeedSource, FeedSourceSchema } from '@/_types/feeds';
+import { FeedSource, FeedSourceSchema } from '@/_types';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useEffect } from 'react';
 

@@ -1,7 +1,7 @@
 'use client';
 import { uploadImage } from '@/_apiServices/images';
 import { createPost } from '@/_apiServices/post';
-import { type SessionUser } from '@/_types/users';
+import { type SessionUser } from '@/_types';
 import { GENERIC_USER_IMAGE_URL } from '@/constants';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';

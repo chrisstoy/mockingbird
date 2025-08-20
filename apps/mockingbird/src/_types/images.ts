@@ -1,12 +1,5 @@
 import { z } from 'zod';
-import { createDatabaseIdSchema } from './type-utilities';
-import { UserIdSchema } from './users';
-
-export type ImageId = string & { __brand: 'ImageId' };
-export const ImageIdSchema = createDatabaseIdSchema<ImageId>();
-
-export type AlbumId = string & { __brand: 'AlbumId' };
-export const AlbumIdSchema = createDatabaseIdSchema<AlbumId>();
+import { AlbumIdSchema, ImageIdSchema, UserIdSchema } from './ids';
 
 export const CreateImageDataSchema = z.object({
   ownerId: UserIdSchema,

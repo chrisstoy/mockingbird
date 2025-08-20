@@ -4,9 +4,7 @@ import {
   getCommentsForPost,
   getPostWithId,
 } from '@/_server/postsService';
-import { ImageIdSchema } from '@/_types/images';
-import { PostIdSchema } from '@/_types/post';
-import { UserIdSchema } from '@/_types/users';
+import { ImageIdSchema, PostIdSchema, UserIdSchema } from '@/_types';
 import { respondWithError, ResponseError } from '@/app/api/errors';
 import { validateAuthentication } from '@/app/api/validateAuthentication';
 import { RouteContext } from '@/app/types';

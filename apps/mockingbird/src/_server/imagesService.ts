@@ -5,8 +5,8 @@ import {
   ImageId,
   ImageMetadata,
   ImageSchema,
-} from '@/_types/images';
-import { UserId } from '@/_types/users';
+  UserId,
+} from '@/_types';
 import {
   DeleteObjectCommand,
   ListObjectsV2Command,

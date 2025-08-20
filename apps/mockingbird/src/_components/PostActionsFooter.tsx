@@ -1,5 +1,4 @@
-import { Post } from '@/_types/post';
-import React from 'react';
+import { Post } from '@/_types';
 import { CommentButton } from './CommentButton.client';
 
 interface Props {

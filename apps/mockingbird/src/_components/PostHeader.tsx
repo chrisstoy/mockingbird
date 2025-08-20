@@ -1,6 +1,5 @@
 import { toLocalTime } from '@/_apiServices/toLocalTime';
-import { Audience } from '@/_types/audience';
-import { PostId } from '@/_types/post';
+import { Audience, PostId } from '@/_types';
 import { toCapitalized } from '@/_utils/toCapitalized';
 import { PostMenu } from './PostMenu.client';
 

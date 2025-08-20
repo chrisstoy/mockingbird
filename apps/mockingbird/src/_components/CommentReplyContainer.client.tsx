@@ -1,7 +1,7 @@
 'use client';
 import { commentOnPost, getCommentsForPost } from '@/_apiServices/post';
 import { useSessionUser } from '@/_hooks/useSessionUser';
-import { type Post } from '@/_types/post';
+import { type Post } from '@/_types';
 import { type EditorDelta, TextEditor } from '@mockingbird/stoyponents';
 import { Suspense, useEffect, useState } from 'react';
 import { CommentReplyList } from './CommentReplyList.client';

@@ -1,6 +1,6 @@
 'use client';
 import { fetchFromServer } from '@/_apiServices/fetchFromServer';
-import { CreateUser, CreateUserSchema } from '@/_types/createUser';
+import { CreateUser, CreateUserSchema } from '@/_types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Turnstile } from '@marsidev/react-turnstile';
 import { FormTextInput } from '@mockingbird/stoyponents';

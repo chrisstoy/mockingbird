@@ -2,7 +2,7 @@ import { FeedList } from '@/_components/FeedList';
 import { NewPost } from '@/_components/NewPost.client';
 import { SkeletonSummaryPost } from '@/_components/SkeletonSummaryPost';
 import { sessionUser } from '@/_hooks/sessionUser';
-import { FeedSource, FeedSourceSchema } from '@/_types/feeds';
+import { FeedSource, FeedSourceSchema } from '@/_types';
 import { Suspense } from 'react';
 import { z } from 'zod';
 

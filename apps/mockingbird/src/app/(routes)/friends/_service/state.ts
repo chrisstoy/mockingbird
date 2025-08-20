@@ -1,4 +1,4 @@
-import { FriendCollection, SimpleUserInfo, UserInfo } from '@/_types/users';
+import { FriendCollection, SimpleUserInfo, UserInfo } from '@/_types';
 import type {} from '@redux-devtools/extension'; // required for devtools typing
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';

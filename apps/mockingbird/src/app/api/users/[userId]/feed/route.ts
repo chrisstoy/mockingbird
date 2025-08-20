@@ -1,7 +1,6 @@
 import { getFeed } from '@/_server/feedService';
 import baseLogger from '@/_server/logger';
-import { FeedSourceSchema } from '@/_types/feeds';
-import { UserIdSchema } from '@/_types/users';
+import { FeedSourceSchema, UserIdSchema } from '@/_types';
 import { respondWithError } from '@/app/api/errors';
 import { validateAuthentication } from '@/app/api/validateAuthentication';
 import { RouteContext } from '@/app/types';

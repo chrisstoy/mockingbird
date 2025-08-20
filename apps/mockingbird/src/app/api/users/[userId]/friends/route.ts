@@ -1,6 +1,6 @@
 import { getFriendsForUser } from '@/_server/friendsService';
 import baseLogger from '@/_server/logger';
-import { UserIdSchema } from '@/_types/users';
+import { UserIdSchema } from '@/_types';
 import { createErrorResponse, respondWithError } from '@/app/api/errors';
 import { validateAuthentication } from '@/app/api/validateAuthentication';
 import { RouteContext } from '@/app/types';

@@ -1,7 +1,5 @@
 import { getFeed } from '@/_server/feedService';
-import { FeedSource } from '@/_types/feeds';
-import { Post } from '@/_types/post';
-import { UserId } from '@/_types/users';
+import { FeedSource, Post, UserId } from '@/_types';
 import { NoPostsInFeed } from './NoPostsInFeed';
 import { SummaryPost } from './SummaryPost';
 

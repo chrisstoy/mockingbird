@@ -1,7 +1,6 @@
-import { signIn } from '@/app/auth';
+import { PostSchema, UserId } from '@/_types';
 import { fetchFromServer } from './fetchFromServer';
-import { UserId } from '@/_types/users';
-import { PostSchema } from '@/_types/post';
+import { signIn } from '@/app/auth';
 import { z } from 'zod';
 
 export async function getFeedForUser(userId: UserId) {

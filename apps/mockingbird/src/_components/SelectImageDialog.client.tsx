@@ -1,6 +1,6 @@
 'use client';
 import { useSessionUser } from '@/_hooks/useSessionUser';
-import { type ImageId } from '@/_types/images';
+import { type ImageId } from '@/_types';
 import {
   DialogActions,
   DialogBody,

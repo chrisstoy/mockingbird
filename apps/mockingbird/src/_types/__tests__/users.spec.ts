@@ -1,5 +1,5 @@
 import { ZodError } from 'zod';
-import { EmailAddressSchema, UserIdSchema } from '../users';
+import { EmailAddressSchema, UserIdSchema } from '..';
 
 describe('UserIdSchema', () => {
   it('should parse a valid user id', () => {
