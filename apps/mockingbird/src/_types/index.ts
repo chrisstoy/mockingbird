@@ -1,5 +1,6 @@
 export * from './audience';
 export * from './createUser';
+export * from './documents';
 export * from './feeds';
 export * from './ids';
 export * from './images';
