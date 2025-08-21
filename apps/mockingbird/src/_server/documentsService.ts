@@ -1,5 +1,11 @@
 import { prisma } from '@/_server/db';
-import { Document, DocumentSchema, DocumentType, UserId } from '@/_types';
+import {
+  Document,
+  DocumentId,
+  DocumentSchema,
+  DocumentType,
+  UserId,
+} from '@/_types';
 import { z } from 'zod';
 import baseLogger from './logger';
 
@@ -85,6 +91,20 @@ export async function createDocument(
       content,
       creatorId,
       version,
+    },
+  });
+
+  const doc = DocumentSchema.parse(rawData);
+  return doc;
+}
+
+export async function deleteDocument(docType: DocumentType, docId: DocumentId) {
+  logger.info(`Deleting document with id: ${docId} of type: ${docType}`);
+
+  const rawData = await prisma.document.delete({
+    where: {
+      type: docType,
+      id: docId,
     },
   });
 
