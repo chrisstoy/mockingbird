@@ -72,6 +72,13 @@ export async function POST(req: NextRequest, context: RouteContext) {
       throw new ResponseError(400, 'Content is required for the document');
     }
 
+    if (content.length > 1000000) {
+      throw new ResponseError(
+        400,
+        'Content exceeds the maximum allowed size of 1MB'
+      );
+    }
+
     const doc = await createDocument(session.user.id, docType, content);
 
     logger.info(

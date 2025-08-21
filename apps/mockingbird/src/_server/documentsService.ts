@@ -48,8 +48,8 @@ export async function getVersionOfDocument(
     return undefined;
   }
 
-  const docs = DocumentSchema.parse(rawData);
-  return docs;
+  const doc = DocumentSchema.parse(rawData);
+  return doc;
 }
 
 export async function getLatestVersionOfDocument(
@@ -57,22 +57,20 @@ export async function getLatestVersionOfDocument(
 ): Promise<Document | undefined> {
   logger.info(`Getting latest version of document type: ${docType}`);
 
-  const rawData = await prisma.document.findMany({
+  const rawData = await prisma.document.findFirst({
     where: {
       type: docType,
     },
     orderBy: {
       version: 'desc',
     },
-    take: 1,
   });
 
   if (!rawData) {
     return undefined;
   }
 
-  const doc = z.array(DocumentSchema).parse(rawData).at(0);
-
+  const doc = DocumentSchema.parse(rawData);
   return doc;
 }
 
@@ -80,7 +78,7 @@ export async function createDocument(
   creatorId: UserId,
   docType: DocumentType,
   content: string
-) {
+): Promise<Document> {
   const latestVersion = await getLatestVersionOfDocument(docType);
   const version = latestVersion ? latestVersion.version + 1 : 1;
   logger.info(`Creating document of type: ${docType} with version: ${version}`);
@@ -98,12 +96,11 @@ export async function createDocument(
   return doc;
 }
 
-export async function deleteDocument(docType: DocumentType, docId: DocumentId) {
-  logger.info(`Deleting document with id: ${docId} of type: ${docType}`);
+export async function deleteDocument(docId: DocumentId): Promise<Document> {
+  logger.info(`Deleting document with id: ${docId}`);
 
   const rawData = await prisma.document.delete({
     where: {
-      type: docType,
       id: docId,
     },
   });
