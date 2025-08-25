@@ -85,20 +85,35 @@ model Passwords {
 // #endregion
 
 // #region Mockingbird
+enum DocumentType {
+  TOC // Table of Contents
+  PRIVACY // Privacy Policy
+}
+
+model Document {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  type      DocumentType // type of document (e.g., TOC, Privacy Policy)
+  creatorId String // user that created this document
+  version   Int // version of the document
+  content   String // content of the document
+}
 
 enum Audience {
-  PUBLIC    // anyone can see this post
-  PRIVATE   // only people on user's friends list can see this post
+  PUBLIC // anyone can see this post
+  PRIVATE // only people on user's friends list can see this post
 }
 
 model Post {
-  id               String  @id @default(cuid())
+  id               String   @id @default(cuid())
   posterId         String
   responseToPostId String?
   audience         Audience @default(PUBLIC)
   content          String
-  likeCount        Int     @default(0)
-  dislikeCount     Int     @default(0)
+  likeCount        Int      @default(0)
+  dislikeCount     Int      @default(0)
   imageId          String?
 
   createdAt DateTime @default(now())

@@ -1,0 +1,33 @@
+meta {
+  name: POST Document of Type
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{apiHost}}/documents/:docType
+  body: multipartForm
+  auth: none
+}
+
+params:path {
+  docType: TOC
+}
+
+body:json {
+  {
+    "posterId": "cm175soco00051ocbbnmnfi42",
+    "content": "This is a post with an iamge",
+    "imageId": "cm6o4jvpx0002d2ecfr7186l9"
+  }
+}
+
+body:multipart-form {
+  version: 1
+  file: @file(/Users/cstoy/dev/mockingbird/apps/mockingbird/public/terms-of-service.md)
+  ~content: Test Content
+}
+
+body:file {
+  file: @file()
+}

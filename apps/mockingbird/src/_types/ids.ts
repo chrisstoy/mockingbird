@@ -1,5 +1,8 @@
 import { createDatabaseIdSchema } from './type-utilities';
 
+export type DocumentId = string & { __brand: 'DocumentId' };
+export const DocumentIdSchema = createDatabaseIdSchema<DocumentId>();
+
 export type ImageId = string & { __brand: 'ImageId' };
 export const ImageIdSchema = createDatabaseIdSchema<ImageId>();
 

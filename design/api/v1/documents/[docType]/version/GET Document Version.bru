@@ -1,0 +1,29 @@
+meta {
+  name: GET Document Version
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{apiHost}}/documents/:docType
+  body: none
+  auth: none
+}
+
+params:path {
+  docType: TOC
+}
+
+body:json {
+  {
+    "posterId": "cm175soco00051ocbbnmnfi42",
+    "content": "This is a post with an iamge",
+    "imageId": "cm6o4jvpx0002d2ecfr7186l9"
+  }
+}
+
+body:multipart-form {
+  posterId: cm175soco00051ocbbnmnfi42
+  content: This is a post with an image file
+  ~image: @file()
+}
