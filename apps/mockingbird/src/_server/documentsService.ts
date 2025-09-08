@@ -31,6 +31,23 @@ export async function getAllDocumentsOfType(
   return docs;
 }
 
+export async function getDocumentById(docId: DocumentId) {
+  logger.info(`Getting document with id: ${docId}`);
+
+  const rawData = await prisma.document.findUnique({
+    where: {
+      id: docId,
+    },
+  });
+
+  if (!rawData) {
+    return undefined;
+  }
+
+  const doc = DocumentSchema.parse(rawData);
+  return doc;
+}
+
 export async function getVersionOfDocument(
   docType: DocumentType,
   version: number

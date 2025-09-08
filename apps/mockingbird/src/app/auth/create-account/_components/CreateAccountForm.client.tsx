@@ -79,7 +79,7 @@ export function CreateAccountForm() {
       await signIn('credentials', {
         email,
         password,
-        callbackUrl: '/',
+        callbackUrl: '/auth/tos',
       });
     } catch (error) {
       console.error(error);

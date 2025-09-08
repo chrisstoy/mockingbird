@@ -93,6 +93,11 @@ export function UserButton() {
             <MenuItem title="Friends" onClick={() => router.push('/friends')} />
             <MenuItem title="Profile" onClick={() => router.push('/profile')} />
             <hr className="m-1"></hr>
+            <MenuItem
+              title="Data & Privacy"
+              onClick={() => router.push('/privacy')}
+            />
+            <hr className="m-1"></hr>
             <MenuItem title="Sign Out" onClick={() => setShowSignout(true)} />
           </>
         ) : (
