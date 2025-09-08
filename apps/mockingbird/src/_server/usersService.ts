@@ -1,6 +1,6 @@
 import { prisma } from '@/_server/db';
 import baseLogger from '@/_server/logger';
-import { UserId, UserInfoSchema } from '@/_types';
+import { DocumentId, UserId, UserInfoSchema } from '@/_types';
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 
@@ -199,4 +199,15 @@ export async function deleteUser(userId: UserId) {
     logger.error(`DELETE User: ERROR: ${error}`);
     throw error;
   }
+}
+
+export async function acceptTOS(userId: UserId, tosId: DocumentId) {
+  logger.info(`User ${userId} accepted TOS ${tosId}`);
+
+  return await prisma.user.update({
+    data: { acceptedToS: tosId },
+    where: {
+      id: userId,
+    },
+  });
 }

@@ -15,6 +15,7 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
+  acceptedToS   String? // ID of the TOS that was accepted by the user
 
   accounts Account[]
   sessions Session[]

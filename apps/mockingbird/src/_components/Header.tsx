@@ -14,7 +14,7 @@ export function Header() {
           width={64}
           height={64}
         />
-        Mockingbird
+        <div className="hidden sm:block">Mockingbird</div>
       </Link>
       <div className="flex-grow flex justify-center">
         <FeedSelector />

@@ -1,5 +1,5 @@
 import { z, ZodIssueCode } from 'zod';
-import { UserIdSchema } from './ids';
+import { DocumentIdSchema, UserIdSchema } from './ids';
 
 export type EmailAddress = string & { __brand: 'EmailAddress' };
 export const EmailAddressSchema = z
@@ -36,6 +36,7 @@ export type SimpleUserInfo = z.infer<typeof SimpleUserInfoSchema>;
 export const UserInfoSchema = SimpleUserInfoSchema.extend({
   email: EmailAddressSchema,
   emailVerified: z.coerce.date().nullish(),
+  acceptedToS: DocumentIdSchema.nullish(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
 });

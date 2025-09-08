@@ -1,6 +1,6 @@
-import { UserId, UserInfoSchema } from '@/_types';
-import { fetchFromServer } from './fetchFromServer';
+import { DocumentId, UserId, UserInfoSchema } from '@/_types';
 import { z } from 'zod';
+import { fetchFromServer } from './fetchFromServer';
 
 export async function getUser(id: UserId) {
   try {
@@ -30,6 +30,26 @@ export async function deleteUser(userId: UserId) {
   try {
     const response = await fetchFromServer(`/users/${userId}`, {
       method: 'DELETE',
+    });
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function acceptTOS(userId: UserId, tosId: DocumentId) {
+  try {
+    const response = await fetchFromServer(`/users/${userId}/tos/${tosId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId,
+        tosId,
+      }),
     });
     const result = await response.json();
     return result;

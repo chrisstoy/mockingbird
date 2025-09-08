@@ -1,13 +1,17 @@
 'use client';
+import { SimpleUserInfoSchema } from '@/_types';
 import { AuthError } from 'next-auth';
-import { signIn } from 'next-auth/react';
+import { signIn, useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { redirect, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { requireAcceptToS } from '../requireAcceptToS';
 import { SignInButton } from './_components/SignInButton.client';
 import { SignInEmailPassword } from './_components/SignInEmailPassword.client';
 
 export default function SignInPage() {
+  const { update } = useSession();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') || '/';
 
@@ -39,15 +43,43 @@ export default function SignInPage() {
     password: string
   ) {
     try {
-      setSelectedProvider('credentials');
-      await signIn('credentials', {
+      const result = await signIn('credentials', {
         email,
         password,
-        callbackUrl,
+        redirectTo: callbackUrl,
+        redirect: false,
       });
+
+      if (result?.error) {
+        setError(`Invalid Credentials: ${result.error}`);
+        setSelectedProvider('');
+      } else if (result?.ok) {
+        const session = await update();
+        if (!session) {
+          throw new Error('No Session after sign-in');
+        }
+
+        const { data: user } = SimpleUserInfoSchema.safeParse(session.user);
+        if (!user) {
+          throw new Error('User not found after sign-in');
+        }
+
+        const { requireAcceptance, newTOS, userId } = await requireAcceptToS(
+          user.id
+        );
+        if (result) {
+          router.push(
+            `/auth/tos?requireAcceptance=${
+              requireAcceptance ? 'true' : 'false'
+            }&newTOS=${newTOS ? 'true' : 'false'}&userId=${userId}`
+          );
+          return;
+        }
+        router.replace(callbackUrl || '/');
+      }
     } catch (error) {
       if (error instanceof AuthError) {
-        return redirect(`/auth/error?error=${error.type}`);
+        return router.push(`/auth/error?error=${error.type}`);
       }
       throw error;
     }
