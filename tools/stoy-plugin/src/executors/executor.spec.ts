@@ -1,7 +1,7 @@
 import { ExecutorContext } from '@nx/devkit';
 
-import { UpdateVersionExecutorSchema } from './schema';
 import executor from './executor';
+import { UpdateVersionExecutorSchema } from './schema';
 
 const options: UpdateVersionExecutorSchema = {
   versionFile: `${__dirname}/test-version.json`,
@@ -10,6 +10,9 @@ const context: ExecutorContext = {
   root: '',
   cwd: process.cwd(),
   isVerbose: false,
+  projectsConfigurations: undefined,
+  nxJsonConfiguration: undefined,
+  projectGraph: undefined,
 };
 
 describe('UpdateVersion Executor', () => {
