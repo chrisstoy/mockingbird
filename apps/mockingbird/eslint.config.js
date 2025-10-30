@@ -17,12 +17,9 @@ module.exports = [
   ),
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
-    ignores: ['.next/**/*'],
+    ignores: ['.next/**/*', './next-env.d.ts'],
     rules: {
-      '@next/next/no-html-link-for-pages': [
-        'error',
-        'apps/mockingbird/pages',
-      ],
+      '@next/next/no-html-link-for-pages': ['error', 'apps/mockingbird/pages'],
       '@next/next/no-img-element': 'off',
       '@typescript-eslint/no-unused-vars': [
         'warn',

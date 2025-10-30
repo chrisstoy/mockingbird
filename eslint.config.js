@@ -10,7 +10,14 @@ const compat = new FlatCompat({
 module.exports = [
   {
     // Global ignores
-    ignores: ['**/node_modules', '**/dist', '**/.next', '**/build', '**/coverage', '**/*.json'],
+    ignores: [
+      '**/node_modules',
+      '**/dist',
+      '**/.next',
+      '**/build',
+      '**/coverage',
+      '**/*.json',
+    ],
   },
   // Nx plugin configurations
   ...nxPlugin.configs['flat/base'],
@@ -19,6 +26,7 @@ module.exports = [
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
     rules: {
+      '@typescript-eslint/triple-slash-reference': ['off'],
       '@nx/enforce-module-boundaries': [
         'error',
         {
