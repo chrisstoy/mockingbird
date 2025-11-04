@@ -10,7 +10,8 @@
       "Bash(npx nx serve:*)",
       "Bash(npx nx show project:*)",
       "Bash(npx nx dev mockingbird)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(pkill:*)"
     ],
     "deny": [],
     "ask": []

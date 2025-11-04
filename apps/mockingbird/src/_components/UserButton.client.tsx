@@ -5,7 +5,7 @@ import {
   ConfirmationDialogResult,
   ConfirmSignOutDialog,
 } from '@mockingbird/stoyponents';
-import { signIn, signOut } from 'next-auth/react';
+import { createClient } from '@/_utils/supabase/client';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -29,6 +29,7 @@ function MenuItem({ title, onClick }: { title: string; onClick: () => void }) {
 export function UserButton() {
   const user = useSessionUser();
   const router = useRouter();
+  const supabase = createClient();
 
   const [showSignout, setShowSignout] = useState(false);
 
@@ -50,17 +51,20 @@ export function UserButton() {
     });
   }, [user]);
 
-  function handleSignOutResponse(
+  async function handleSignOutResponse(
     result?: ConfirmationDialogResult | undefined
   ) {
     setShowSignout(false);
     if (result === 'ok') {
-      signOut({ callbackUrl: '/' });
+      await supabase.auth.signOut();
+      router.push('/');
+      router.refresh();
     }
   }
 
   function handleSignIn() {
-    signIn(undefined, { callbackUrl: '/' });
+    // TODO: Implement Supabase sign-in redirect
+    router.push('/auth/signin');
   }
 
   return (

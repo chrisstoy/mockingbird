@@ -4,13 +4,13 @@ import {
 } from '@/_server/documentsService';
 import { getUserById } from '@/_server/usersService';
 import { UserIdSchema } from '@/_types';
-import { auth } from '@/app/auth';
+import { getSession } from '@/_server/auth';
 import TermsOfService from '../../../../_components/TermsOfService.client';
 
 export default async function ViewTOSPage() {
-  const session = await auth();
+  const supabaseUser = await getSession();
 
-  const { data: userId } = UserIdSchema.safeParse(session?.user?.id);
+  const { data: userId } = UserIdSchema.safeParse(supabaseUser?.id);
 
   const userInfo = userId ? await getUserById(userId) : null;
 

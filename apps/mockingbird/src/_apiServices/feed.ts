@@ -1,6 +1,5 @@
 import { PostSchema, UserId } from '@/_types';
 import { fetchFromServer } from './fetchFromServer';
-import { signIn } from '@/app/auth';
 import { z } from 'zod';
 
 export async function getFeedForUser(userId: UserId) {
@@ -11,7 +10,8 @@ export async function getFeedForUser(userId: UserId) {
 
     if (!response.ok) {
       if (response.status === 401) {
-        signIn();
+        console.error('Unauthorized: User needs to sign in');
+        // Client-side redirect to signin should be handled by middleware
       }
 
       console.error(

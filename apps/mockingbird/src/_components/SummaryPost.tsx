@@ -4,7 +4,7 @@ import {
 } from '@/_server/postsService';
 import { getUserById } from '@/_server/usersService';
 import { Post } from '@/_types';
-import { auth } from '@/app/auth';
+import { getSession } from '@/_server/auth';
 import { GENERIC_USER_IMAGE_URL } from '@/constants';
 import { TextDisplay } from '@mockingbird/stoyponents';
 import Link from 'next/link';
@@ -26,13 +26,13 @@ export async function SummaryPost({
   linkToDetails = false,
   showFirstComment = false,
 }: Props) {
-  const session = await auth();
+  const supabaseUser = await getSession();
   const poster = await getUserById(post.posterId);
 
   const userName = poster?.name ?? 'Unknown';
   const imageSrc = poster?.image ?? GENERIC_USER_IMAGE_URL;
 
-  const showOptionsMenu = post.posterId === session?.user?.id;
+  const showOptionsMenu = post.posterId === supabaseUser?.id;
 
   const comments =
     (await getCommentsForPost(post.id, showFirstComment ? 1 : undefined)) ?? [];
