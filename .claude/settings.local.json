@@ -3,7 +3,9 @@
     "allow": [
       "Bash(npx nx run-many:*)",
       "Bash(npx prisma migrate:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []

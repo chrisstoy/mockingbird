@@ -37,8 +37,8 @@ try {
     region: 'auto',
     endpoint: `https://${env.CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`,
     credentials: {
-      accessKeyId: env.CLOUDFLARE_R2_ACCESS_KEY_ID,
-      secretAccessKey: env.CLOUDFLARE_R2_SECRET_ACCESS_KEY,
+      accessKeyId: env.CLOUDFLARE_R2_ACCESS_KEY_ID ?? '',
+      secretAccessKey: env.CLOUDFLARE_R2_SECRET_ACCESS_KEY ?? '',
     },
   };
   logger.info(`Creating S3 client`, config);
@@ -280,7 +280,7 @@ export async function deleteImageForUser(userId: UserId, imageId: ImageId) {
     }
 
     const deleteImage = async (imageUrl: string) => {
-      const key = imageUrl.replace(env.IMAGES_BASE_URL, '');
+      const key = imageUrl.replace(env.IMAGES_BASE_URL ?? '', '');
 
       const command = new DeleteObjectCommand({
         Bucket: bucketName,
