@@ -1,0 +1,23 @@
+# Supabase Database
+
+database name: mockingbird-dev
+Password: 3BcMLxpNL7i1KSNb
+
+# Connect to Supabase via connection pooling
+
+DATABASE_URL="postgresql://postgres.vltjqqsbvlnzgedtrdqe:3BcMLxpNL7i1KSNb@aws-1-us-east-2.pooler.supabase.com:6543/postgres?pgbouncer=true"
+
+# Direct connection to the database. Used for migrations
+
+DIRECT_URL="postgresql://postgres.vltjqqsbvlnzgedtrdqe:3BcMLxpNL7i1KSNb@aws-1-us-east-2.pooler.supabase.com:5432/postgres"
+
+SUPABASE_URL=https://vltjqqsbvlnzgedtrdqe.supabase.co
+SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdGpxcXNidmxuemdlZHRyZHFlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE5NDM1MDgsImV4cCI6MjA3NzUxOTUwOH0.vK1ZSli0YO4udQ3n55cKSo7GmvI31SLOYp59to4uL8M
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdGpxcXNidmxuemdlZHRyZHFlIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MTk0MzUwOCwiZXhwIjoyMDc3NTE5NTA4fQ.8TJPDtGV2bssaEXg0EmJoETDa6KluNkzq-ye5zC--e4
+
+# Auth
+
+## Github
+
+AUTH_GITHUB_ID=Ov23liEH083DjRNd4MNk
+AUTH_GITHUB_SECRET=bd52309182351da150c321a4bdfc912b40e2c7c4
