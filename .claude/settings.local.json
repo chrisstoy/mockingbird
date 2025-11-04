@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(npx nx run-many:*)",
-      "Bash(npx prisma migrate:*)"
+      "Bash(npx prisma migrate:*)",
+      "Bash(npm install:*)"
     ],
     "deny": [],
     "ask": []

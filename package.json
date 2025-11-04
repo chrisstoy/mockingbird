@@ -12,6 +12,8 @@
     "@marsidev/react-turnstile": "^1.1.0",
     "@prisma/client": "^5.22.0",
     "@redux-devtools/extension": "^3.3.0",
+    "@supabase/ssr": "^0.7.0",
+    "@supabase/supabase-js": "^2.78.0",
     "@tailwindcss/typography": "^0.5.15",
     "@types/bcrypt": "^5.0.2",
     "@types/bcryptjs": "^2.4.6",

@@ -16,37 +16,39 @@ export const env = createEnv({
       .default('info'),
     LOG_DIR: z.string().default('./logs'),
 
+    // Database (Supabase PostgreSQL)
     DATABASE_URL: z.string().url(),
+    DIRECT_URL: z.string().url(), // Direct connection for Prisma migrations
+
+    // Supabase Auth & API
+    SUPABASE_URL: z.string().url(),
+    SUPABASE_ANON_KEY: z.string().min(1),
+    SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
 
     API_HOST: z.string().url().optional(),
     API_PATH: z.string().min(1),
 
     NEXT_SHARP_PATH: z.string().optional(),
 
-    AUTH_SECRET:
-      process.env.NODE_ENV === 'production' ||
-      process.env.VERCEL_ENV === 'production'
-        ? z.string().min(1)
-        : z.string().min(1).optional(),
-
-    AUTH_TRUST_HOST: z.enum(['true', 'false']).optional(),
-
+    // GitHub OAuth (for Supabase Auth)
     AUTH_GITHUB_ID: z.string().min(1),
     AUTH_GITHUB_SECRET: z.string().min(1),
 
-    AUTH_GOOGLE_ID: z.string().min(1),
-    AUTH_GOOGLE_SECRET: z.string().min(1),
-
-    CLOUDFLARE_ACCOUNT_ID: z.string().min(1),
-    CLOUDFLARE_R2_ACCESS_KEY_ID: z.string().min(1),
-    CLOUDFLARE_R2_SECRET_ACCESS_KEY: z.string().min(1),
-    CLOUDFLARE_R2_BUCKET_NAME: z.string().min(1),
-
-    IMAGES_BASE_URL: z.string().url(),
-    IMAGES_MAX_SIZE_IN_BYTES: z.string(),
-
+    // Cloudflare Turnstile (keeping for now)
     TURNSTILE_SITE_KEY: z.string().min(1),
     TURNSTILE_SECRET_KEY: z.string().min(1),
+
+    // OLD - To be removed after full migration
+    AUTH_SECRET: z.string().optional(),
+    AUTH_TRUST_HOST: z.enum(['true', 'false']).optional(),
+    AUTH_GOOGLE_ID: z.string().optional(),
+    AUTH_GOOGLE_SECRET: z.string().optional(),
+    CLOUDFLARE_ACCOUNT_ID: z.string().optional(),
+    CLOUDFLARE_R2_ACCESS_KEY_ID: z.string().optional(),
+    CLOUDFLARE_R2_SECRET_ACCESS_KEY: z.string().optional(),
+    CLOUDFLARE_R2_BUCKET_NAME: z.string().optional(),
+    IMAGES_BASE_URL: z.string().optional(),
+    IMAGES_MAX_SIZE_IN_BYTES: z.string().optional(),
   },
 
   /**
@@ -54,7 +56,10 @@ export const env = createEnv({
    * isn't built with invalid env vars. To expose them to the client, prefix them with
    * `NEXT_PUBLIC_`.
    */
-  client: {},
+  client: {
+    NEXT_PUBLIC_SUPABASE_URL: z.string().url(),
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
+  },
 
   /**
    * You can't destruct `process.env` as a regular object in the Next.js edge runtimes (e.g.
