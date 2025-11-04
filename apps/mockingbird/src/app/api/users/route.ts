@@ -1,14 +1,12 @@
 import baseLogger from '@/_server/logger';
-import { verifyTurnstile } from '@/_server/turnstileService';
 import {
   createUser,
   getUserByEmail,
   getUsersMatchingQuery,
 } from '@/_server/usersService';
-import { CreateUserDataSchema } from '@/_types';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { respondWithError, ResponseError } from '../errors';
+import { respondWithError } from '../errors';
 import { validateAuthentication } from '../validateAuthentication';
 
 const logger = baseLogger.child({
@@ -42,36 +40,31 @@ export async function GET(req: NextRequest) {
 }
 
 /**
- * Create a new user
+ * Create a new user profile (called after Supabase Auth signup)
  */
 export async function POST(req: NextRequest) {
   try {
-    // We need to allow a non-authenticated call to create a user
-    // BUT, we have to be careful not to expose ourselves to malicious attacks.
-
     const data = await req.json();
-    const { name, email, password, turnstileToken } =
-      CreateUserDataSchema.parse(data);
 
-    const isTurnstileValid = req.url.includes('localhost')
-      ? true
-      : turnstileToken
-      ? await verifyTurnstile(turnstileToken)
-      : false;
+    // For Supabase Auth, we expect id, name, and email
+    // The user is already authenticated via Supabase, so we just create the profile
+    const CreateUserProfileSchema = z.object({
+      id: z.string().uuid(),
+      name: z.string(),
+      email: z.string().email(),
+    });
 
-    if (!isTurnstileValid) {
-      return NextResponse.json(
-        { success: false, message: 'CAPTCHA verification failed' },
-        { status: 400 }
-      );
-    }
+    const { id, name, email } = CreateUserProfileSchema.parse(data);
 
+    // Check if user profile already exists
     const existingUser = await getUserByEmail(email);
     if (existingUser) {
-      throw new ResponseError(409, `User with email '${email}' already exists`);
+      // User already exists, this is okay - return success
+      return NextResponse.json({ userId: existingUser.id }, { status: 200 });
     }
 
-    const userId = await createUser(name, email, password);
+    // Create user profile in database
+    const userId = await createUser(id as any, name, email);
     return NextResponse.json({ userId }, { status: 201 });
   } catch (error) {
     logger.error(error);
