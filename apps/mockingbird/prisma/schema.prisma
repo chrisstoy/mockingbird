@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "cockroachdb"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")      // Pooled connection (port 6543) via pgBouncer
+  directUrl = env("DIRECT_URL")        // Direct connection (port 5432) for migrations
 }
 
 // #region -- Next-Auth Tables
@@ -15,7 +16,7 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
-  acceptedToS   String? // ID of the TOS that was accepted by the user
+  // acceptedToS removed - will use Supabase Auth user_metadata instead
 
   accounts Account[]
   sessions Session[]
@@ -73,15 +74,7 @@ model VerificationToken {
 // #endregion
 
 // #region Authentication and Authorization
-model Passwords {
-  userId   String @unique
-  password String
-
-  expiresAt DateTime
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
+// Passwords table removed - Supabase Auth handles password storage
 
 // #endregion
 
