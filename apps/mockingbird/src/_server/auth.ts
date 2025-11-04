@@ -8,7 +8,7 @@ import type { User } from '@supabase/supabase-js';
  * Returns the authenticated Supabase user
  */
 export async function validateAuthentication(): Promise<User> {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const {
     data: { user },
@@ -27,7 +27,7 @@ export async function validateAuthentication(): Promise<User> {
  * Returns the Supabase user or null if not authenticated
  */
 export async function getSession(): Promise<User | null> {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const {
     data: { user },

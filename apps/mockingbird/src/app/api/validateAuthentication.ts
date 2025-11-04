@@ -9,7 +9,7 @@ import { ResponseError } from './errors';
  * @throws {ResponseError} if not authenticated
  */
 export async function validateAuthentication(): Promise<ActiveSession> {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const {
     data: { user },
