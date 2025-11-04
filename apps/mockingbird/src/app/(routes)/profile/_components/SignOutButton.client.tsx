@@ -4,18 +4,23 @@ import {
   ConfirmationDialogResult,
   ConfirmSignOutDialog,
 } from '@mockingbird/stoyponents';
-import { signOut } from 'next-auth/react';
+import { createClient } from '@/_utils/supabase/client';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 export function SignOutButton() {
   const [showSignout, setShowSignout] = useState(false);
+  const router = useRouter();
+  const supabase = createClient();
 
-  function handleSignOutResponse(
+  async function handleSignOutResponse(
     result?: ConfirmationDialogResult | undefined
   ) {
     setShowSignout(false);
     if (result === 'ok') {
-      signOut({ callbackUrl: '/' });
+      await supabase.auth.signOut();
+      router.push('/');
+      router.refresh();
     }
   }
 

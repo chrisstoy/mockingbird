@@ -6,7 +6,8 @@ import {
   ConfirmationDialog,
   ConfirmationDialogResult,
 } from '@mockingbird/stoyponents';
-import { signOut } from 'next-auth/react';
+import { createClient } from '@/_utils/supabase/client';
+import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import {
   FinalConfirmDeleteUserDialog,
@@ -15,6 +16,8 @@ import {
 
 export function DeleteAccountButton() {
   const user = useSessionUser();
+  const router = useRouter();
+  const supabase = createClient();
   const [showFirstConfirmDelete, setShowFirstConfirmDelete] = useState(false);
   const [showFinalConfirmDelete, setShowFinalConfirmDelete] = useState(false);
   const [isDeletingUser, setIsDeletingUser] = useState(false);
@@ -46,7 +49,10 @@ export function DeleteAccountButton() {
           } catch (error) {
             console.error(error);
           }
-          void signOut({ redirect: true, callbackUrl: '/auth/signin' });
+          // Sign out from Supabase Auth
+          await supabase.auth.signOut();
+          router.push('/auth/signin');
+          router.refresh();
         })();
       }
     },

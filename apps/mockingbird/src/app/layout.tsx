@@ -1,6 +1,4 @@
 import { DialogManager } from '@/_components/DialogManager.client';
-import { auth } from '@/app/auth';
-import { SessionProvider } from 'next-auth/react';
 import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import './global.css';
@@ -20,23 +18,20 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await auth();
-
+  // Supabase Auth handles sessions via cookies, no provider needed
   return (
     <html lang="en">
       <body className="h-screen bg-neutral">
         <ErrorBoundary fallbackRender={renderError}>
-          <SessionProvider session={session}>
-            <div className="w-full h-auto bg-neutral">
-              <Suspense
-                fallback={
-                  <span className="loading loading-ball loading-lg"></span>
-                }
-              ></Suspense>
-              {children}
-            </div>
-            <DialogManager></DialogManager>
-          </SessionProvider>
+          <div className="w-full h-auto bg-neutral">
+            <Suspense
+              fallback={
+                <span className="loading loading-ball loading-lg"></span>
+              }
+            ></Suspense>
+            {children}
+          </div>
+          <DialogManager></DialogManager>
         </ErrorBoundary>
       </body>
     </html>
