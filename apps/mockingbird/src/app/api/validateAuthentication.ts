@@ -1,5 +1,5 @@
-import { ActiveSession } from '@/_types';
 import { createClient } from '@/_server/supabase/server';
+import { ActiveSession, EmailAddressSchema, UserIdSchema } from '@/_types';
 import { ResponseError } from './errors';
 
 /**
@@ -12,20 +12,38 @@ export async function validateAuthentication(): Promise<ActiveSession> {
   const supabase = await createClient();
 
   const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
+    data: { session },
+    error: sessionError,
+  } = await supabase.auth.getSession();
 
-  if (error || !user) {
+  if (sessionError || !session || !session.user) {
     throw new ResponseError(401, 'User not logged in');
   }
 
-  // Convert Supabase user to ActiveSession format
+  const user = session.user;
+
+  const { data: id, error: userIdError } = UserIdSchema.safeParse(user.id);
+  const { data: email, error: emailError } = EmailAddressSchema.safeParse(
+    user.email
+  );
+
+  if (userIdError || emailError) {
+    console.error(`useSessionUser: ${userIdError} ${emailError}`);
+    throw new ResponseError(401, 'No user Id or email found for user');
+  }
+
+  const expires =
+    typeof session.expires_at === 'number'
+      ? new Date(session.expires_at * 1000).toISOString()
+      : session.expires_at || new Date().toISOString();
+
+  // Convert Supabase session to ActiveSession format
   return {
+    expires,
     user: {
-      id: user.id,
+      id: id,
       name: user.user_metadata?.name || user.email || 'Unknown',
-      email: user.email || null,
+      email: email,
       image: user.user_metadata?.avatar_url || null,
     },
   };

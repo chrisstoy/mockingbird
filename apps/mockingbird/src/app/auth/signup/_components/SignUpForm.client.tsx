@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { createClient } from '@/_utils/supabase/client';
 import { FormTextInput } from '@mockingbird/stoyponents';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 export function SignUpForm() {
   const [name, setName] = useState('');
@@ -188,7 +188,9 @@ export function SignUpForm() {
           label="Name"
           type="text"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setName(e.target.value)
+          }
           required
           disabled={loading}
         />
@@ -196,7 +198,9 @@ export function SignUpForm() {
           label="Email"
           type="email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setEmail(e.target.value)
+          }
           required
           disabled={loading}
         />
@@ -204,7 +208,9 @@ export function SignUpForm() {
           label="Password"
           type="password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setPassword(e.target.value)
+          }
           required
           disabled={loading}
           minLength={6}
@@ -213,7 +219,9 @@ export function SignUpForm() {
           label="Confirm Password"
           type="password"
           value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setConfirmPassword(e.target.value)
+          }
           required
           disabled={loading}
           minLength={6}

@@ -1,4 +1,9 @@
-import { SessionUser, SessionUserSchema } from '@/_types';
+import {
+  EmailAddressSchema,
+  SessionUser,
+  SessionUserSchema,
+  UserIdSchema,
+} from '@/_types';
 import { createClient } from '@/_utils/supabase/client';
 import { useEffect, useState } from 'react';
 
@@ -14,11 +19,28 @@ export function useSessionUser() {
     // Get initial session
     supabase.auth.getUser().then(({ data: { user: supabaseUser } }) => {
       if (supabaseUser) {
+        const { data: id, error: userIdError } = UserIdSchema.safeParse(
+          supabaseUser.id
+        );
+
+        const { data: email, error: emailError } = EmailAddressSchema.safeParse(
+          supabaseUser.email
+        );
+
+        if (userIdError || emailError) {
+          console.error(`useSessionUser: ${userIdError} ${emailError}`);
+          setUser(undefined);
+          return;
+        }
+
         try {
           const sessionUser: SessionUser = {
-            id: supabaseUser.id,
-            name: supabaseUser.user_metadata?.name || supabaseUser.email || 'Unknown',
-            email: supabaseUser.email || null,
+            id,
+            name:
+              supabaseUser.user_metadata?.name ||
+              supabaseUser.email ||
+              'Unknown',
+            email,
             image: supabaseUser.user_metadata?.avatar_url || null,
           };
           setUser(SessionUserSchema.parse(sessionUser));
@@ -35,11 +57,28 @@ export function useSessionUser() {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
+        const { data: id, error: userIdError } = UserIdSchema.safeParse(
+          session.user.id
+        );
+
+        const { data: email, error: emailError } = EmailAddressSchema.safeParse(
+          session.user.email
+        );
+
+        if (userIdError || emailError) {
+          console.error(`onAuthStateChange: ${userIdError} ${emailError}`);
+          setUser(undefined);
+          return;
+        }
+
         try {
           const sessionUser: SessionUser = {
-            id: session.user.id,
-            name: session.user.user_metadata?.name || session.user.email || 'Unknown',
-            email: session.user.email || null,
+            id,
+            name:
+              session.user.user_metadata?.name ||
+              session.user.email ||
+              'Unknown',
+            email,
             image: session.user.user_metadata?.avatar_url || null,
           };
           setUser(SessionUserSchema.parse(sessionUser));

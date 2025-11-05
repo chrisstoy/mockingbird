@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { Suspense } from 'react';
 import { FeedSelector } from './FeedSelector.client';
 import { UserButton } from './UserButton.client';
 
@@ -17,7 +18,9 @@ export function Header() {
         <div className="hidden sm:block">Mockingbird</div>
       </Link>
       <div className="flex-grow flex justify-center">
-        <FeedSelector />
+        <Suspense fallback={<div>...</div>}>
+          <FeedSelector />
+        </Suspense>
       </div>
       <div className="w-1/3 flex justify-end">
         <UserButton />

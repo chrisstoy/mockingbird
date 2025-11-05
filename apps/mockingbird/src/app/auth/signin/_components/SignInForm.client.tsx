@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { createClient } from '@/_utils/supabase/client';
 import { FormTextInput } from '@mockingbird/stoyponents';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useState } from 'react';
 
 export function SignInForm() {
   const [email, setEmail] = useState('');
@@ -11,6 +11,7 @@ export function SignInForm() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
   const supabase = createClient();
 
   const handleEmailSignIn = async (e: React.FormEvent) => {
@@ -27,7 +28,9 @@ export function SignInForm() {
       if (error) {
         setError(error.message);
       } else {
-        router.push('/feed');
+        // Redirect to the original page or home
+        const redirectTo = searchParams.get('redirectTo') || '/';
+        router.push(redirectTo);
         router.refresh();
       }
     } catch (err) {
@@ -115,7 +118,9 @@ export function SignInForm() {
           label="Email"
           type="email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setEmail(e.target.value)
+          }
           required
           disabled={loading}
         />
@@ -123,7 +128,9 @@ export function SignInForm() {
           label="Password"
           type="password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setPassword(e.target.value)
+          }
           required
           disabled={loading}
         />

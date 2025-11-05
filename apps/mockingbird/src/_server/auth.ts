@@ -1,6 +1,6 @@
-import { createClient } from './supabase/server';
-import { ResponseError } from '../app/api/errors';
 import type { User } from '@supabase/supabase-js';
+import { ResponseError } from '../app/api/errors';
+import { createClient } from './supabase/server';
 
 /**
  * Validates that the user is authenticated via Supabase Auth
@@ -16,7 +16,7 @@ export async function validateAuthentication(): Promise<User> {
   } = await supabase.auth.getUser();
 
   if (error || !user) {
-    throw new ResponseError('Unauthorized', 401);
+    throw new ResponseError(401, 'Unauthorized');
   }
 
   return user;
