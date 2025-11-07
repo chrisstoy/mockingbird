@@ -11,7 +11,8 @@
       "Bash(npx nx show project:*)",
       "Bash(npx nx dev mockingbird)",
       "Bash(curl:*)",
-      "Bash(pkill:*)"
+      "Bash(pkill:*)",
+      "Skill(commit-message)"
     ],
     "deny": [],
     "ask": []

@@ -1,6 +1,6 @@
 import { env } from '@/../env';
-import { type NextRequest, NextResponse } from 'next/server';
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
+import { NextResponse, type NextRequest } from 'next/server';
 
 // the list of all allowed origins
 const allowedOrigins = [
@@ -10,7 +10,13 @@ const allowedOrigins = [
 ];
 
 // Public routes that don't require authentication
-const publicRoutes = ['/', '/auth/signin', '/auth/signup', '/auth/callback', '/privacy', '/privacy/tos'];
+const publicRoutes = [
+  '/auth/signin',
+  '/auth/signup',
+  '/auth/callback',
+  '/privacy',
+  '/privacy/tos',
+];
 
 export async function middleware(req: NextRequest) {
   let response = NextResponse.next({
@@ -82,7 +88,11 @@ export async function middleware(req: NextRequest) {
   }
 
   // If user is authenticated and trying to access signin/signup, redirect to home
-  if (user && (req.nextUrl.pathname === '/auth/signin' || req.nextUrl.pathname === '/auth/signup')) {
+  if (
+    user &&
+    (req.nextUrl.pathname === '/auth/signin' ||
+      req.nextUrl.pathname === '/auth/signup')
+  ) {
     return NextResponse.redirect(new URL('/', req.url));
   }
 
@@ -110,8 +120,6 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    '/((?!api|_next/static|_next/image|images|favicon.ico).*)',
-  ],
+  matcher: ['/((?!api|_next/static|_next/image|images|favicon.ico).*)'],
   runtime: 'nodejs',
 };
