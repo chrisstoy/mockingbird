@@ -2,7 +2,17 @@
   "name": "@mockingbird/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "supabase:start": "supabase start",
+    "supabase:stop": "supabase stop",
+    "supabase:restart": "supabase stop && supabase start",
+    "supabase:reset": "supabase db reset --local",
+    "supabase:status": "supabase status",
+    "supabase:studio": "echo 'Supabase Studio: http://localhost:54323'",
+    "test:e2e": "nx e2e mockingbird-e2e",
+    "test:e2e:ui": "nx e2e mockingbird-e2e --ui",
+    "test:e2e:debug": "nx e2e mockingbird-e2e --debug"
+  },
   "private": true,
   "dependencies": {
     "@auth/prisma-adapter": "^2.4.2",
