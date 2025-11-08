@@ -18,7 +18,9 @@
       "Bash(cat:*)",
       "Bash(DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres npx prisma db push:*)",
       "Bash(DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres DIRECT_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres npx prisma db push:*)",
-      "Bash(PGPASSWORD=postgres psql:*)"
+      "Bash(PGPASSWORD=postgres psql:*)",
+      "Bash(npx tsc:*)",
+      "Bash(node -e:*)"
     ],
     "deny": [],
     "ask": []
