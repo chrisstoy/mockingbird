@@ -12,9 +12,14 @@
       "Bash(npx nx dev mockingbird)",
       "Bash(curl:*)",
       "Bash(pkill:*)",
-      "Skill(commit-message)"
+      "Skill(commit-message)",
+      "Bash(npx supabase:*)"
     ],
     "deny": [],
     "ask": []
-  }
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "playwright-test"
+  ]
 }
