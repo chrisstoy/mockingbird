@@ -13,7 +13,9 @@
       "Bash(curl:*)",
       "Bash(pkill:*)",
       "Skill(commit-message)",
-      "Bash(npx supabase:*)"
+      "Bash(npx supabase:*)",
+      "Bash(git check-ignore:*)",
+      "Bash(cat:*)"
     ],
     "deny": [],
     "ask": []
