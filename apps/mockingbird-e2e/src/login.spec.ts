@@ -5,6 +5,7 @@ import {
   performSignIn,
   performSignOut,
 } from './utils';
+import { cleanupTestUsers } from './supabase-helpers';
 
 function getSignInHeading(page: Page) {
   return page.getByRole('heading', { name: 'Sign In', exact: true });
@@ -12,6 +13,11 @@ function getSignInHeading(page: Page) {
 
 test.describe('Login and Account Creation', () => {
   test.describe.configure({ mode: 'serial' });
+
+  // Cleanup any leftover test users from failed runs
+  test.afterAll(async () => {
+    await cleanupTestUsers();
+  });
   test.beforeEach(async ({ page }) => {
     await page.goto('http://localhost:3000');
   });
@@ -51,5 +57,17 @@ test.describe('Login and Account Creation', () => {
     await expect(
       page.getByText('There was an authentication error:')
     ).toBeVisible();
+  });
+
+  // OAuth tests are skipped in local environment
+  // OAuth requires external services not available in E2E local setup
+  test.skip('OAuth signin with GitHub', async ({ page }) => {
+    // This test would require GitHub OAuth configuration
+    // Skip in local E2E tests with Supabase
+  });
+
+  test.skip('OAuth signin with Google', async ({ page }) => {
+    // This test would require Google OAuth configuration
+    // Skip in local E2E tests with Supabase
   });
 });

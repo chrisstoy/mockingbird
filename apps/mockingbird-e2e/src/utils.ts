@@ -1,8 +1,14 @@
 import { Locator, Page } from '@playwright/test';
 
-export const testUserName = `Testy McTestface`;
-export const testUserEmail = 'testy.mctestface@example.com';
-export const testUserPassword = 'Starts123';
+// Test user constants (exported for use in tests)
+export const TEST_USER_NAME = `Testy McTestface`;
+export const TEST_USER_EMAIL = 'testy.mctestface@example.com';
+export const TEST_USER_PASSWORD = 'Starts123';
+
+// Legacy exports (kept for backward compatibility)
+export const testUserName = TEST_USER_NAME;
+export const testUserEmail = TEST_USER_EMAIL;
+export const testUserPassword = TEST_USER_PASSWORD;
 
 /**
  * Locate the Post TextEditor rooted at the parent.

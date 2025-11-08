@@ -2,11 +2,15 @@ import { expect, Page, test } from '@playwright/test';
 import {
   getPostEditor,
   pauseFor,
-  performCreateTestUser,
-  performDeleteTestUser,
   performSignIn,
   testUserName,
+  testUserEmail,
+  testUserPassword,
 } from './utils';
+import {
+  createTestUserDirect,
+  deleteTestUserDirect,
+} from './supabase-helpers';
 
 const getCreatePostButton = (page: Page) =>
   page.getByRole('button', { name: "What's going on" });
@@ -15,16 +19,30 @@ const testPostContent = 'TEST Post 1';
 const testCommentContent = 'TEST Comment 1';
 const testReplyContent = 'TEST Reply 1';
 
+let testUserId: string;
+
 test.describe('Creating and commenting on posts', () => {
   test.describe.configure({ mode: 'serial' });
 
-  test.beforeEach(async ({ page }) => {
-    await page.goto('http://localhost:3000');
+  // Create user via API for faster setup (doesn't test auth UI)
+  test.beforeAll(async () => {
+    const user = await createTestUserDirect(
+      testUserEmail,
+      testUserPassword,
+      testUserName
+    );
+    testUserId = user.id;
   });
 
-  test('create test user', async ({ page }) => {
-    await performCreateTestUser(page);
-    await expect(getCreatePostButton(page)).toBeVisible();
+  // Clean up after all tests
+  test.afterAll(async () => {
+    if (testUserId) {
+      await deleteTestUserDirect(testUserId);
+    }
+  });
+
+  test.beforeEach(async ({ page }) => {
+    await page.goto('http://localhost:3000');
   });
 
   test('create post', async ({ page }) => {
@@ -131,10 +149,5 @@ test.describe('Creating and commenting on posts', () => {
 
     const updatedPosts = page.getByRole('listitem');
     await expect(updatedPosts).toHaveCount(0);
-  });
-
-  test('delete test user', async ({ page }) => {
-    await performSignIn(page);
-    await performDeleteTestUser(page);
   });
 });
