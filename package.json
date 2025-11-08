@@ -45,6 +45,7 @@
     "@babel/core": "^7.14.5",
     "@babel/preset-react": "^7.14.5",
     "@eslint/compat": "^1.2.4",
+    "dotenv": "^16.4.5",
     "@eslint/eslintrc": "^3.2.0",
     "@eslint/js": "^9.18.0",
     "@nx-tools/container-metadata": "^6.1.1",

@@ -1,16 +1,14 @@
 import { defineConfig, devices } from '@playwright/test';
 import { nxE2EPreset } from '@nx/playwright/preset';
-
 import { workspaceRoot } from '@nx/devkit';
+import * as dotenv from 'dotenv';
+import * as path from 'path';
+
+// Load E2E environment variables from .env.e2e
+dotenv.config({ path: path.join(workspaceRoot, '.env.e2e') });
 
 // For CI, you may want to set BASE_URL to the deployed application.
 const baseURL = process.env['BASE_URL'] || 'http://127.0.0.1:3000';
-
-/**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-// require('dotenv').config();
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -29,7 +27,16 @@ export default defineConfig({
     url: 'http://127.0.0.1:3000',
     reuseExistingServer: !process.env.CI,
     cwd: workspaceRoot,
+    timeout: 120000,
+    env: {
+      NODE_ENV: 'test',
+      // Ensure app uses .env.e2e variables
+      ...process.env,
+    },
   },
+  /* Global setup and teardown */
+  globalSetup: require.resolve('./global-setup.ts'),
+  globalTeardown: require.resolve('./global-teardown.ts'),
   projects: [
     /*
     {
