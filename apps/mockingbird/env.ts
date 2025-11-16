@@ -34,21 +34,9 @@ export const env = createEnv({
     AUTH_GITHUB_ID: z.string().min(1),
     AUTH_GITHUB_SECRET: z.string().min(1),
 
-    // Cloudflare Turnstile (keeping for now)
+    // Cloudflare Turnstile
     TURNSTILE_SITE_KEY: z.string().min(1),
     TURNSTILE_SECRET_KEY: z.string().min(1),
-
-    // OLD - To be removed after full migration
-    AUTH_SECRET: z.string().optional(),
-    AUTH_TRUST_HOST: z.enum(['true', 'false']).optional(),
-    AUTH_GOOGLE_ID: z.string().optional(),
-    AUTH_GOOGLE_SECRET: z.string().optional(),
-    CLOUDFLARE_ACCOUNT_ID: z.string().optional(),
-    CLOUDFLARE_R2_ACCESS_KEY_ID: z.string().optional(),
-    CLOUDFLARE_R2_SECRET_ACCESS_KEY: z.string().optional(),
-    CLOUDFLARE_R2_BUCKET_NAME: z.string().optional(),
-    IMAGES_BASE_URL: z.string().optional(),
-    IMAGES_MAX_SIZE_IN_BYTES: z.string().optional(),
   },
 
   /**

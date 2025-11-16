@@ -97,8 +97,6 @@ export async function deleteUser(userId: UserId) {
       commentsDeleted,
       postsDeleted,
       friendshipsDeleted,
-      sessionsDeleted,
-      accountsDeleted,
       userDeleted,
     ] = await prisma.$transaction([
       // delete comments to Posts by user
@@ -134,21 +132,8 @@ export async function deleteUser(userId: UserId) {
         },
       }),
 
-      // delete Sessions
-      prisma.session.deleteMany({
-        where: {
-          userId: userId,
-        },
-      }),
-
-      // delete Accounts
-      prisma.account.deleteMany({
-        where: {
-          userId: userId,
-        },
-      }),
-
-      // Passwords table removed - Supabase Auth handles password storage
+      // NextAuth tables (Session, Account) removed - Supabase Auth handles authentication
+      // User deletion in Supabase Auth should be handled via Supabase Admin API
 
       // delete User
       prisma.user.delete({
@@ -162,8 +147,6 @@ export async function deleteUser(userId: UserId) {
       commentsDeleted,
       postsDeleted,
       friendshipsDeleted,
-      sessionsDeleted,
-      accountsDeleted,
       userDeleted,
     };
 

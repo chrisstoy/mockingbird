@@ -23,7 +23,13 @@
       "Bash(node -e:*)",
       "Bash(npm run supabase:status:*)",
       "Bash(npm run supabase:studio:*)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres DIRECT_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres npx prisma migrate dev:*)",
+      "Bash(supabase status:*)",
+      "Bash(DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres DIRECT_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres npx prisma migrate diff:*)",
+      "Bash(export DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres)",
+      "Bash(export DIRECT_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres)",
+      "Bash(DATABASE_URL=\"postgresql://postgres:postgres@127.0.0.1:54322/postgres\" DIRECT_URL=\"postgresql://postgres:postgres@127.0.0.1:54322/postgres\" npx prisma generate:*)"
     ],
     "deny": [],
     "ask": []

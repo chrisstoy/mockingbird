@@ -8,75 +8,23 @@ datasource db {
   directUrl = env("DIRECT_URL")        // Direct connection (port 5432) for migrations
 }
 
-// #region -- Next-Auth Tables
-
+// User model for application data
+// Authentication is handled by Supabase Auth (auth.users table in Supabase)
+// This model stores additional application-specific user data
 model User {
-  id            String    @id @default(cuid())
-  name          String
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  // acceptedToS removed - will use Supabase Auth user_metadata instead
+  id    String  @id @default(cuid())
+  name  String
+  email String? @unique
+  image String?
 
-  accounts Account[]
-  sessions Session[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Mockingbird specific references
   posts   Post[]
   friends Friends[]
-}
-
-model Account {
-  id                String  @id @default(cuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String?
-  access_token      String?
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String?
-  session_state     String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
-}
-
-model Session {
-  id           String   @id @default(cuid())
-  expires      DateTime
-  sessionToken String   @unique
-  userId       String
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  images  Image[]
+  albums  Album[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
-
-model VerificationToken {
-  identifier String
-  token      String
-  expires    DateTime
-
-  @@unique([identifier, token])
-}
-
-// #endregion
-
-// #region Authentication and Authorization
-// Passwords table removed - Supabase Auth handles password storage
-
-// #endregion
 
 // #region Mockingbird
 enum DocumentType {
@@ -139,6 +87,7 @@ model Image {
   updatedAt DateTime @updatedAt
 
   ownerId String // user that owns this image
+  owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
 
   imageUrl     String // URL to the original version of the image
   thumbnailUrl String // URL to a small, thumbnail version of the image
@@ -157,6 +106,7 @@ model Album {
   updatedAt DateTime @updatedAt
 
   ownerId String
+  owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   name    String
 
   images Image[] // images in this album
