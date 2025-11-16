@@ -143,6 +143,7 @@ export function SignUpForm() {
             <FormTextInput
               label="Name"
               type="text"
+              placeholder="Full Name"
               value={name}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setName(e.target.value)
@@ -153,6 +154,7 @@ export function SignUpForm() {
             <FormTextInput
               label="Email"
               type="email"
+              placeholder="user@example.com"
               value={email}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setEmail(e.target.value)
@@ -163,6 +165,7 @@ export function SignUpForm() {
             <FormTextInput
               label="Password"
               type="password"
+              placeholder="Password"
               value={password}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setPassword(e.target.value)
@@ -174,6 +177,7 @@ export function SignUpForm() {
             <FormTextInput
               label="Confirm Password"
               type="password"
+              placeholder="Confirm Password"
               value={confirmPassword}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setConfirmPassword(e.target.value)

@@ -28,7 +28,7 @@ export async function pauseFor(milliseconds: number) {
 }
 
 export async function performCreateTestUser(page: Page) {
-  await page.getByRole('link', { name: 'Create new account' }).click();
+  await page.getByRole('link', { name: 'Sign up' }).click();
 
   await page.getByPlaceholder('Full Name').fill(testUserName);
   await page.getByPlaceholder('user@example.com').fill(testUserEmail);

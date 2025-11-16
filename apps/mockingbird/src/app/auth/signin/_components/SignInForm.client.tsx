@@ -71,6 +71,7 @@ export function SignInForm() {
           label="Email"
           type="email"
           value={email}
+          placeholder="user@example.com"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setEmail(e.target.value)
           }
@@ -81,6 +82,7 @@ export function SignInForm() {
           label="Password"
           type="password"
           value={password}
+          placeholder="Password"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setPassword(e.target.value)
           }
