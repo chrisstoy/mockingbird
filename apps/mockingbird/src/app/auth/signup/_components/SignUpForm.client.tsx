@@ -1,9 +1,11 @@
 'use client';
 
 import { createClient } from '@/_utils/supabase/client';
+import { Turnstile } from '@marsidev/react-turnstile';
 import { FormTextInput } from '@mockingbird/stoyponents';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { getTurnstileSiteKey } from './getTurnstileSiteKey';
 
 export function SignUpForm() {
   const [name, setName] = useState('');
@@ -16,17 +18,48 @@ export function SignUpForm() {
   const router = useRouter();
   const supabase = createClient();
 
+  const [turnstileToken, setTurnstileToken] = useState<string>('');
+  const [turnstileSiteKey, setTurnstileSiteKey] = useState<string>('');
+
+  useEffect(() => {
+    (async () => {
+      const siteKey = await getTurnstileSiteKey();
+      setTurnstileSiteKey(siteKey);
+    })();
+  }, []);
+
+  const handleTurnstileVerify = (token: string) => {
+    setTurnstileToken(token);
+    setError('');
+  };
+
+  const handleTurnstileError = () => {
+    setError('CAPTCHA verification failed. Please refresh page and again.');
+    setTurnstileToken('');
+  };
+
+  const handleTurnstileExpire = () => {
+    setError('CAPTCHA expired. Please refresh page and try again.');
+    setTurnstileToken('');
+  };
+
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+
     setError(null);
-    setLoading(true);
+
+    if (!turnstileToken) {
+      setError('Please complete the CAPTCHA verification.');
+      return;
+    }
 
     // Validate passwords match
     if (password !== confirmPassword) {
       setError('Passwords do not match');
-      setLoading(false);
       return;
     }
+
+    setLoading(true);
 
     try {
       // Sign up with Supabase Auth
@@ -169,7 +202,7 @@ export function SignUpForm() {
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || turnstileToken === ''}
               className="btn btn-primary w-full"
             >
               {loading ? (
@@ -179,6 +212,23 @@ export function SignUpForm() {
               )}
             </button>
           </form>
+          {turnstileSiteKey && (
+            <div className="w-full my-1">
+              <Turnstile
+                className="w-full"
+                options={{
+                  theme: 'light',
+                  size: 'flexible',
+                  responseField: false,
+                  appearance: 'always',
+                }}
+                siteKey={turnstileSiteKey}
+                onError={handleTurnstileError}
+                onExpire={handleTurnstileExpire}
+                onSuccess={handleTurnstileVerify}
+              />
+            </div>
+          )}
         </div>
 
         {/* Center Divider */}
