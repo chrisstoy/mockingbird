@@ -8,14 +8,21 @@ datasource db {
   directUrl = env("DIRECT_URL")        // Direct connection (port 5432) for migrations
 }
 
-// User model for application data
-// Authentication is handled by Supabase Auth (auth.users table in Supabase)
-// This model stores additional application-specific user data
+// User table - Read-only cache of Supabase auth.users
+// Automatically synced via PostgreSQL triggers on auth.users
+// Source of truth: auth.users in Supabase Auth
+//
+// Sync mechanism: PostgreSQL triggers automatically maintain this table
+// - on_auth_user_created: Inserts User when auth.users row created
+// - on_auth_user_updated: Updates User when auth.users metadata changes
+// - on_auth_user_deleted: Deletes User when auth.users row deleted
+//
+// DO NOT write to this table directly - use Supabase Admin API to modify auth.users
 model User {
-  id    String  @id @default(cuid())
-  name  String
-  email String? @unique
-  image String?
+  id    String  @id @db.Uuid // Supabase Auth UUID (synced from auth.users.id)
+  name  String  // Synced from auth.users.raw_user_meta_data->>'name'
+  email String? @unique // Synced from auth.users.email
+  image String? // Synced from auth.users.raw_user_meta_data->>'avatar_url'
 
   posts   Post[]
   friends Friends[]
@@ -38,7 +45,7 @@ model Document {
   updatedAt DateTime @updatedAt
 
   type      DocumentType // type of document (e.g., TOC, Privacy Policy)
-  creatorId String // user that created this document
+  creatorId String       @db.Uuid // user that created this document
   version   Int // version of the document
   content   String // content of the document
 }
@@ -50,7 +57,7 @@ enum Audience {
 
 model Post {
   id               String   @id @default(cuid())
-  posterId         String
+  posterId         String   @db.Uuid
   responseToPostId String?
   audience         Audience @default(PUBLIC)
   content          String
@@ -74,8 +81,8 @@ model Friends {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  userId   String // user who makes the friend request
-  friendId String // user to be friends with
+  userId   String  @db.Uuid // user who makes the friend request
+  friendId String  @db.Uuid // user to be friends with
   accepted Boolean // true if the friendship is accepted
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -86,8 +93,8 @@ model Image {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  ownerId String // user that owns this image
-  owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId String  @db.Uuid // user that owns this image
+  owner   User    @relation(fields: [ownerId], references: [id], onDelete: Cascade)
 
   imageUrl     String // URL to the original version of the image
   thumbnailUrl String // URL to a small, thumbnail version of the image
@@ -105,8 +112,8 @@ model Album {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  ownerId String
-  owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId String  @db.Uuid
+  owner   User    @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   name    String
 
   images Image[] // images in this album

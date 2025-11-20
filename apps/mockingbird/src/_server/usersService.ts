@@ -1,8 +1,8 @@
 import { prisma } from '@/_server/db';
 import baseLogger from '@/_server/logger';
 import { DocumentId, UserId, UserInfoSchema } from '@/_types';
-import { z } from 'zod';
 import { createClient as createSupabaseClient } from '@supabase/supabase-js';
+import { z } from 'zod';
 
 const logger = baseLogger.child({
   service: 'users:service',
@@ -68,90 +68,57 @@ export async function getUserByEmail(email: string) {
 }
 
 /**
- * Creates a user record in the database
- * Note: User is already created in Supabase Auth before this is called
- * This just creates the corresponding database record
+ * NOTE: User creation is now handled automatically by PostgreSQL triggers.
+ * When a user is created in Supabase Auth (auth.users), the trigger
+ * on_auth_user_created automatically creates the corresponding User record.
+ *
+ * No manual User table creation is needed - just create the user via
+ * Supabase Auth and the trigger handles the rest.
  */
-export async function createUser(id: UserId, name: string, email: string) {
-  logger.info(
-    `Creating new user record with id: ${id}, name: '${name}' and email: ${email}`
-  );
 
-  const rawData = await prisma.user.create({
-    data: {
-      id, // Use the Supabase Auth user ID
-      email,
-      name,
-    },
-  });
-
-  const newUser = UserInfoSchema.parse(rawData);
-  logger.info(`Created new user record: ${newUser.id}`);
-
-  return newUser.id;
-}
-
+/**
+ * Deletes a user from Supabase Auth, which automatically triggers deletion
+ * of the User record and all related data via PostgreSQL triggers and foreign key cascades.
+ *
+ * Flow:
+ * 1. Delete user from auth.users (Supabase Auth)
+ * 2. on_auth_user_deleted trigger deletes from User table
+ * 3. Foreign key CASCADE deletes remove Posts, Friends, Images, Albums
+ */
 export async function deleteUser(userId: UserId) {
   try {
-    const [
-      commentsDeleted,
-      postsDeleted,
-      friendshipsDeleted,
-      userDeleted,
-    ] = await prisma.$transaction([
-      // delete comments to Posts by user
-      prisma.post.deleteMany({
-        where: {
-          responseToPostId: {
-            not: null, // ensure it is a response
-          },
-          responseTo: {
-            posterId: userId, // original post was by user being deleted
-          },
-        },
-      }),
+    logger.info(`Deleting user ${userId} from Supabase Auth`);
 
-      // delete Posts by user
-      prisma.post.deleteMany({
-        where: {
-          posterId: userId,
+    // Create admin client with service role key
+    const supabase = createSupabaseClient(
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false,
         },
-      }),
+      }
+    );
 
-      // delete Friendships
-      prisma.friends.deleteMany({
-        where: {
-          OR: [
-            {
-              userId: userId,
-            },
-            {
-              friendId: userId,
-            },
-          ],
-        },
-      }),
+    // Delete from Supabase Auth - triggers cascade via PostgreSQL triggers
+    const { error } = await supabase.auth.admin.deleteUser(userId);
 
-      // NextAuth tables (Session, Account) removed - Supabase Auth handles authentication
-      // User deletion in Supabase Auth should be handled via Supabase Admin API
-
-      // delete User
-      prisma.user.delete({
-        where: {
-          id: userId,
-        },
-      }),
-    ]);
+    if (error) {
+      logger.error(
+        `Failed to delete user from Supabase Auth: ${error.message}`
+      );
+      throw new Error(`Failed to delete user: ${error.message}`);
+    }
 
     const results = {
-      commentsDeleted,
-      postsDeleted,
-      friendshipsDeleted,
-      userDeleted,
+      userId,
     };
 
     logger.info(`DELETE User: ${JSON.stringify(results)}`);
     return results;
+
+    return true;
   } catch (error) {
     logger.error(`DELETE User: ERROR: ${error}`);
     throw error;

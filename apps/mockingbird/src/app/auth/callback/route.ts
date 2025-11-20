@@ -12,42 +12,9 @@ export async function GET(request: NextRequest) {
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error && data.user) {
-      // Check if user record exists in database
-      try {
-        const checkResponse = await fetch(
-          `${origin}/api/users/${data.user.id}`,
-          {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-
-        // If user doesn't exist, create them
-        if (checkResponse.status === 404) {
-          const name =
-            data.user.user_metadata?.name ||
-            data.user.user_metadata?.full_name ||
-            data.user.email?.split('@')[0] ||
-            'User';
-
-          await fetch(`${origin}/api/users`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              id: data.user.id,
-              name,
-              email: data.user.email,
-            }),
-          });
-        }
-      } catch (err) {
-        console.error('Error creating user profile:', err);
-        // Continue anyway - user is authenticated
-      }
+      // User record is automatically created by PostgreSQL trigger
+      // when the Supabase Auth user is created (on_auth_user_created)
+      // For OAuth flows, the user_metadata is automatically populated by Supabase
 
       // Redirect to feed after successful authentication
       return NextResponse.redirect(`${origin}/`);

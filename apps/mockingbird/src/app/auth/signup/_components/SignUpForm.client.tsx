@@ -44,30 +44,10 @@ export function SignUpForm() {
       if (signUpError) {
         setError(signUpError.message);
       } else if (data.user) {
-        // Create user record in database via API
-        try {
-          const response = await fetch('/api/users', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              id: data.user.id,
-              name,
-              email,
-            }),
-          });
-
-          if (!response.ok) {
-            throw new Error('Failed to create user profile');
-          }
-
-          setSuccess(true);
-        } catch (err) {
-          setError(
-            'Account created but failed to create profile. Please contact support.'
-          );
-        }
+        // User record is automatically created by PostgreSQL trigger
+        // when the Supabase Auth user is created (on_auth_user_created)
+        // No need to manually create the user profile
+        setSuccess(true);
       }
     } catch (err) {
       setError('An unexpected error occurred');

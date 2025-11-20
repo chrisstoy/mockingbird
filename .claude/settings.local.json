@@ -29,7 +29,8 @@
       "Bash(DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres DIRECT_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres npx prisma migrate diff:*)",
       "Bash(export DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres)",
       "Bash(export DIRECT_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres)",
-      "Bash(DATABASE_URL=\"postgresql://postgres:postgres@127.0.0.1:54322/postgres\" DIRECT_URL=\"postgresql://postgres:postgres@127.0.0.1:54322/postgres\" npx prisma generate:*)"
+      "Bash(DATABASE_URL=\"postgresql://postgres:postgres@127.0.0.1:54322/postgres\" DIRECT_URL=\"postgresql://postgres:postgres@127.0.0.1:54322/postgres\" npx prisma generate:*)",
+      "Bash(DATABASE_URL=\"postgresql://postgres:postgres@127.0.0.1:54322/postgres\" DIRECT_URL=\"postgresql://postgres:postgres@127.0.0.1:54322/postgres\" npx prisma migrate deploy:*)"
     ],
     "deny": [],
     "ask": []
