@@ -5,6 +5,9 @@
       "name": "Next.js: debug server-side (dev)",
       "type": "node-terminal",
       "request": "launch",
+      "env": {
+        "NEXT_RUNTIME_LOG": "1"
+      },
       "command": "nx dev mockingbird",
       "cwd": "${workspaceFolder}/apps/mockingbird"
     },
@@ -12,6 +15,9 @@
       "name": "Next.js: debug server-side (prod)",
       "type": "node-terminal",
       "request": "launch",
+      "env": {
+        "NEXT_RUNTIME_LOG": "1"
+      },
       "command": "nx start mockingbird",
       "cwd": "${workspaceFolder}/apps/mockingbird"
     },
@@ -26,6 +32,9 @@
       "name": "Next.js: debug full stack",
       "type": "node-terminal",
       "request": "launch",
+      "env": {
+        "NEXT_RUNTIME_LOG": "1"
+      },
       "command": "nx dev mockingbird",
       "serverReadyAction": {
         "pattern": "- Local:.+(https?://.+)",

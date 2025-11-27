@@ -2,6 +2,7 @@
 import { acceptTOS } from '@/_apiServices/users';
 import { DocumentIdSchema, UserId, UserIdSchema } from '@/_types';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import Markdown from 'react-markdown';
 import remarkBreaks from 'remark-breaks';
 import remarkGfm from 'remark-gfm';
@@ -23,6 +24,7 @@ export default function TermsOfService({
   tosId: rawTOSId,
   userId: rawUserId,
 }: Props) {
+  const [acceptingTOS, setAcceptingTOS] = useState(false);
   const router = useRouter();
 
   async function handleAccept() {
@@ -30,6 +32,7 @@ export default function TermsOfService({
     const { data: userId } = UserIdSchema.safeParse(rawUserId);
 
     if (userId && tosId) {
+      setAcceptingTOS(true);
       await acceptTOS(userId, tosId);
       router.push('/');
     }
@@ -68,8 +71,13 @@ export default function TermsOfService({
           <button
             className="btn btn-primary text-primary-content ml-2"
             onClick={handleAccept}
+            disabled={acceptingTOS}
           >
-            Accept Terms
+            {acceptingTOS ? (
+              <span className="loading loading-spinner loading-md"></span>
+            ) : (
+              'Accept Terms'
+            )}
           </button>
         </div>
       )}

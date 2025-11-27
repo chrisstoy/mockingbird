@@ -38,6 +38,7 @@
     "**/*.jsx",
     "next-env.d.ts",
     ".next/types/**/*.ts",
+    "src/_utils/getLoginRedirectForUser.ts",
   ],
   "exclude": [
     "node_modules",

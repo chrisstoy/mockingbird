@@ -1,4 +1,6 @@
 import { createClient } from '@/_server/supabase/server';
+import { DocumentIdSchema } from '@/_types';
+import { getLoginRedirectUrlForUser } from '@/_utils/getLoginRedirectForUser';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
@@ -16,8 +18,18 @@ export async function GET(request: NextRequest) {
       // when the Supabase Auth user is created (on_auth_user_created)
       // For OAuth flows, the user_metadata is automatically populated by Supabase
 
+      // Redirect to original page, or get login redirect URL
+      const { data: acceptedToS } = DocumentIdSchema.safeParse(
+        data.user.user_metadata?.acceptedToS
+      );
+
+      const loginRedirect = await getLoginRedirectUrlForUser({
+        acceptedToS,
+      });
+      const redirectUrl = new URL(loginRedirect, origin);
+
       // Redirect to feed after successful authentication
-      return NextResponse.redirect(`${origin}/`);
+      return NextResponse.redirect(redirectUrl);
     }
   }
 

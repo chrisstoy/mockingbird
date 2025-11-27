@@ -13,7 +13,8 @@ Mockingbird is a full-stack social media application built with modern web techn
 - **Styling**: Tailwind CSS 3.4.3 + DaisyUI 4.12.10
 - **Build System**: Nx 19.8.4 (Monorepo)
 - **Deployment**: Vercel (with Docker support)
-- **Database**: CockroachDB (via Prisma)
+- **Database**: PostgreSQL via Supabase (with Prisma ORM)
+- **Authentication**: Supabase Auth
 
 ## Monorepo Structure
 
@@ -61,20 +62,19 @@ src/app/
 │   ├── feed/
 │   └── test/
 ├── api/                          # RESTful API endpoints
-│   ├── auth/[...nextauth]/       # NextAuth route handler
+│   ├── auth/
+│   │   ├── callback/             # OAuth callback route (Supabase)
+│   │   └── login-redirect/       # Post-login redirect determination
 │   ├── posts/                    # Posts CRUD operations
 │   ├── users/                    # User management
 │   ├── images/                   # Image operations
 │   ├── documents/                # Legal documents (ToS, Privacy Policy)
 │   └── errors.ts                 # Centralized error handling
 ├── auth/                         # Authentication pages and logic
-│   ├── signin/                   # Sign-in page
-│   ├── tos/                      # Terms of Service acceptance
-│   ├── create-account/           # Account creation
-│   ├── index.ts                  # NextAuth configuration export
-│   ├── auth.config.ts            # NextAuth provider configuration
-│   ├── localCredentials.ts       # Local email/password provider
-│   └── requireAcceptToS.ts       # TOS middleware
+│   ├── signin/                   # Sign-in page (email/password + OAuth)
+│   ├── signup/                   # Sign-up page with Turnstile CAPTCHA
+│   ├── callback/                 # OAuth callback route handler
+│   └── tos/                      # Terms of Service acceptance page
 ├── layout.tsx                    # Root layout
 ├── not-found.tsx                 # 404 page
 └── global.css                    # Global styles
@@ -144,9 +144,13 @@ Schema definitions using Zod for runtime validation:
 
 #### `_utils/` - Utility Functions
 
-Helper functions for common operations
+Helper functions for common operations:
 
 - `toLocalTime.ts`: Timezone conversion
+- `requireAcceptToS.ts`: Server Action to check if user needs to accept latest ToS
+- `getLoginRedirectForUser.ts`: Server Action to determine post-login redirect URL
+- `supabase/client.ts`: Supabase client for browser-side operations
+- `supabase/server.ts`: Supabase client for server-side operations
 
 #### `_hooks/` - Custom React Hooks
 
@@ -156,9 +160,11 @@ Custom hooks for shared stateful logic
 
 ### Prisma ORM
 
-- **Provider**: CockroachDB (distributed SQL database)
+- **Provider**: PostgreSQL (via Supabase)
 - **Location**: `prisma/schema.prisma`
 - **Client**: Auto-generated PrismaClient with environment-based logging
+- **Migrations**: Managed via Prisma Migrate with direct database connection
+- **Local Development**: Supabase CLI provides local PostgreSQL instance
 
 ### Data Model
 
@@ -210,36 +216,80 @@ NextAuth Tables
 
 ## Authentication
 
-### NextAuth.js Configuration
+### Supabase Auth
 
-- **Strategy**: JWT-based sessions with Prisma adapter
-- **Base Path**: `/api/auth`
-- **Session Strategy**: JWT (scalable for stateless deployments)
+- **Provider**: Supabase Authentication (replaces NextAuth)
+- **Database**: PostgreSQL via Supabase (local development with Supabase CLI)
+- **Session Management**: Supabase handles sessions with automatic refresh tokens
+- **User Sync**: PostgreSQL triggers automatically sync Supabase Auth users to application User table
 
-### Providers Configured
+### Authentication Methods
 
-1. **GitHub OAuth** (`AUTH_GITHUB_ID`, `AUTH_GITHUB_SECRET`)
-2. **Google OAuth** (`AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`)
-3. **Local Credentials** (email/password with bcryptjs)
+1. **Email/Password** - Built-in Supabase auth with secure password hashing
+2. **GitHub OAuth** - Supabase OAuth provider configuration
+3. **Google OAuth** - Supabase OAuth provider configuration
+4. **Cloudflare Turnstile** - CAPTCHA validation on signup to prevent bots
 
 ### Auth Flow
 
-- Users can sign in via OAuth or email/password
-- NextAuth adapter stores accounts and sessions in Prisma
-- JWT tokens contain user ID and access tokens from providers
-- Terms of Service acceptance tracked in User.acceptedToS field
+#### Email/Password Sign-In Flow
+1. User submits credentials via `SignInForm.client.tsx`
+2. Supabase validates credentials (`supabase.auth.signInWithPassword()`)
+3. Client calls `/api/auth/login-redirect` to check ToS acceptance
+4. API checks user's `acceptedToS` metadata against latest ToS document
+5. Redirects to `/auth/tos` if ToS acceptance required, otherwise to default route
+6. Session stored in cookies, automatically refreshed by Supabase
+
+#### OAuth Sign-In Flow
+1. User clicks OAuth provider button
+2. Redirects to provider (GitHub/Google) for authentication
+3. Provider redirects to `/auth/callback` with authorization code
+4. Server exchanges code for session (`supabase.auth.exchangeCodeForSession()`)
+5. PostgreSQL trigger creates User record if first-time login
+6. Server checks ToS acceptance via `getLoginRedirectUrlForUser()`
+7. Server-side redirect to `/auth/tos` or default route
+
+### Terms of Service Enforcement
+
+**Location**:
+- Utility: `_utils/requireAcceptToS.ts`
+- API Route: `/api/auth/login-redirect/route.ts`
+- Callback Handler: `/auth/callback/route.ts`
+
+**Flow**:
+1. User metadata stores `acceptedToS` (DocumentId of accepted ToS)
+2. `requireAcceptToS()` queries latest ToS document from database
+3. Compares user's accepted ToS ID with latest document ID
+4. Returns `requireAcceptance` (boolean) and `newTOS` (boolean - true if user accepted old version)
+5. Redirects to `/auth/tos` with query params indicating acceptance requirement
+
+### User Metadata Storage
+
+Supabase Auth `user_metadata` stores:
+- `acceptedToS`: DocumentId (TID) of accepted Terms of Service document
+- Additional profile information as needed
+
+### Database Synchronization
+
+**PostgreSQL Trigger**: `on_auth_user_created`
+- Automatically fires when new Supabase Auth user is created
+- Creates corresponding record in application `User` table
+- Ensures referential integrity between auth system and application data
 
 ### Middleware
 
 - **Location**: `middleware.ts`
-- **Protected Routes**: All routes except `/auth`, `/api`, `/api/auth`, and static assets
-- **Callback URL**: Redirects unauthenticated users to signin with callback
-- **CORS**: Allows specific origins (localhost:3000, Vercel deployment URLs)
+- **Protected Routes**: All routes except `/auth/*`, `/api/auth/*`, and static assets
+- **Session Check**: Validates Supabase session from cookies
+- **Callback URL**: Redirects unauthenticated users to `/auth/signin` with `redirectTo` param
+- **CORS**: Configured for local development and Vercel deployments
 
-### Password Storage
+### Local Development
 
-- Local passwords use bcryptjs for hashing
-- Stored in separate `Passwords` table with expiration
+- **Supabase CLI**: Run local Supabase instance with `npm run supabase:start`
+- **Database URL**: `postgresql://postgres:postgres@127.0.0.1:54322/postgres`
+- **Studio**: Access Supabase Studio at `http://localhost:54323`
+- **Prisma Integration**: Prisma schema points to local Supabase PostgreSQL
 
 ## File Storage: Cloudflare R2 + AWS S3 SDK
 
@@ -322,6 +372,13 @@ Bucket: {CLOUDFLARE_R2_BUCKET_NAME}
 - `GET /api/documents/[docType]/latest` - Get latest legal document
 - `GET /api/documents/[docType]/[version]` - Get specific version
 - `POST /api/documents/[docType]` - Create new document
+
+#### Authentication
+
+- `GET /api/auth/callback` - OAuth callback handler (exchanges code for session)
+- `POST /api/auth/login-redirect` - Determines post-login redirect based on ToS acceptance
+  - Request: `{ userId: UserId, acceptedToS?: DocumentId, defaultRedirect?: string }`
+  - Response: `{ route: string }` - URL to redirect user to
 
 ### Error Handling
 
@@ -436,10 +493,11 @@ Custom Nx plugin for tooling and build automation
 
 ### 6. Authentication Strategy
 
-- **JWT-based sessions** for scalability (stateless)
-- **Prisma adapter** for persistent session storage
-- **NextAuth middleware** for request-level authorization
-- **OAuth providers** for third-party auth without password storage
+- **Supabase Auth** for managed authentication service
+- **Cookie-based sessions** with automatic refresh tokens
+- **PostgreSQL triggers** for user record synchronization
+- **OAuth providers** (GitHub, Google) via Supabase configuration
+- **Terms of Service enforcement** via user metadata and API validation
 
 ### 7. Image Management
 
@@ -474,14 +532,30 @@ Custom Nx plugin for tooling and build automation
 
 Required server-side variables in `env.ts`:
 
-- `DATABASE_URL`: CockroachDB connection string
-- `AUTH_SECRET`: JWT signing secret
-- `AUTH_GITHUB_ID`, `AUTH_GITHUB_SECRET`: GitHub OAuth
-- `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`: Google OAuth
-- `CLOUDFLARE_*`: R2 storage credentials
-- `IMAGES_BASE_URL`: CDN URL for images
-- `TURNSTILE_*`: Cloudflare Turnstile CAPTCHA keys
-- `LOG_LEVEL`, `LOG_DIR`: Logging configuration
+**Database**:
+- `DATABASE_URL`: PostgreSQL connection string (Supabase)
+- `DIRECT_URL`: Direct PostgreSQL connection (bypass PgBouncer for migrations)
+
+**Supabase**:
+- `NEXT_PUBLIC_SUPABASE_URL`: Supabase project URL (public)
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Supabase anonymous key (public)
+- `SUPABASE_SERVICE_ROLE_KEY`: Supabase service role key (server-only)
+
+**Storage**:
+- `CLOUDFLARE_ACCOUNT_ID`: Cloudflare account ID
+- `CLOUDFLARE_R2_ACCESS_KEY_ID`: R2 access key
+- `CLOUDFLARE_R2_SECRET_ACCESS_KEY`: R2 secret key
+- `CLOUDFLARE_R2_BUCKET_NAME`: R2 bucket name
+- `IMAGES_BASE_URL`: CDN URL for serving images
+- `IMAGES_MAX_SIZE_IN_BYTES`: Maximum image upload size
+
+**Security**:
+- `TURNSTILE_SECRET_KEY`: Cloudflare Turnstile server-side secret
+- `NEXT_PUBLIC_TURNSTILE_SITE_KEY`: Turnstile site key (public)
+
+**Logging**:
+- `LOG_LEVEL`: Winston log level (verbose, info, error)
+- `LOG_DIR`: Directory for log files
 
 ### Scripts (from package.json)
 

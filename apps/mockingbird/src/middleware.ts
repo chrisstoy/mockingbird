@@ -14,6 +14,7 @@ const publicRoutes = [
   '/auth/signin',
   '/auth/signup',
   '/auth/callback',
+  '/auth/tos',
   '/privacy',
   '/privacy/tos',
 ];

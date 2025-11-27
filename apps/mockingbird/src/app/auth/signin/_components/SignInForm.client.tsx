@@ -1,5 +1,6 @@
 'use client';
 
+import { DocumentId, DocumentIdSchema } from '@/_types';
 import { createClient } from '@/_utils/supabase/client';
 import { FormTextInput } from '@mockingbird/stoyponents';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -14,13 +15,13 @@ export function SignInForm() {
   const searchParams = useSearchParams();
   const supabase = createClient();
 
-  const handleEmailSignIn = async (e: React.FormEvent) => {
+  async function handleEmailSignIn(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { error, data } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
@@ -28,17 +29,42 @@ export function SignInForm() {
       if (error) {
         setError(error.message);
       } else {
-        // Redirect to the original page or home
-        const redirectTo = searchParams.get('redirectTo') || '/';
+        // Get user's accepted ToS from metadata
+        const { data: acceptedToS } = DocumentIdSchema.safeParse(
+          data.user.user_metadata?.acceptedToS
+        );
+
+        // Call API to determine redirect URL
+        const response = await fetch('/api/auth/login-redirect', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: data.user.id,
+            acceptedToS,
+            defaultRedirect: searchParams.get('redirectTo') ?? '/',
+          }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to determine redirect');
+        }
+
+        const { route: redirectTo } = await response.json();
+
+        // Redirect to the determined route (could be ToS page or default)
         router.push(redirectTo);
         router.refresh();
       }
     } catch (err) {
-      setError('An unexpected error occurred');
+      console.error('Login error:', err);
+      setError(
+        err instanceof Error ? err.message : 'An unexpected error occurred'
+      );
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   const handleOAuthSignIn = async (provider: 'github' | 'google') => {
     setError(null);

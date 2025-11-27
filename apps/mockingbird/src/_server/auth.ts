@@ -22,6 +22,11 @@ export async function validateAuthentication(): Promise<User> {
   return user;
 }
 
+export async function signOut() {
+  const supabase = await createClient();
+  await supabase.auth.signOut();
+}
+
 /**
  * Gets the current user session (nullable)
  * Returns the Supabase user or null if not authenticated

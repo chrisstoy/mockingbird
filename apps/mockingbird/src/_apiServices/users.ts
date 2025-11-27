@@ -1,4 +1,4 @@
-import { DocumentId, UserId, UserInfoSchema } from '@/_types';
+import { DocumentId, DocumentIdSchema, UserId, UserInfoSchema } from '@/_types';
 import { z } from 'zod';
 import { fetchFromServer } from './fetchFromServer';
 
@@ -51,8 +51,14 @@ export async function acceptTOS(userId: UserId, tosId: DocumentId) {
         tosId,
       }),
     });
+
+    const AcceptTOSResponseSchema = z.object({
+      accepted: DocumentIdSchema,
+    });
+
     const result = await response.json();
-    return result;
+    const acceptedTosId = AcceptTOSResponseSchema.parse(result).accepted;
+    return acceptedTosId;
   } catch (error) {
     console.error(error);
     throw error;
