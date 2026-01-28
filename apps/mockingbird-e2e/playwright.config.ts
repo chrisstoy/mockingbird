@@ -1,10 +1,10 @@
-import { workspaceRoot } from '@nx/devkit';
-import { nxE2EPreset } from '@nx/playwright/preset';
 import { defineConfig, devices } from '@playwright/test';
+import { nxE2EPreset } from '@nx/playwright/preset';
+import { workspaceRoot } from '@nx/devkit';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
 
-// Load E2E environment variables from .env.e2e at workspace root
+// Load E2E environment variables from .env.e2e
 dotenv.config({ path: path.join(workspaceRoot, '.env.e2e') });
 
 // For CI, you may want to set BASE_URL to the deployed application.
@@ -29,7 +29,7 @@ export default defineConfig({
     cwd: workspaceRoot,
     timeout: 120000,
     env: {
-      NODE_ENV: 'e2e',
+      NODE_ENV: 'test',
       // Ensure app uses .env.e2e variables
       ...process.env,
     },
@@ -38,6 +38,39 @@ export default defineConfig({
   globalSetup: require.resolve('./global-setup.ts'),
   globalTeardown: require.resolve('./global-teardown.ts'),
   projects: [
+    /*
+    {
+      name: 'chromium',
+      use: { ...devices['Desktop Chrome'] },
+    },
+
+    {
+      name: 'firefox',
+      use: { ...devices['Desktop Firefox'] },
+    },
+
+    {
+      name: 'webkit',
+      use: { ...devices['Desktop Safari'] },
+    },
+    */
+
+    // Uncomment for mobile browsers support
+    /* {
+      name: 'Mobile Chrome',
+      use: { ...devices['Pixel 5'] },
+    },
+    {
+      name: 'Mobile Safari',
+      use: { ...devices['iPhone 12'] },
+    }, */
+
+    // Uncomment for branded browsers
+    /* {
+      name: 'Microsoft Edge',
+      use: { ...devices['Desktop Edge'], channel: 'msedge' },
+    },
+     */
     {
       name: 'Google Chrome',
       use: { ...devices['Desktop Chrome'], channel: 'chrome' },

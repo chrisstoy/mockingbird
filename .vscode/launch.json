@@ -6,18 +6,6 @@
       "type": "node-terminal",
       "request": "launch",
       "env": {
-        "NODE_ENV": "development",
-        "NEXT_RUNTIME_LOG": "1"
-      },
-      "command": "nx dev mockingbird",
-      "cwd": "${workspaceFolder}/apps/mockingbird"
-    },
-    {
-      "name": "Next.js: debug server-side (test)",
-      "type": "node-terminal",
-      "request": "launch",
-      "env": {
-        "NODE_ENV": "test",
         "NEXT_RUNTIME_LOG": "1"
       },
       "command": "nx dev mockingbird",
@@ -28,7 +16,6 @@
       "type": "node-terminal",
       "request": "launch",
       "env": {
-        "NODE_ENV": "production",
         "NEXT_RUNTIME_LOG": "1"
       },
       "command": "nx start mockingbird",
