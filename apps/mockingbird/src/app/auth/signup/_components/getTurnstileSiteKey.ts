@@ -3,7 +3,12 @@
 import { env } from '@/../env';
 
 export async function getTurnstileSiteKey() {
-  if (env.NODE_ENV === 'development' || env.VERCEL_ENV === 'development') {
+  if (
+    env.NODE_ENV === 'development' ||
+    env.VERCEL_ENV === 'development' ||
+    env.NODE_ENV === 'test' ||
+    env.NODE_ENV === 'e2e'
+  ) {
     /** See https://developers.cloudflare.com/turnstile/troubleshooting/testing/ */
     return '1x00000000000000000000AA'; // always pass
     // return '2x00000000000000000000AA'; // always fail
