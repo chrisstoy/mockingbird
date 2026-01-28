@@ -80,6 +80,7 @@ export function SignUpForm() {
         // User record is automatically created by PostgreSQL trigger
         // when the Supabase Auth user is created (on_auth_user_created)
         // No need to manually create the user profile
+        await supabase.auth.signOut(); // Ensure user is signed out until email confirmed
         setSuccess(true);
       }
     } catch (err) {

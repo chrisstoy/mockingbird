@@ -3,7 +3,7 @@ import { Locator, Page } from '@playwright/test';
 // Test user constants (exported for use in tests)
 export const TEST_USER_NAME = `Testy McTestface`;
 export const TEST_USER_EMAIL = 'testy.mctestface@example.com';
-export const TEST_USER_PASSWORD = 'Starts123';
+export const TEST_USER_PASSWORD = 'Starts123!';
 
 // Legacy exports (kept for backward compatibility)
 export const testUserName = TEST_USER_NAME;
