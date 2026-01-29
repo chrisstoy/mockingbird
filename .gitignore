@@ -33,6 +33,7 @@ npm-debug.log
 yarn-error.log
 testem.log
 /typings
+.env.*
 
 # System Files
 .DS_Store
@@ -47,7 +48,6 @@ out
 logs
 logs-e2e
 .vercel
-**/.env.*
 
 .cursor/rules/nx-rules.mdc
 .github/instructions/nx.instructions.md
