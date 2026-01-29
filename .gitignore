@@ -44,8 +44,6 @@ Thumbs.db
 # Next.js
 .next
 out
-.env.*  # Includes .env.e2e for E2E test configuration
-.env.e2e  # E2E test environment configuration (explicit)
 logs
 logs-e2e
 .vercel
