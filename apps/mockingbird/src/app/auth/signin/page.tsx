@@ -67,7 +67,7 @@ export default function SignInPage() {
         const { requireAcceptance, newTOS, userId } = await requireAcceptToS(
           user.id
         );
-        if (result) {
+        if (result && (requireAcceptance || newTOS)) {
           router.push(
             `/auth/tos?requireAcceptance=${
               requireAcceptance ? 'true' : 'false'

@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 export default {
   displayName: 'stoyponents',
   preset: '../jest.preset.js',
