@@ -4,7 +4,8 @@
       "Bash(npx nx run-many:*)",
       "Bash(tree:*)",
       "Bash(ls:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "mcp__nx-mcp__nx_project_details"
     ],
     "deny": [],
     "ask": []

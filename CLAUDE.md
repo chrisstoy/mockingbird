@@ -33,12 +33,14 @@ mockingbird/
 ```
 
 ### Path Aliases (tsconfig.base.json)
+
 - `@mockingbird/stoyponents`: Shared component library
 - `@mockingbird/stoy-plugin`: Custom build tools
 
 ## Directory Structure: apps/mockingbird
 
 ### Root Configuration Files
+
 - **next.config.js**: Next.js configuration with Nx plugin, image optimization settings
 - **env.ts**: Environment variable schema validation using @t3-oss/env-nextjs with Zod
 - **middleware.ts**: NextAuth middleware for authentication and CORS handling
@@ -48,6 +50,7 @@ mockingbird/
 ### Source Directory (`src/`)
 
 #### `app/` - App Router Structure
+
 Next.js uses the App Router pattern (not Pages Router):
 
 ```
@@ -78,7 +81,9 @@ src/app/
 ```
 
 #### `_components/` - React Components
+
 Shared UI components following the underscore-prefix pattern for shared logic:
+
 - Post-related: `PostView.tsx`, `SummaryPost.tsx`, `PostHeader.tsx`, `PostMenu.client.tsx`
 - Comments: `Comment.tsx`, `CommentReply.client.tsx`, `CommentList.tsx`
 - Image: `ImageDisplay.client.tsx`, `ImageView.client.tsx`, `SelectImageDialog.client.tsx`
@@ -87,11 +92,13 @@ Shared UI components following the underscore-prefix pattern for shared logic:
 - Utilities: `DialogManager.client.tsx`, `FeedSelector.client.tsx`, `AudienceSelector.client.tsx`
 
 **Component Naming Convention**:
+
 - `.client.tsx`: Client-side component (requires "use client" directive)
 - `.tsx`: Server component by default
 - Skeleton components for loading states: `SkeletonPostView.tsx`, etc.
 
 #### `_server/` - Server-Side Logic
+
 Backend services and database interactions:
 
 ```
@@ -109,7 +116,9 @@ _server/
 ```
 
 #### `_apiServices/` - Client-Side API Calls
+
 Fetch wrappers for making HTTP requests to API routes:
+
 - `post.ts`: Post operations
 - `images.ts`: Image upload and retrieval
 - `friends.ts`: Friend operations
@@ -119,7 +128,9 @@ Fetch wrappers for making HTTP requests to API routes:
 - `apiUrlFor.ts`: URL builder for API routes
 
 #### `_types/` - TypeScript Type Definitions
+
 Schema definitions using Zod for runtime validation:
+
 - `ids.ts`: ID branded types (PostId, UserId, ImageId, etc.)
 - `post.ts`: Post schema and types
 - `images.ts`: Image schema and metadata
@@ -132,15 +143,19 @@ Schema definitions using Zod for runtime validation:
 - `type-utilities.ts`: Utility types and helpers
 
 #### `_utils/` - Utility Functions
+
 Helper functions for common operations
+
 - `toLocalTime.ts`: Timezone conversion
 
 #### `_hooks/` - Custom React Hooks
+
 Custom hooks for shared stateful logic
 
 ## Database Layer
 
 ### Prisma ORM
+
 - **Provider**: CockroachDB (distributed SQL database)
 - **Location**: `prisma/schema.prisma`
 - **Client**: Auto-generated PrismaClient with environment-based logging
@@ -186,6 +201,7 @@ NextAuth Tables
 ```
 
 ### Key Design Patterns
+
 - **Cascade Deletes**: Posts, Friends, and Images cascade delete with their owner
 - **Optional Relations**: Images and Responses are optional
 - **Audience Control**: Posts have PUBLIC/PRIVATE audience for access control
@@ -195,37 +211,44 @@ NextAuth Tables
 ## Authentication
 
 ### NextAuth.js Configuration
+
 - **Strategy**: JWT-based sessions with Prisma adapter
 - **Base Path**: `/api/auth`
 - **Session Strategy**: JWT (scalable for stateless deployments)
 
 ### Providers Configured
+
 1. **GitHub OAuth** (`AUTH_GITHUB_ID`, `AUTH_GITHUB_SECRET`)
 2. **Google OAuth** (`AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`)
 3. **Local Credentials** (email/password with bcryptjs)
 
 ### Auth Flow
+
 - Users can sign in via OAuth or email/password
 - NextAuth adapter stores accounts and sessions in Prisma
 - JWT tokens contain user ID and access tokens from providers
 - Terms of Service acceptance tracked in User.acceptedToS field
 
 ### Middleware
+
 - **Location**: `middleware.ts`
 - **Protected Routes**: All routes except `/auth`, `/api`, `/api/auth`, and static assets
 - **Callback URL**: Redirects unauthenticated users to signin with callback
 - **CORS**: Allows specific origins (localhost:3000, Vercel deployment URLs)
 
 ### Password Storage
+
 - Local passwords use bcryptjs for hashing
 - Stored in separate `Passwords` table with expiration
 
 ## File Storage: Cloudflare R2 + AWS S3 SDK
 
 ### Architecture
+
 Mockingbird uses **Cloudflare R2** (S3-compatible object storage) for image management via AWS SDK v3.
 
 ### S3 Configuration
+
 ```
 Endpoint: https://{CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com
 Region: auto
@@ -234,6 +257,7 @@ Bucket: {CLOUDFLARE_R2_BUCKET_NAME}
 ```
 
 ### Image Processing
+
 - **Sharp**: Image resizing and optimization
 - **Original Storage**: Full-size images stored with UUID as key
 - **Thumbnail Generation**: Automatically creates 120x120px JPEG thumbnails (80% quality)
@@ -241,6 +265,7 @@ Bucket: {CLOUDFLARE_R2_BUCKET_NAME}
 - **URL Base**: `IMAGES_BASE_URL` environment variable for public CDN access
 
 ### Image Service Operations (imagesService.ts)
+
 1. **storeImageForUser()**: Upload and create thumbnail
 2. **storeExternalImageForUser()**: Reference external image URL
 3. **deleteImageForUser()**: Remove image and thumbnail from R2
@@ -250,6 +275,7 @@ Bucket: {CLOUDFLARE_R2_BUCKET_NAME}
 7. **enumerateRemoteDirectories()**: List top-level user directories
 
 ### Storage Limits
+
 - `IMAGES_MAX_SIZE_IN_BYTES`: 2MB default maximum image size
 - Image validation includes size checks before upload
 
@@ -258,44 +284,53 @@ Bucket: {CLOUDFLARE_R2_BUCKET_NAME}
 ### RESTful Endpoints
 
 #### Posts
+
 - `POST /api/posts` - Create new post (requires authentication)
 - `GET /api/posts/[postId]` - Get post details
 - `DELETE /api/posts/[postId]` - Delete post
 
 #### Comments/Replies
+
 - `GET /api/posts/[postId]/comments` - List comments on post
 - `POST /api/posts/[postId]/comments` - Add comment to post
 
 #### Users
+
 - `GET /api/users` - Get all users
 - `GET /api/users/[userId]` - Get user profile
 - `PUT /api/users/[userId]` - Update user profile
 
 #### User Images
+
 - `GET /api/users/[userId]/images` - List user's images
 - `POST /api/users/[userId]/images` - Upload image
 - `DELETE /api/images/[imageId]` - Delete specific image
 
 #### Feed
+
 - `GET /api/users/[userId]/feed` - Get personalized feed
 
 #### Friends
+
 - `GET /api/users/[userId]/friends` - List friends
 - `POST /api/users/[userId]/friends` - Send friend request
 - `PUT /api/users/[userId]/friends/[friendId]` - Accept/reject request
 - `DELETE /api/users/[userId]/friends/[friendId]` - Remove friend
 
 #### Documents
+
 - `GET /api/documents/[docType]/latest` - Get latest legal document
 - `GET /api/documents/[docType]/[version]` - Get specific version
 - `POST /api/documents/[docType]` - Create new document
 
 ### Error Handling
+
 - **Centralized**: `api/errors.ts` with `ResponseError` class
 - **Validation**: Zod schemas validate request/response data
 - **Status Codes**: 400 (validation), 401 (auth), 403 (forbidden), 404 (not found), 500 (server)
 
 ### Authentication Guard
+
 - `validateAuthentication()`: Checks NextAuth session
 - Throws error if unauthenticated
 - Returns session with user ID for authorization checks
@@ -303,18 +338,22 @@ Bucket: {CLOUDFLARE_R2_BUCKET_NAME}
 ## Shared Libraries
 
 ### stoyponents Library
+
 Reusable UI component library with four main modules:
 
 1. **Dialog Components** (`dialog/`)
+
    - `DialogBase.tsx`: Base dialog structure with header, body, actions
    - `ConfirmationDialog.client.tsx`: Generic confirmation dialogs
    - `ConfirmSignOutDialog.client.tsx`: Sign-out confirmation
 
 2. **Form Components** (`form/`)
+
    - `FormTextInput.tsx`: Styled text input with validation
    - `FormError.tsx`: Error message display
 
 3. **Menu Components** (`menu/`)
+
    - `MenuButton.tsx`: Dropdown menu container
    - `MenuItem.tsx`: Individual menu items
 
@@ -323,11 +362,13 @@ Reusable UI component library with four main modules:
    - Quill-based rich text editor
 
 ### stoy-plugin
+
 Custom Nx plugin for tooling and build automation
 
 ## Key Dependencies & Libraries
 
 ### Frontend
+
 - **react-hook-form**: Form state management
 - **@hookform/resolvers**: Form validation resolver
 - **zod**: Runtime type validation
@@ -337,6 +378,7 @@ Custom Nx plugin for tooling and build automation
 - **@heroicons/react**: Icon library
 
 ### Backend/Services
+
 - **@prisma/client**: ORM and database client
 - **next-auth**: Authentication framework
 - **@auth/prisma-adapter**: NextAuth Prisma adapter
@@ -348,6 +390,7 @@ Custom Nx plugin for tooling and build automation
 - **@t3-oss/env-nextjs**: Environment validation
 
 ### Development
+
 - **@nx/next**: Nx Next.js plugin
 - **@nx/react**: Nx React library support
 - **@nx/jest**: Jest test runner
@@ -359,57 +402,67 @@ Custom Nx plugin for tooling and build automation
 ## Architectural Patterns & Decisions
 
 ### 1. Server Components by Default
+
 - React 19 with Next.js 15 uses Server Components by default
 - Only child components explicitly marked with `.client.tsx` or "use client" directive are client-side
 - Reduces JavaScript bundle size and enables server-side data fetching
 
 ### 2. API Layer Separation
+
 - **Client-side API calls** in `_apiServices/` use `fetch()` wrappers
 - **Server-side business logic** in `_server/` services
 - **API routes** in `app/api/` handle HTTP requests
 - Clear separation of concerns
 
 ### 3. Type Safety
+
 - **Zod schemas** for runtime validation of all inputs/outputs
 - **Branded types** for IDs (PostId, UserId, etc.) prevent accidental mixups
 - **TypeScript strict mode** enforces type safety
 
 ### 4. Monorepo with Nx
+
 - Centralized dependencies at root level
 - Shared TypeScript configuration
 - Reusable libraries (stoyponents)
 - Consistent tooling and building
 
 ### 5. Environment Validation
+
 - **@t3-oss/env-nextjs** with Zod schemas
 - Validates all env vars at build time
 - Separate server and client schemas
 - Prevents runtime errors from missing config
 
 ### 6. Authentication Strategy
+
 - **JWT-based sessions** for scalability (stateless)
 - **Prisma adapter** for persistent session storage
 - **NextAuth middleware** for request-level authorization
 - **OAuth providers** for third-party auth without password storage
 
 ### 7. Image Management
+
 - **Cloudflare R2** for cost-effective, distributed object storage
 - **Sharp** for server-side image optimization
 - **Automatic thumbnails** generated during upload
 - **CDN-backed URLs** for fast image serving
 
 ### 8. Logging & Observability
+
 - **Winston** with daily-rotate-file transport
 - **Structured JSON logs** for parsing
 - **Environment-based log levels** (verbose in dev, errors only in prod)
 - **Child loggers** for service-level context
 
 ### 9. Audience Control
+
 - **ENUM-based audience** (PUBLIC or PRIVATE)
 - Enables future feed filtering logic
 - Database-enforced access control
 
 ### 10. Data Validation at Every Layer
+
 - **Client**: react-hook-form with resolver
 - **API route**: Zod schema parsing
 - **Service**: Additional business logic validation
@@ -418,7 +471,9 @@ Custom Nx plugin for tooling and build automation
 ## Development Environment
 
 ### Environment Variables
+
 Required server-side variables in `env.ts`:
+
 - `DATABASE_URL`: CockroachDB connection string
 - `AUTH_SECRET`: JWT signing secret
 - `AUTH_GITHUB_ID`, `AUTH_GITHUB_SECRET`: GitHub OAuth
@@ -429,9 +484,11 @@ Required server-side variables in `env.ts`:
 - `LOG_LEVEL`, `LOG_DIR`: Logging configuration
 
 ### Scripts (from package.json)
+
 Root workspace dependencies and Nx-managed build targets
 
 ### Testing
+
 - **Jest** for unit tests in `__tests__/` directories
 - **Playwright** for E2E tests in `mockingbird-e2e` app
 - Service-level tests in `_server/__tests__/`
@@ -440,23 +497,27 @@ Root workspace dependencies and Nx-managed build targets
 ## Deployment
 
 ### Vercel
+
 - Primary deployment platform
 - Next.js first-class support
 - Environment variables configured in project settings
 - Automatic deployments from git branches
 
 ### Docker
+
 - `Dockerfile` for containerized deployment
 - `docker-compose.yaml` for local dev environment
 - Image optimization with `NEXT_SHARP_PATH` for production builds
 
 ### Database Migrations
+
 - `migrations.json` tracks Prisma migrations
 - CockroachDB compatibility layer handled by Prisma
 
 ## Summary
 
 Mockingbird is a well-architected, modern social media platform emphasizing:
+
 - **Type safety** through TypeScript and Zod
 - **Scalability** via Next.js 15, JWT sessions, and serverless functions
 - **Component reusability** with shared stoyponents library
@@ -465,3 +526,17 @@ Mockingbird is a well-architected, modern social media platform emphasizing:
 - **Performance** via Server Components, image optimization, and CDN storage
 - **Observability** through Winston structured logging
 
+<!-- nx configuration start-->
+<!-- Leave the start & end comments to automatically receive updates. -->
+
+# General Guidelines for working with Nx
+
+- When running tasks (for example build, lint, test, e2e, etc.), always prefer running the task through `nx` (i.e. `nx run`, `nx run-many`, `nx affected`) instead of using the underlying tooling directly
+- You have access to the Nx MCP server and its tools, use them to help the user
+- When answering questions about the repository, use the `nx_workspace` tool first to gain an understanding of the workspace architecture where applicable.
+- When working in individual projects, use the `nx_project_details` mcp tool to analyze and understand the specific project structure and dependencies
+- For questions around nx configuration, best practices or if you're unsure, use the `nx_docs` tool to get relevant, up-to-date docs. Always use this instead of assuming things about nx configuration
+- If the user needs help with an Nx configuration or project graph error, use the `nx_workspace` tool to get any errors
+- For Nx plugin best practices, check `node_modules/@nx/<plugin>/PLUGIN.md`. Not all plugins have this file - proceed without it if unavailable.
+
+<!-- nx configuration end-->
