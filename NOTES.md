@@ -45,3 +45,17 @@
 - delete release branch
 - marke Release as complete in Jira
 - create next Release in Jira
+
+## Database Reset
+
+To remove all migrations and clear all data (uses `DATABASE_URL` from environment):
+
+```bash
+rm -rf apps/mockingbird/prisma/migrations
+npx prisma db push --force-reset --schema=apps/mockingbird/prisma/schema.prisma
+```
+
+Verify which database will be affected first:
+```bash
+echo $DATABASE_URL
+```
