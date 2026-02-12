@@ -41,9 +41,17 @@ export async function GET(_req: NextRequest, context: RouteContext) {
 
 export async function DELETE(_req: NextRequest, context: RouteContext) {
   try {
-    await validateAuthentication();
+    const session = await validateAuthentication();
 
     const { postId } = ParamsSchema.parse(await context.params);
+
+    const post = await getPostWithId(postId);
+    if (!post) {
+      throw new ResponseError(404, `Post not found: ${postId}`);
+    }
+    if (post.posterId !== session.user.id) {
+      throw new ResponseError(403, 'Forbidden');
+    }
 
     const wasDeleted = await deletePost(postId);
     if (!wasDeleted) {
