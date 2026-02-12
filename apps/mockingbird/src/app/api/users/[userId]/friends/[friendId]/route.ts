@@ -30,9 +30,12 @@ const ParamsSchema = z.object({
  */
 export async function POST(req: NextRequest, context: RouteContext) {
   try {
-    await validateAuthentication();
+    const session = await validateAuthentication();
 
     const { userId, friendId } = ParamsSchema.parse(await context.params);
+    if (session.user.id !== userId) {
+      throw new ResponseError(403, 'Forbidden');
+    }
 
     const data = await req.json();
     const { accepted } = AcceptFriendshipSchema.parse(data);
@@ -59,9 +62,12 @@ export async function POST(req: NextRequest, context: RouteContext) {
  */
 export async function PUT(_req: NextRequest, context: RouteContext) {
   try {
-    await validateAuthentication();
+    const session = await validateAuthentication();
 
     const { userId, friendId } = ParamsSchema.parse(await context.params);
+    if (session.user.id !== userId) {
+      throw new ResponseError(403, 'Forbidden');
+    }
 
     const existingFriends = await getAcceptedFriendsForUser(userId);
 
@@ -94,9 +100,12 @@ export async function PUT(_req: NextRequest, context: RouteContext) {
  */
 export async function DELETE(_req: NextRequest, context: RouteContext) {
   try {
-    await validateAuthentication();
+    const session = await validateAuthentication();
 
     const { userId, friendId } = ParamsSchema.parse(await context.params);
+    if (session.user.id !== userId) {
+      throw new ResponseError(403, 'Forbidden');
+    }
 
     const result = await deleteFriendshipBetweenUsers(userId, friendId);
     if (result === 0) {
