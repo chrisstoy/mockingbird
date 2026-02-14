@@ -12,20 +12,32 @@ const logger = baseLogger.child({
   service: 'friends:service',
 });
 
+/**
+ * Atomically check for an existing friendship/request and create one if absent.
+ * Returns the new record, or null if a friendship/request already exists.
+ */
 export async function requestFriendshipBetweenUsers(
   userId: UserId,
   friendId: UserId
 ) {
-  const friendRequest = {
-    userId,
-    friendId,
-    accepted: false,
-  };
+  return prisma.$transaction(async (tx) => {
+    const existing = await tx.friends.findFirst({
+      where: {
+        OR: [
+          { userId, friendId },
+          { userId: friendId, friendId: userId },
+        ],
+      },
+    });
 
-  const rawData = await prisma.friends.create({
-    data: friendRequest,
+    if (existing) {
+      return null;
+    }
+
+    return tx.friends.create({
+      data: { userId, friendId, accepted: false },
+    });
   });
-  return rawData;
 }
 
 export async function updateFriendshipBetweenUsers(

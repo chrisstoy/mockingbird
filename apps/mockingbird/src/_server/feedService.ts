@@ -3,15 +3,18 @@ import { FeedSource, PostSchema, UserId } from '@/_types';
 import { z } from 'zod';
 import { getAcceptedFriendsForUser } from './friendsService';
 
+const PUBLIC_FEED_PAGE_SIZE = 50;
+
 export interface FeedOptions {
   userId: UserId;
   feedSource: FeedSource;
+  cursor?: string;
 }
 
-export async function getFeed({ userId, feedSource }: FeedOptions) {
+export async function getFeed({ userId, feedSource, cursor }: FeedOptions) {
   switch (feedSource) {
     case 'public':
-      return getPublicFeed();
+      return getPublicFeed(cursor);
     case 'private':
       return getPrivateFeedForUser(userId);
     default:
@@ -46,7 +49,7 @@ async function getPrivateFeedForUser(userId: UserId) {
  * Return the public Feed of Posts for a user.
  *  A user's public feed consists of all top-level public posts by all users.
  */
-async function getPublicFeed() {
+async function getPublicFeed(cursor?: string) {
   const rawData = await prisma.post.findMany({
     where: {
       audience: 'PUBLIC',
@@ -55,6 +58,8 @@ async function getPublicFeed() {
     orderBy: {
       createdAt: 'desc',
     },
+    take: PUBLIC_FEED_PAGE_SIZE,
+    ...(cursor ? { skip: 1, cursor: { id: cursor } } : {}),
   });
 
   const posts = z.array(PostSchema).parse(rawData);

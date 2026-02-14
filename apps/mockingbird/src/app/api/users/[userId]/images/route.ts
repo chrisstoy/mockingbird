@@ -80,7 +80,7 @@ export async function POST(req: NextRequest, context: RouteContext) {
       file,
       imageUrl: formData.get('imageUrl'),
       description: formData.get('description'),
-      album: formData.get('album'),
+      albumId: formData.get('albumId'),
     });
 
     if (fd.imageUrl) {
