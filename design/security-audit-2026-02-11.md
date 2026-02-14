@@ -9,20 +9,6 @@
 
 ---
 
-## MEDIUM
-
-**9. Race condition in friend request flow**
-`apps/mockingbird/src/app/api/users/[userId]/friends/[friendId]/route.ts` — Check-then-act pattern; should use a transaction.
-
-**10. Form field name mismatch for album upload**
-`apps/mockingbird/src/app/api/users/[userId]/images/route.ts` — Code reads `formData.get('album')` but schema expects `albumId`. Album association always silently fails.
-
-**11. Unbounded `getPublicFeed()` query**
-`apps/mockingbird/src/app/api/users/[userId]/feed/route.ts` — No pagination cap on public feed; could exhaust memory.
-
-**12. Unsafe type cast in friends service**
-`apps/mockingbird/src/app/api/users/[userId]/friends/route.ts` — `as unknown as string[]` bypasses type safety silently.
-
 ---
 
 ## LOW

@@ -24,7 +24,7 @@ export default auth(async (req) => {
 
   // Allowed origins check
   const origin = req.headers.get('origin') ?? '';
-  const isOriginAllowed = allowedOrigins.find((o) => o && origin.includes(o));
+  const isOriginAllowed = allowedOrigins.find((o) => o && origin === o);
 
   if (isOriginAllowed) {
     response.headers.set('Access-Control-Allow-Origin', origin);

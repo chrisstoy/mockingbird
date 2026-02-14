@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
 
     if (session.user?.id !== posterId) {
       throw new ResponseError(
-        400,
+        403,
         `posterId ${posterId} does not match the logged in userId ${session.user?.id}`
       );
     }
