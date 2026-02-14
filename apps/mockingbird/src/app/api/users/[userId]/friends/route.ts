@@ -17,7 +17,7 @@ const ParamsSchema = z.object({
 
 export async function GET(_req: NextRequest, context: RouteContext) {
   try {
-    await validateAuthentication();
+    const session = await validateAuthentication();
 
     const { data, success, error } = ParamsSchema.safeParse(
       await context.params
@@ -26,6 +26,10 @@ export async function GET(_req: NextRequest, context: RouteContext) {
       return createErrorResponse(400, error.message);
     }
     const { userId } = data;
+
+    if (session.user.id !== userId) {
+      return createErrorResponse(403, 'Forbidden');
+    }
 
     const friends = await getFriendsForUser(userId);
     return NextResponse.json(friends, { status: 200 });

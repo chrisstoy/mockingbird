@@ -29,8 +29,8 @@ export function respondWithError(error: unknown) {
   }
 
   if (error instanceof Error) {
-    return createErrorResponse(500, `${error.name}: ${error.message}`);
+    return createErrorResponse(500, 'Internal Server Error');
   }
 
-  return createErrorResponse(500, `${error}`);
+  return createErrorResponse(500, 'Internal Server Error');
 }

@@ -5,35 +5,7 @@
 
 ---
 
-## CRITICAL — Fix Immediately
-
-**1. IDOR: Any user can delete any post**
-`apps/mockingbird/src/app/api/posts/[postId]/route.ts` — DELETE validates auth but never checks the authenticated user owns the post.
-
-**2. IDOR: Friend operations bypass authorization**
-`apps/mockingbird/src/app/api/users/[userId]/friends/[friendId]/route.ts` — POST/PUT/DELETE all validate auth but never assert `session.user.id === userId`. Any user can accept/reject/send/delete friend requests on behalf of another user.
-
-**3. Unauthenticated image listing**
-`apps/mockingbird/src/app/api/users/[userId]/images/route.ts` — GET handler has no `validateAuthentication()` call; anyone can enumerate any user's images.
-
-**4. IDOR: Can attempt to delete other users' images**
-`apps/mockingbird/src/app/api/images/[imageId]/route.ts` — Ownership is only enforced at the service layer via an exception, not with a clean 403 in the route.
-
 ---
-
-## HIGH
-
-**5. Friends list visible to anyone (no ownership check)**
-`apps/mockingbird/src/app/api/users/[userId]/friends/route.ts` — GET authenticates but returns any user's friends regardless of who is asking.
-
-**6. Error responses leak internals**
-`apps/mockingbird/src/app/api/errors.ts` — Full error name/message returned in responses in production.
-
-**7. Unbounded `limit` param on comments (potential DoS)**
-`apps/mockingbird/src/app/api/posts/[postId]/comments/route.ts` — No bounds checking; parsed with `parseInt` with no max.
-
-**8. User emails logged**
-`apps/mockingbird/src/app/auth/localCredentials.ts` — Emails and expiry timestamps written to logs.
 
 ---
 
@@ -68,12 +40,12 @@
 
 ## Summary
 
-| Severity | Count |
-|----------|-------|
-| Critical | 4     |
-| High     | 4     |
-| Medium   | 4     |
-| Low      | 3     |
-| **Total**| **15**|
+| Severity  | Count  |
+| --------- | ------ |
+| Critical  | 4      |
+| High      | 4      |
+| Medium    | 4      |
+| Low       | 3      |
+| **Total** | **15** |
 
 **Fix priority:** Issues 1–4 (IDOR vulnerabilities) first — they allow cross-user data manipulation. Issue 10 is a silent bug causing lost functionality (album upload broken).

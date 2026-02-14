@@ -34,7 +34,9 @@ export async function GET(req: NextRequest, context: RouteContext) {
     const queryParams = QueryParamsSchema.parse(
       Object.fromEntries(req.nextUrl.searchParams.entries())
     );
-    const limit = queryParams.limit ? parseInt(queryParams.limit) : undefined;
+    const limit = queryParams.limit
+      ? Math.min(Math.max(1, parseInt(queryParams.limit, 10)), 100)
+      : undefined;
 
     logger.info(
       `Getting comments for Post: { postId: ${postId}, limit: ${limit} }`

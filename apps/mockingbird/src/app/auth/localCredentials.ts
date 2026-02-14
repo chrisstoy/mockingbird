@@ -39,7 +39,7 @@ async function authorize(
   });
 
   if (!user) {
-    console.error(`User with email ${email} not found`);
+    console.error(`User not found`);
     throw new CredentialsError('userNotFound', 'User not found');
   }
 
@@ -55,7 +55,7 @@ async function authorize(
 
   try {
     if (!(await bcrypt.compare(password, existingPassword.password))) {
-      console.log(`Invalid password for user ${user.id}:${user.email}`);
+      console.log(`Invalid password for user ${user.id}`);
       throw new CredentialsError('invalidPassword', 'Invalid password');
     }
   } catch (error) {
@@ -69,11 +69,7 @@ async function authorize(
   }
 
   if (existingPassword.expiresAt < new Date()) {
-    console.warn(
-      `Password for user ${user.id}:${
-        user.email
-      } expired on ${existingPassword.expiresAt.toISOString()}`
-    );
+    console.warn(`Password expired for user ${user.id}`);
     throw new CredentialsError('passwordExpired', 'Password has expired');
   }
 
