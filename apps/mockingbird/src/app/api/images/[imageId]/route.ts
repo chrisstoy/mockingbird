@@ -56,6 +56,14 @@ export async function DELETE(_req: NextRequest, context: RouteContext) {
     }
     const { imageId } = data;
 
+    const image = await getImage(imageId);
+    if (!image) {
+      throw new ResponseError(404, `Image not found: ${imageId}`);
+    }
+    if (image.ownerId !== session.user.id) {
+      throw new ResponseError(403, 'Forbidden');
+    }
+
     const deletedImage = await deleteImageForUser(session.user.id, imageId);
     if (!deletedImage) {
       throw new ResponseError(404, `Image not found: ${imageId}`);

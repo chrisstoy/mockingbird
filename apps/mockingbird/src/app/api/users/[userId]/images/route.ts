@@ -25,6 +25,8 @@ const ParamsSchema = z.object({
 
 export async function GET(_req: NextRequest, context: RouteContext) {
   try {
+    await validateAuthentication();
+
     const { userId } = ParamsSchema.parse(await context.params);
 
     const result = await listImagesForUser(userId);

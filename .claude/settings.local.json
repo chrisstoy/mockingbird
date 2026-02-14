@@ -5,7 +5,9 @@
       "Bash(tree:*)",
       "Bash(ls:*)",
       "Bash(cat:*)",
-      "mcp__nx-mcp__nx_project_details"
+      "mcp__nx-mcp__nx_project_details",
+      "Bash(git -C /Users/cstoy/dev/mockingbird diff --cached)",
+      "Bash(git -C /Users/cstoy/dev/mockingbird status)"
     ],
     "deny": [],
     "ask": []
