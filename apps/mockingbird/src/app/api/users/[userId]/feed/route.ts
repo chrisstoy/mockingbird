@@ -16,7 +16,7 @@ const ParamsSchema = z.object({
   feed: FeedSourceSchema,
 });
 
-export async function GET(_req: NextRequest, context: RouteContext) {
+export async function GET(req: NextRequest, context: RouteContext) {
   try {
     await validateAuthentication();
 
@@ -24,9 +24,11 @@ export async function GET(_req: NextRequest, context: RouteContext) {
       await context.params
     );
 
+    const cursor = req.nextUrl.searchParams.get('cursor') ?? undefined;
+
     logger.info(`Getting feed for userId: ${userId}`);
 
-    const feed = await getFeed({ userId, feedSource });
+    const feed = await getFeed({ userId, feedSource, cursor });
 
     return NextResponse.json(feed, { status: 200 });
   } catch (error) {

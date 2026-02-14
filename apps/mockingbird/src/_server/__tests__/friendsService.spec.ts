@@ -3,7 +3,16 @@ jest.mock('@/_server/db', () => {
     prisma: {
       friends: {
         create: jest.fn(),
+        findFirst: jest.fn(),
       },
+      $transaction: jest.fn((fn) =>
+        fn({
+          friends: {
+            create: jest.requireMock('@/_server/db').prisma.friends.create,
+            findFirst: jest.requireMock('@/_server/db').prisma.friends.findFirst,
+          },
+        })
+      ),
     },
   };
 });
@@ -21,9 +30,11 @@ import { prisma } from '@/_server/db';
 import { requestFriendshipBetweenUsers } from '../friendsService';
 
 const friendsCreateMock = jest.mocked(prisma.friends.create);
+const friendsFindFirstMock = jest.mocked(prisma.friends.findFirst);
 
 describe('requestFriendshipBetweenUsers', () => {
   it('should return requested friendship', async () => {
+    friendsFindFirstMock.mockResolvedValue(null);
     friendsCreateMock.mockResolvedValue({
       id: 'cm1750szo00001ocb5aog8ley',
       userId: 'cm1750szo00001ocb5aog8ley',

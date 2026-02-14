@@ -1,6 +1,5 @@
 import {
   deleteFriendshipBetweenUsers,
-  getAcceptedFriendsForUser,
   requestFriendshipBetweenUsers,
   updateFriendshipBetweenUsers,
 } from '@/_server/friendsService';
@@ -69,17 +68,15 @@ export async function PUT(_req: NextRequest, context: RouteContext) {
       throw new ResponseError(403, 'Forbidden');
     }
 
-    const existingFriends = await getAcceptedFriendsForUser(userId);
+    const friendRequest = await requestFriendshipBetweenUsers(userId, friendId);
 
-    if (existingFriends.includes(friendId)) {
-      logger.info(`User ${userId} already friends with ${friendId}`);
+    if (!friendRequest) {
+      logger.info(`User ${userId} already has a friendship record with ${friendId}`);
       return NextResponse.json(
-        { userId, friendId, accepted: true },
+        { userId, friendId },
         { status: 200 }
       );
     }
-
-    const friendRequest = await requestFriendshipBetweenUsers(userId, friendId);
 
     logger.info(
       `User ${userId} requested to add friend ${friendId}. Friend request id: ${friendRequest.id}`
