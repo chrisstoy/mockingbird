@@ -76,11 +76,12 @@ export async function POST(req: NextRequest, context: RouteContext) {
       albumId: AlbumIdSchema.optional(),
     });
 
+    const albumIdValue = formData.get('albumId');
     const fd = schema.parse({
       file,
       imageUrl: formData.get('imageUrl'),
       description: formData.get('description'),
-      albumId: formData.get('albumId'),
+      albumId: albumIdValue !== '' ? albumIdValue : undefined,
     });
 
     if (fd.imageUrl) {
