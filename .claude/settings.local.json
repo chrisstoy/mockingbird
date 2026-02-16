@@ -27,7 +27,13 @@
       "Bash(# Check for eslint config in next.config.js \\(the warning source\\) # The eslint warning during build was from @nx/next plugin - let''s verify grep -r \"\"eslint\"\" /Users/cstoy/dev/mockingbird/node_modules/@nx/next/src/plugins/with-nx.js)",
       "Bash(curl:*)",
       "Bash(pkill:*)",
-      "mcp__next-devtools__browser_eval"
+      "mcp__next-devtools__browser_eval",
+      "WebFetch(domain:www.prisma.io)",
+      "Bash(pnpm add:*)",
+      "Bash(npm --version:*)",
+      "Bash(set:*)",
+      "Bash(source:*)",
+      "Bash(npx prisma migrate dev:*)"
     ],
     "deny": [],
     "ask": []
