@@ -2,7 +2,7 @@ import baseLogger from '@/_server/logger';
 import { deletePost, getPostWithId } from '@/_server/postsService';
 import { PostIdSchema } from '@/_types';
 import { RouteContext } from '@/app/types';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { Prisma } from '../../../../../prisma/generated/client.js';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import {
@@ -61,7 +61,7 @@ export async function DELETE(_req: NextRequest, context: RouteContext) {
     return new Response(null, { status: 204 });
   } catch (error) {
     if (
-      error instanceof PrismaClientKnownRequestError &&
+      error instanceof Prisma.PrismaClientKnownRequestError &&
       error.code === 'P2025'
     ) {
       return createErrorResponse(404, `Post does not exist`);

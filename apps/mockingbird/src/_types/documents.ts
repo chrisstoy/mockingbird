@@ -1,4 +1,4 @@
-import { DocumentType as DBDocumentType } from '@prisma/client';
+import { DocumentType as DBDocumentType } from '../../prisma/generated/enums.js';
 import { z, ZodIssueCode } from 'zod';
 import { DocumentIdSchema, UserIdSchema } from './ids';
 
