@@ -7,9 +7,7 @@ export function Footer() {
       <div className="text-[8px]">
         Mockingbird {version.version} - {env.VERCEL_ENV || env.NODE_ENV} -
         {` - Built: ${new Date(version.buildDate).toUTCString()}`}
-        {env.VERCEL_GIT_COMMIT_REF
-          ? ` - PR${env.VERCEL_GIT_COMMIT_REF}`
-          : ''}{' '}
+        {env.VERCEL_GIT_COMMIT_REF ? ` - ${env.VERCEL_GIT_COMMIT_REF}` : ''}
       </div>
     </div>
   );
