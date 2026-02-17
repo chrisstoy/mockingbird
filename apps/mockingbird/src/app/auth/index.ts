@@ -1,9 +1,11 @@
 import NextAuth from 'next-auth';
 import authConfig from './auth.config';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../../../prisma/generated/client.js';
 import { PrismaAdapter } from '@auth/prisma-adapter';
+import { PrismaPg } from '@prisma/adapter-pg';
 
-const prisma = new PrismaClient();
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
+const prisma = new PrismaClient({ adapter });
 
 export const BASE_PATH = '/api/auth';
 

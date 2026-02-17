@@ -41,6 +41,9 @@ Thumbs.db
 .nx/cache
 .nx/workspace-data
 
+# Prisma generated client
+apps/mockingbird/prisma/generated
+
 # Next.js
 .next
 out

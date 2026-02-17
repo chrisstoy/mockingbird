@@ -6,21 +6,21 @@
       "type": "node-terminal",
       "request": "launch",
       "command": "nx dev mockingbird",
-      "cwd": "${workspaceFolder}/apps/mockingbird"
+      "cwd": "${workspaceFolder}"
     },
     {
       "name": "Next.js: debug server-side (prod)",
       "type": "node-terminal",
       "request": "launch",
       "command": "nx start mockingbird",
-      "cwd": "${workspaceFolder}/apps/mockingbird"
+      "cwd": "${workspaceFolder}"
     },
     {
       "name": "Next.js: debug client-side",
       "type": "chrome",
       "request": "launch",
       "url": "http://localhost:3000",
-      "cwd": "${workspaceFolder}/apps/mockingbird"
+      "cwd": "${workspaceFolder}"
     },
     {
       "name": "Next.js: debug full stack",
@@ -32,7 +32,7 @@
         "uriFormat": "%s",
         "action": "debugWithChrome"
       },
-      "cwd": "${workspaceFolder}/apps/mockingbird"
+      "cwd": "${workspaceFolder}"
     }
   ]
 }

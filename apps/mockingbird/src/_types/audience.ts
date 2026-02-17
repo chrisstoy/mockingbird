@@ -1,4 +1,4 @@
-import { Audience as DBAudience } from '@prisma/client';
+import { Audience as DBAudience } from '../../prisma/generated/enums.js';
 import { z, ZodIssueCode } from 'zod';
 
 export const audienceValues = Object.values(DBAudience);

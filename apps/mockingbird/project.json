@@ -5,6 +5,21 @@
   "projectType": "application",
   "tags": [],
   "targets": {
+    "build": {
+      "executor": "@nx/next:build",
+      "options": {
+        "outputPath": "apps/mockingbird/.next",
+        "webpack": true
+      }
+    },
+    "dev": {
+      "executor": "@nx/next:server",
+      "options": {
+        "buildTarget": "mockingbird:build",
+        "webpack": true,
+        "port": 3000
+      }
+    },
     "prisma-deploy": {
       "executor": "@nx-tools/nx-prisma:deploy"
     },

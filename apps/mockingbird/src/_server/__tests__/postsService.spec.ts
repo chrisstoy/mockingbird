@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../../../prisma/generated/client.js';
 
 jest.mock('@/_server/db', () => {
   return {
