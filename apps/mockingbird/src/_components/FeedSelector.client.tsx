@@ -30,18 +30,18 @@ export function FeedSelector() {
   };
 
   return (
-    <div role="tablist" className="tabs tabs-boxed">
+    <div role="tablist" className="tabs tabs-box">
       <button
         onClick={() => handleSelectChange('public')}
         role="tab"
-        className={`tab ${activeFeed === 'public' ? 'tab-active' : ''}`}
+        className={`tab ${activeFeed === 'public' ? 'tab-active text-base-content' : ''}`}
       >
         Public
       </button>
       <button
         onClick={() => handleSelectChange('private')}
         role="tab"
-        className={`tab ${activeFeed === 'private' ? 'tab-active' : ''}`}
+        className={`tab ${activeFeed === 'private' ? 'tab-active text-base-content' : ''}`}
       >
         Friends
       </button>

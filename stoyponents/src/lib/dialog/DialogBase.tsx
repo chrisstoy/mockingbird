@@ -33,7 +33,7 @@ export function DialogHeader<_Result>({
       >
         {title}
         <button
-          className="flex-grow-0 flex-shrink-0 border-1 w-5"
+          className="grow-0 shrink-0 w-5"
           onClick={() => onClosed()}
         >
           <XMarkIcon></XMarkIcon>

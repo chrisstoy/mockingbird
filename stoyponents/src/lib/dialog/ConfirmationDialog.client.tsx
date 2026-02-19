@@ -33,7 +33,7 @@ export function ConfirmationDialog({
   return (
     <dialog
       ref={dialogRef}
-      className="bg-transparent bg-base-100 open:animate-fade-in open:backdrop:animate-fade-in"
+      className="m-auto bg-transparent open:animate-fade-in open:backdrop:animate-fade-in"
     >
       <div className="card card-bordered shadow-xl bg-base-100">
         <DialogHeader title={title} onClosed={onClosed}></DialogHeader>
