@@ -1,6 +1,53 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@source "../../../../stoyponents/src";
+@plugin "@tailwindcss/typography";
+@plugin "daisyui" {
+  themes: mockingbird;
+}
+
+@plugin "daisyui/theme" {
+  name: "mockingbird";
+  default: true;
+  color-scheme: light;
+
+  --color-primary: #8e7d75;
+  --color-primary-content: #ffffff;
+  --color-secondary: #774f43;
+  --color-secondary-content: #ffffff;
+  --color-accent: #e5d9db;
+  --color-accent-content: #3b2e2b;
+  --color-neutral: #796a6f;
+  --color-neutral-content: #f6f4f5;
+  --color-base-100: #f6f4f5;
+  --color-base-200: #ede9ea;
+  --color-base-300: #ddd7d8;
+  --color-base-content: #2c2624;
+  --color-info: #77a7d8;
+  --color-info-content: #ffffff;
+  --color-success: #2fd479;
+  --color-success-content: #0a3a1f;
+  --color-warning: #b9530f;
+  --color-warning-content: #ffffff;
+  --color-error: #d62200;
+  --color-error-content: #ffffff;
+
+  --radius-selector: 2rem;
+  --radius-field: 0.5rem;
+  --radius-box: 1rem;
+
+  --border: 1px;
+
+  --card-p: 1rem;
+  --depth: 0;
+}
+
+.btn:not(.btn-xs):not(.btn-sm):not(.btn-lg):not(.btn-xl) {
+  --size: 3rem;
+}
+
+.tabs {
+  --tab-height: 2rem;
+}
 
 html {
   -webkit-text-size-adjust: 100%;

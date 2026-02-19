@@ -151,7 +151,7 @@ export function PostEditorDialog({
   return (
     <dialog
       ref={dialogRef}
-      className="w-full max-w-2xl h-full md:h-[90%] bg-transparent backdrop:backdrop-brightness-50"
+      className="m-auto w-full max-w-2xl h-full md:h-[90%] bg-transparent backdrop:backdrop-brightness-50"
     >
       <div className="flex flex-col h-full">
         <DialogHeader
