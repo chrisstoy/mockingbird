@@ -1,3 +1,14 @@
+# Release notes - Mockingbird - 0.2.6
+
+### Task
+
+- [MOC-31](https://stoy.atlassian.net/browse/MOC-31) Upgrade to Tailwind CSS v4 and DaisyUI v5
+- [MOC-74](https://stoy.atlassian.net/browse/MOC-74) Critical issues
+- [MOC-75](https://stoy.atlassian.net/browse/MOC-75) Fix security vulnerabilities in API error handling and auth
+- [MOC-76](https://stoy.atlassian.net/browse/MOC-76) Fix medium security and correctness issues
+- [MOC-77](https://stoy.atlassian.net/browse/MOC-77) Fix medium security issues in CORS and authorization
+- [MOC-79](https://stoy.atlassian.net/browse/MOC-79) Update to latest Next.js, Prisma and other libraries
+
 # Release notes - Mockingbird - 0.2.5
 
 ### Task
