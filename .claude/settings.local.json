@@ -48,7 +48,10 @@
       "mcp__chrome-devtools__new_page",
       "mcp__chrome-devtools__select_page",
       "mcp__chrome-devtools__wait_for",
-      "Bash(git log:*)"
+      "Bash(git log:*)",
+      "Bash(tail:*)",
+      "Bash(head:*)",
+      "Bash(chmod +x:*)"
     ],
     "deny": [],
     "ask": []

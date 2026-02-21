@@ -92,6 +92,15 @@ export function UserButton() {
           <>
             <MenuItem title="Friends" onClick={() => router.push('/friends')} />
             <MenuItem title="Profile" onClick={() => router.push('/profile')} />
+            {user.permissions?.includes('admin:access') && (
+              <>
+                <hr className="m-1" />
+                <MenuItem
+                  title="Admin"
+                  onClick={() => router.push('/admin')}
+                />
+              </>
+            )}
             <hr className="m-1"></hr>
             <MenuItem
               title="Data & Privacy"

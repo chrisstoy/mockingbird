@@ -26,6 +26,17 @@ export const EmailAddressSchema = z
     }
   });
 
+export const UserRoleSchema = z.enum([
+  'USER',
+  'MODERATOR',
+  'EDITOR',
+  'SUPER_ADMIN',
+]);
+export type UserRole = z.infer<typeof UserRoleSchema>;
+
+export const UserStatusSchema = z.enum(['ACTIVE', 'SUSPENDED', 'DELETED']);
+export type UserStatus = z.infer<typeof UserStatusSchema>;
+
 export const SimpleUserInfoSchema = z.object({
   id: UserIdSchema,
   name: z.string(),
@@ -37,6 +48,8 @@ export const UserInfoSchema = SimpleUserInfoSchema.extend({
   email: EmailAddressSchema,
   emailVerified: z.coerce.date().nullish(),
   acceptedToS: DocumentIdSchema.nullish(),
+  role: UserRoleSchema.default('USER'),
+  status: UserStatusSchema.default('ACTIVE'),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
 });
@@ -59,6 +72,7 @@ export const SessionUserSchema = z.object({
   name: z.string(),
   image: z.string().nullish(), // url to user's profile image
   email: EmailAddressSchema,
+  permissions: z.array(z.string()).default([]),
 });
 
 /**

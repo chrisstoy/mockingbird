@@ -1,4 +1,5 @@
 import { ActiveSession, ActiveSessionSchema } from '@/_types';
+import type { Permission } from '@/_types/permissions';
 import { auth } from '@/app/auth';
 import { Session } from 'next-auth';
 import { ResponseError } from './errors';
@@ -16,4 +17,20 @@ export async function validateAuthentication(): Promise<ActiveSession> {
   }
 
   return ActiveSessionSchema.parse(authSession);
+}
+
+/**
+ * Validates that the session user has the given permission.
+ *
+ * @returns the active Session
+ * @throws {ResponseError} 401 if not authenticated, 403 if missing permission
+ */
+export async function validatePermission(
+  permission: Permission
+): Promise<ActiveSession> {
+  const session = await validateAuthentication();
+  if (!session.user.permissions.includes(permission)) {
+    throw new ResponseError(403, 'Forbidden');
+  }
+  return session;
 }
