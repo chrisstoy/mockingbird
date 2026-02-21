@@ -1,3 +1,16 @@
+# Release notes - Mockingbird - 0.2.5
+
+### Task
+
+- [MOC-52](https://stoy.atlassian.net/browse/MOC-52) Mark Posts as either Public or Private
+- [MOC-56](https://stoy.atlassian.net/browse/MOC-56) Fix use of env variables
+- [MOC-61](https://stoy.atlassian.net/browse/MOC-61) Update to latest version of next js
+- [MOC-62](https://stoy.atlassian.net/browse/MOC-62) Support adding external image link to a Post
+- [MOC-63](https://stoy.atlassian.net/browse/MOC-63) Add CAPTCHA
+- [MOC-66](https://stoy.atlassian.net/browse/MOC-66) Add Terms of Service
+- [MOC-69](https://stoy.atlassian.net/browse/MOC-69) Add Documents support
+- [MOC-70](https://stoy.atlassian.net/browse/MOC-70) Refactor types to avoid circular dependencies
+
 # Release notes - Mockingbird - 0.2.4
 
 ### Task
