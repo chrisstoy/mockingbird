@@ -1,5 +1,6 @@
 import { auth } from '@/app/auth';
 import Link from 'next/link';
+import { AdminNav } from './_components/AdminNav.client';
 
 const NAV_ITEMS = [
   { href: '/admin', label: 'Dashboard', permission: 'admin:access' },
@@ -27,23 +28,63 @@ export default async function AdminLayout({
   );
 
   return (
-    <div className="flex h-screen">
-      <aside className="w-56 bg-base-200 flex flex-col p-4 gap-2 shrink-0">
-        <div className="text-lg font-bold mb-4">Admin Panel</div>
-        <ul className="menu gap-1 p-0">
-          {visibleNav.map((item) => (
-            <li key={item.href}>
-              <Link href={item.href}>{item.label}</Link>
-            </li>
-          ))}
-        </ul>
-        <div className="mt-auto">
-          <Link href="/" className="btn btn-sm btn-ghost w-full">
-            ← Back to App
+    <div className="flex h-screen bg-base-100">
+      <aside
+        className="w-60 flex flex-col shrink-0"
+        style={{ backgroundColor: '#2c2624', color: '#f6f4f5' }}
+      >
+        {/* Brand */}
+        <div
+          className="px-6 pt-6 pb-5"
+          style={{ borderBottom: '1px solid rgba(246,244,245,0.08)' }}
+        >
+          <div
+            className="text-xs font-medium mb-1"
+            style={{
+              letterSpacing: '0.18em',
+              textTransform: 'uppercase',
+              color: 'rgba(246,244,245,0.35)',
+            }}
+          >
+            Control Panel
+          </div>
+          <div className="text-base font-bold tracking-tight text-white">
+            Mockingbird
+          </div>
+        </div>
+
+        {/* Nav */}
+        <nav className="flex-1 px-3 py-5 overflow-y-auto">
+          <div
+            className="text-xs font-medium px-4 mb-2"
+            style={{
+              letterSpacing: '0.14em',
+              textTransform: 'uppercase',
+              color: 'rgba(246,244,245,0.28)',
+            }}
+          >
+            Navigation
+          </div>
+          <AdminNav items={visibleNav} />
+        </nav>
+
+        {/* Footer */}
+        <div
+          className="px-3 pb-5 pt-4"
+          style={{ borderTop: '1px solid rgba(246,244,245,0.08)' }}
+        >
+          <Link
+            href="/"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm transition-all duration-150 hover:bg-white/5"
+            style={{ color: 'rgba(246,244,245,0.35)' }}
+          >
+            <span>←</span>
+            <span>Back to App</span>
           </Link>
         </div>
       </aside>
-      <main className="flex-1 overflow-y-auto p-6">{children}</main>
+
+      <main className="flex-1 overflow-y-auto bg-base-100">{children}</main>
     </div>
   );
 }

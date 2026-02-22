@@ -2,6 +2,13 @@ import { getAllUsers } from '@/_server/adminService';
 import Link from 'next/link';
 import { RouteParams } from '@/app/types';
 
+const ROLE_BADGE: Record<string, string> = {
+  SUPER_ADMIN: 'badge-error',
+  MODERATOR: 'badge-warning',
+  EDITOR: 'badge-info',
+  USER: 'badge-ghost',
+};
+
 export default async function AdminUsersPage({ searchParams }: RouteParams) {
   const sp = await searchParams;
   const page = Number(sp['page'] ?? '1');
@@ -11,46 +18,61 @@ export default async function AdminUsersPage({ searchParams }: RouteParams) {
   const totalPages = Math.ceil(total / limit);
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">Users</h1>
+    <div className="p-8 max-w-5xl">
+      <div className="flex items-end justify-between mb-6">
+        <div>
+          <p className="text-xs font-medium tracking-widest uppercase text-base-content/40 mb-1">
+            Management
+          </p>
+          <h1 className="text-2xl font-bold tracking-tight">Users</h1>
+        </div>
+        <span className="text-sm text-base-content/50">
+          {total} user{total !== 1 ? 's' : ''}
+        </span>
+      </div>
 
-      <form className="mb-4 flex gap-2">
+      <form className="mb-5 flex gap-2">
         <input
           name="q"
           defaultValue={q}
           placeholder="Search by name or email…"
-          className="input input-bordered input-sm flex-1"
+          className="input input-bordered input-sm flex-1 max-w-sm"
         />
         <button type="submit" className="btn btn-sm btn-primary">
           Search
         </button>
+        {q && (
+          <Link href="/admin/users" className="btn btn-sm btn-ghost">
+            Clear
+          </Link>
+        )}
       </form>
 
-      <div className="overflow-x-auto">
-        <table className="table table-sm">
+      <div className="overflow-x-auto rounded-box border border-base-300 mb-5">
+        <table className="table table-sm table-zebra w-full">
           <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Role</th>
-              <th>Status</th>
-              <th>Joined</th>
+            <tr className="bg-base-200">
+              <th className="text-xs font-semibold tracking-wider uppercase text-base-content/50">Name</th>
+              <th className="text-xs font-semibold tracking-wider uppercase text-base-content/50">Email</th>
+              <th className="text-xs font-semibold tracking-wider uppercase text-base-content/50">Role</th>
+              <th className="text-xs font-semibold tracking-wider uppercase text-base-content/50">Status</th>
+              <th className="text-xs font-semibold tracking-wider uppercase text-base-content/50">Joined</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             {users.map((user) => (
-              <tr key={user.id}>
-                <td>{user.name}</td>
-                <td className="text-sm">{user.email}</td>
+              <tr key={user.id} className="hover">
+                <td className="font-medium">{user.name}</td>
+                <td className="text-sm text-base-content/70">{user.email}</td>
                 <td>
-                  <span className="badge badge-outline text-xs">
-                    {user.role}
+                  <span className={`badge badge-sm text-xs ${ROLE_BADGE[user.role] ?? 'badge-ghost'}`}>
+                    {user.role.replace('_', ' ')}
                   </span>
                 </td>
                 <td>
                   <span
-                    className={`badge text-xs ${
+                    className={`badge badge-sm text-xs ${
                       user.status === 'ACTIVE'
                         ? 'badge-success'
                         : user.status === 'SUSPENDED'
@@ -61,7 +83,7 @@ export default async function AdminUsersPage({ searchParams }: RouteParams) {
                     {user.status}
                   </span>
                 </td>
-                <td className="text-xs">
+                <td className="text-xs text-base-content/50">
                   {new Date(user.createdAt).toLocaleDateString()}
                 </td>
                 <td>
@@ -69,18 +91,25 @@ export default async function AdminUsersPage({ searchParams }: RouteParams) {
                     href={`/admin/users/${user.id}`}
                     className="btn btn-xs btn-ghost"
                   >
-                    View
+                    View →
                   </Link>
                 </td>
               </tr>
             ))}
+            {users.length === 0 && (
+              <tr>
+                <td colSpan={6} className="text-center text-base-content/40 py-8">
+                  No users found
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
 
-      <div className="flex justify-between items-center mt-4 text-sm">
-        <span>
-          {total} user{total !== 1 ? 's' : ''}
+      <div className="flex justify-between items-center text-sm">
+        <span className="text-base-content/50">
+          Page {page} of {Math.max(totalPages, 1)}
         </span>
         <div className="join">
           {page > 1 && (
@@ -91,8 +120,8 @@ export default async function AdminUsersPage({ searchParams }: RouteParams) {
               «
             </Link>
           )}
-          <span className="join-item btn btn-sm btn-disabled">
-            {page} / {totalPages}
+          <span className="join-item btn btn-sm btn-disabled pointer-events-none">
+            {page} / {Math.max(totalPages, 1)}
           </span>
           {page < totalPages && (
             <Link

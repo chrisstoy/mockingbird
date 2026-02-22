@@ -8,19 +8,34 @@ export default async function AdminDocumentsPage() {
   ]);
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-bold">Documents</h1>
+    <div className="p-8 max-w-3xl">
+      <div className="flex items-end justify-between mb-8">
+        <div>
+          <p className="text-xs font-medium tracking-widest uppercase text-base-content/40 mb-1">
+            Legal
+          </p>
+          <h1 className="text-2xl font-bold tracking-tight">Documents</h1>
+        </div>
         <Link href="/admin/documents/new" className="btn btn-primary btn-sm">
           + New Document
         </Link>
       </div>
 
-      <h2 className="text-lg font-semibold mb-2">Terms of Service</h2>
-      <DocumentTable docs={tocDocs} />
+      <div className="space-y-8">
+        <section>
+          <p className="text-xs font-medium tracking-widest uppercase text-base-content/40 mb-3">
+            Terms of Service
+          </p>
+          <DocumentTable docs={tocDocs} />
+        </section>
 
-      <h2 className="text-lg font-semibold mt-6 mb-2">Privacy Policy</h2>
-      <DocumentTable docs={privacyDocs} />
+        <section>
+          <p className="text-xs font-medium tracking-widest uppercase text-base-content/40 mb-3">
+            Privacy Policy
+          </p>
+          <DocumentTable docs={privacyDocs} />
+        </section>
+      </div>
     </div>
   );
 }
@@ -31,31 +46,33 @@ function DocumentTable({
   docs: { id: string; version: number; createdAt: Date; type: string }[];
 }) {
   return (
-    <div className="overflow-x-auto">
-      <table className="table table-sm">
+    <div className="overflow-x-auto rounded-box border border-base-300">
+      <table className="table table-sm table-zebra w-full">
         <thead>
-          <tr>
-            <th>Version</th>
-            <th>Type</th>
-            <th>Created</th>
+          <tr className="bg-base-200">
+            <th className="text-xs font-semibold tracking-wider uppercase text-base-content/50">Version</th>
+            <th className="text-xs font-semibold tracking-wider uppercase text-base-content/50">Type</th>
+            <th className="text-xs font-semibold tracking-wider uppercase text-base-content/50">Created</th>
           </tr>
         </thead>
         <tbody>
           {docs.map((doc) => (
-            <tr key={doc.id}>
-              <td>v{doc.version}</td>
+            <tr key={doc.id} className="hover">
+              <td className="font-mono font-medium">v{doc.version}</td>
               <td>
-                <span className="badge badge-outline text-xs">{doc.type}</span>
+                <span className="badge badge-sm badge-outline text-xs font-mono">
+                  {doc.type}
+                </span>
               </td>
-              <td className="text-xs">
+              <td className="text-xs text-base-content/50">
                 {new Date(doc.createdAt).toLocaleDateString()}
               </td>
             </tr>
           ))}
           {docs.length === 0 && (
             <tr>
-              <td colSpan={3} className="text-center text-base-content/50">
-                No documents
+              <td colSpan={3} className="text-center text-base-content/40 py-8">
+                No documents yet
               </td>
             </tr>
           )}

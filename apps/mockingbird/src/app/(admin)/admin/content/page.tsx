@@ -11,13 +11,24 @@ export default async function AdminContentPage({ searchParams }: RouteParams) {
   const totalPages = Math.ceil(total / limit);
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">Content Moderation</h1>
+    <div className="p-8 max-w-5xl">
+      <div className="flex items-end justify-between mb-6">
+        <div>
+          <p className="text-xs font-medium tracking-widest uppercase text-base-content/40 mb-1">
+            Moderation
+          </p>
+          <h1 className="text-2xl font-bold tracking-tight">Content</h1>
+        </div>
+        <span className="text-sm text-base-content/50">
+          {total} post{total !== 1 ? 's' : ''}
+        </span>
+      </div>
+
       <PostModerationTable posts={posts} />
 
-      <div className="flex justify-between items-center mt-4 text-sm">
-        <span>
-          {total} post{total !== 1 ? 's' : ''}
+      <div className="flex justify-between items-center mt-5 text-sm">
+        <span className="text-base-content/50">
+          Page {page} of {Math.max(totalPages, 1)}
         </span>
         <div className="join">
           {page > 1 && (
@@ -28,7 +39,7 @@ export default async function AdminContentPage({ searchParams }: RouteParams) {
               «
             </Link>
           )}
-          <span className="join-item btn btn-sm btn-disabled">
+          <span className="join-item btn btn-sm btn-disabled pointer-events-none">
             {page} / {Math.max(totalPages, 1)}
           </span>
           {page < totalPages && (
