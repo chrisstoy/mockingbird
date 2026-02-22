@@ -5,7 +5,7 @@ import { Key, PropsWithChildren, ReactNode } from 'react';
 export interface DialogButton<_Result> {
   title: string;
   result?: _Result;
-  intent?: 'primary' | 'secondary' | 'accent';
+  intent?: 'primary' | 'secondary' | 'accent' | 'warning' | 'error';
   disabled?: boolean;
 }
 
@@ -65,14 +65,13 @@ export function DialogButton({
   children,
   ...props
 }: DialogButtonProps) {
+  const intentClass = intent ? `btn-${intent}` : '';
   return (
     <button
       disabled={disabled}
       type="button"
       onClick={onClick}
-      className={`${className} btn btn-sm bg-${intent ?? 'current'} text-${
-        intent ?? 'current'
-      }-content`}
+      className={`btn btn-sm ${intentClass} ${className ?? ''}`}
       {...props}
     >
       {children}
@@ -86,10 +85,11 @@ export function DialogSubmitButton({
   children,
   ...props
 }: Omit<DialogButtonProps, 'onClick'>) {
+  const intentClass = intent ? `btn-${intent}` : '';
   return (
     <button
       type="submit"
-      className={`${className} btn btn-sm bg-${intent ?? 'current'}`}
+      className={`btn btn-sm ${intentClass} ${className ?? ''}`}
       {...props}
     >
       {children}

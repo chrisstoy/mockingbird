@@ -9,7 +9,8 @@ import {
 import type { UserRole } from '@/_types';
 import { PERMISSIONS } from '@/_types/permissions';
 import { useRouter } from 'next/navigation';
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
+import { SuspensionDialog } from './SuspensionDialog.client';
 
 type UserStatus = 'ACTIVE' | 'SUSPENDED' | 'DELETED';
 
@@ -68,8 +69,6 @@ export function UserAdminControls({
   const [deleting, setDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showSuspendModal, setShowSuspendModal] = useState(false);
-  const [suspensionReasonInput, setSuspensionReasonInput] = useState('');
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const overrideMap = Object.fromEntries(
     permissionOverrides.map((o) => [o.permission, o.granted])
@@ -77,12 +76,6 @@ export function UserAdminControls({
   const [permState, setPermState] = useState<Record<string, boolean | null>>(
     overrideMap
   );
-
-  useEffect(() => {
-    if (showSuspendModal && textareaRef.current) {
-      textareaRef.current.focus();
-    }
-  }, [showSuspendModal]);
 
   async function handleRoleChange(newRole: UserRole) {
     setSaving(true);
@@ -95,15 +88,11 @@ export function UserAdminControls({
     }
   }
 
-  async function handleSuspend() {
-    if (!suspensionReasonInput.trim()) return;
-
+  async function handleSuspend(reason: string) {
     setSaving(true);
     try {
-      await adminSuspendUser(userId, suspensionReasonInput.trim());
+      await adminSuspendUser(userId, reason);
       setStatus('SUSPENDED');
-      setShowSuspendModal(false);
-      setSuspensionReasonInput('');
       router.refresh();
     } finally {
       setSaving(false);
@@ -318,122 +307,14 @@ export function UserAdminControls({
 
       {/* Suspension Modal */}
       {showSuspendModal && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
-          style={{ animation: 'fadeIn 0.15s ease-out' }}
-          onClick={(e) => {
-            if (e.target === e.currentTarget) {
-              setShowSuspendModal(false);
-              setSuspensionReasonInput('');
+        <SuspensionDialog
+          onClosed={(result) => {
+            setShowSuspendModal(false);
+            if (result.suspended && result.reason) {
+              handleSuspend(result.reason);
             }
           }}
-        >
-          <div
-            className="bg-base-100 rounded-box border border-base-300 shadow-2xl w-full max-w-lg mx-4"
-            style={{
-              animation: 'scaleIn 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
-            }}
-          >
-            {/* Header */}
-            <div className="px-6 pt-6 pb-4 border-b border-base-300">
-              <div className="flex items-start justify-between">
-                <div>
-                  <h3 className="text-lg font-bold tracking-tight">
-                    Suspend Account
-                  </h3>
-                  <p className="text-xs text-base-content/50 mt-1">
-                    Provide a clear explanation for this action
-                  </p>
-                </div>
-                <button
-                  className="btn btn-ghost btn-sm btn-square -mt-1 -mr-1"
-                  onClick={() => {
-                    setShowSuspendModal(false);
-                    setSuspensionReasonInput('');
-                  }}
-                >
-                  ✕
-                </button>
-              </div>
-            </div>
-
-            {/* Body */}
-            <div className="px-6 py-5">
-              <label className="block">
-                <span className="text-xs font-medium tracking-wider uppercase text-base-content/40 mb-2 block">
-                  Reason for Suspension
-                </span>
-                <textarea
-                  ref={textareaRef}
-                  className="textarea textarea-bordered w-full min-h-32 text-sm leading-relaxed"
-                  placeholder="e.g., Violated community guidelines by posting spam content on multiple occasions..."
-                  value={suspensionReasonInput}
-                  onChange={(e) => setSuspensionReasonInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && e.metaKey && suspensionReasonInput.trim()) {
-                      handleSuspend();
-                    }
-                  }}
-                />
-              </label>
-              <p className="text-xs text-base-content/40 mt-2">
-                This message will be shown to the user when they attempt to log
-                in.
-              </p>
-            </div>
-
-            {/* Footer */}
-            <div className="px-6 pb-6 pt-2 flex items-center justify-between gap-3">
-              <div className="text-xs text-base-content/40">
-                <kbd className="kbd kbd-xs">⌘</kbd> +{' '}
-                <kbd className="kbd kbd-xs">↵</kbd> to confirm
-              </div>
-              <div className="flex gap-2">
-                <button
-                  className="btn btn-ghost btn-sm"
-                  onClick={() => {
-                    setShowSuspendModal(false);
-                    setSuspensionReasonInput('');
-                  }}
-                >
-                  Cancel
-                </button>
-                <button
-                  className="btn btn-warning btn-sm"
-                  onClick={handleSuspend}
-                  disabled={!suspensionReasonInput.trim() || saving}
-                >
-                  {saving ? (
-                    <span className="loading loading-spinner loading-xs" />
-                  ) : (
-                    'Suspend Account'
-                  )}
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <style jsx>{`
-            @keyframes fadeIn {
-              from {
-                opacity: 0;
-              }
-              to {
-                opacity: 1;
-              }
-            }
-            @keyframes scaleIn {
-              from {
-                opacity: 0;
-                transform: scale(0.95) translateY(-10px);
-              }
-              to {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-              }
-            }
-          `}</style>
-        </div>
+        />
       )}
     </div>
   );
