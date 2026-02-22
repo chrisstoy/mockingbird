@@ -24,10 +24,7 @@ export function SelectExistingImage({ onImageSelected }: Props) {
   const [images, setImages] = useState<Image[]>([]);
 
   useEffect(() => {
-    if (!user) {
-      setImages([]);
-      return;
-    }
+    if (!user) return;
 
     (async () => {
       // load all image thumbnails for the user

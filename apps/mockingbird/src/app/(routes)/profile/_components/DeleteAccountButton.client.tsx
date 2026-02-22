@@ -15,6 +15,7 @@ import {
 
 export function DeleteAccountButton() {
   const user = useSessionUser();
+  const userId = user?.id;
   const [showFirstConfirmDelete, setShowFirstConfirmDelete] = useState(false);
   const [showFinalConfirmDelete, setShowFinalConfirmDelete] = useState(false);
   const [isDeletingUser, setIsDeletingUser] = useState(false);
@@ -33,7 +34,7 @@ export function DeleteAccountButton() {
     (result?: ConfirmationDialogResult | undefined) => {
       setShowFinalConfirmDelete(false);
 
-      if (!user?.id) {
+      if (!userId) {
         console.error('Cannot delete user: No user id found');
         return;
       }
@@ -42,7 +43,7 @@ export function DeleteAccountButton() {
         setIsDeletingUser(true);
         (async () => {
           try {
-            await deleteUser(user.id);
+            await deleteUser(userId);
           } catch (error) {
             console.error(error);
           }
@@ -50,7 +51,7 @@ export function DeleteAccountButton() {
         })();
       }
     },
-    [setShowFinalConfirmDelete, user?.id]
+    [setShowFinalConfirmDelete, userId]
   );
 
   return (

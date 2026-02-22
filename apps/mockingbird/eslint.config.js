@@ -1,20 +1,12 @@
-const { FlatCompat } = require('@eslint/eslintrc');
-const js = require('@eslint/js');
+const nxPlugin = require('@nx/eslint-plugin');
+const nextConfig = require('eslint-config-next/core-web-vitals');
 const baseConfig = require('../../eslint.config.js');
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-  recommendedConfig: js.configs.recommended,
-});
 
 module.exports = [
   ...baseConfig,
-  // Next.js and React configs
-  ...compat.extends(
-    'plugin:@nx/react-typescript',
-    'next',
-    'next/core-web-vitals'
-  ),
+  // Next.js and React configs (flat config format)
+  ...nxPlugin.configs['flat/react-typescript'],
+  ...nextConfig,
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
     ignores: ['.next/**/*', './next-env.d.ts'],
