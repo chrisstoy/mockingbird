@@ -46,6 +46,7 @@ export default async function AdminUserDetailPage(context: RouteContext) {
         userId={user.id}
         currentRole={user.role}
         currentStatus={user.status}
+        suspensionReason={user.suspensionReason ?? undefined}
         permissionOverrides={overrides}
       />
     </div>

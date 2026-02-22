@@ -23,14 +23,15 @@ enum UserStatus {
 }
 
 model User {
-  id            String     @id @default(cuid())
-  name          String
-  email         String?    @unique
-  emailVerified DateTime?
-  image         String?
-  acceptedToS   String? // ID of the TOS that was accepted by the user
-  role          UserRole   @default(USER)
-  status        UserStatus @default(ACTIVE)
+  id              String     @id @default(cuid())
+  name            String
+  email           String?    @unique
+  emailVerified   DateTime?
+  image           String?
+  acceptedToS     String? // ID of the TOS that was accepted by the user
+  role            UserRole   @default(USER)
+  status          UserStatus @default(ACTIVE)
+  suspensionReason String? // Explanation for why the account is suspended
 
   accounts Account[]
   sessions Session[]

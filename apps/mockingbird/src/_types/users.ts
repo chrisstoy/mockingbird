@@ -50,6 +50,7 @@ export const UserInfoSchema = SimpleUserInfoSchema.extend({
   acceptedToS: DocumentIdSchema.nullish(),
   role: UserRoleSchema.default('USER'),
   status: UserStatusSchema.default('ACTIVE'),
+  suspensionReason: z.string().nullish(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
 });
@@ -73,6 +74,7 @@ export const SessionUserSchema = z.object({
   image: z.string().nullish(), // url to user's profile image
   email: EmailAddressSchema,
   permissions: z.array(z.string()).default([]),
+  status: UserStatusSchema.default('ACTIVE'),
 });
 
 /**

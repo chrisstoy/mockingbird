@@ -51,13 +51,17 @@ export async function getAllUsers(
   return { users, total, page, limit };
 }
 
-export async function suspendUser(userId: string, actorId: string) {
-  logger.info(`suspendUser userId=${userId} actorId=${actorId}`);
+export async function suspendUser(
+  userId: string,
+  actorId: string,
+  reason: string
+) {
+  logger.info(`suspendUser userId=${userId} actorId=${actorId} reason=${reason}`);
   const user = await prisma.user.update({
     where: { id: userId },
-    data: { status: 'SUSPENDED' },
+    data: { status: 'SUSPENDED', suspensionReason: reason },
   });
-  await logAdminAction(actorId, 'SUSPEND_USER', userId);
+  await logAdminAction(actorId, 'SUSPEND_USER', userId, { reason });
   return user;
 }
 
@@ -65,7 +69,7 @@ export async function unsuspendUser(userId: string, actorId: string) {
   logger.info(`unsuspendUser userId=${userId} actorId=${actorId}`);
   const user = await prisma.user.update({
     where: { id: userId },
-    data: { status: 'ACTIVE' },
+    data: { status: 'ACTIVE', suspensionReason: null },
   });
   await logAdminAction(actorId, 'UNSUSPEND_USER', userId);
   return user;

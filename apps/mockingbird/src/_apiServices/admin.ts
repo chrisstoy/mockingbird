@@ -37,9 +37,11 @@ export async function adminDeleteUser(userId: string) {
   await fetchFromServer(`/admin/users/${userId}`, { method: 'DELETE' });
 }
 
-export async function adminSuspendUser(userId: string) {
+export async function adminSuspendUser(userId: string, reason: string) {
   const res = await fetchFromServer(`/admin/users/${userId}/suspend`, {
     method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ reason }),
   });
   return res.json();
 }

@@ -27,12 +27,13 @@ const nextAuth = NextAuth({
         token.accessToken = account.access_token;
         token.id = user?.id;
 
-        // Fetch role + permission overrides on sign-in to compute effective permissions
+        // Fetch role, status + permission overrides on sign-in
         if (user?.id) {
           const dbUser = await prisma.user.findUnique({
             where: { id: user.id },
             select: {
               role: true,
+              status: true,
               permissionOverrides: {
                 select: { permission: true, granted: true },
               },
@@ -43,6 +44,7 @@ const nextAuth = NextAuth({
               dbUser.role,
               dbUser.permissionOverrides
             );
+            token.status = dbUser.status;
           }
         }
       }
@@ -51,6 +53,7 @@ const nextAuth = NextAuth({
     async session({ session, token, user }) {
       session.user.id = token?.sub || user?.id;
       session.user.permissions = (token.permissions as string[]) ?? [];
+      session.user.status = (token.status as string) ?? 'ACTIVE';
       return Promise.resolve(session);
     },
     authorized: async ({ auth, request }) => {
@@ -63,6 +66,17 @@ const nextAuth = NextAuth({
       }
 
       if (!auth) return false;
+
+      // Check if user is suspended and redirect to suspended page
+      const userStatus = (auth.user as { status?: string }).status;
+      if (userStatus === 'SUSPENDED') {
+        if (request.nextUrl.pathname !== '/account/suspended') {
+          return NextResponse.redirect(
+            new URL('/account/suspended', request.nextUrl)
+          );
+        }
+        return true;
+      }
 
       // Guard admin routes
       if (request.nextUrl.pathname.startsWith('/admin')) {
