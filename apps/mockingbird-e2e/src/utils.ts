@@ -1,4 +1,4 @@
-import { Locator, Page } from '@playwright/test';
+import { Locator, Page, request } from '@playwright/test';
 
 export const testUserName = `Testy McTestface`;
 export const testUserEmail = 'testy.mctestface@example.com';
@@ -45,6 +45,32 @@ export async function performSignOut(page: Page) {
   await page.getByRole('img', { name: 'User Profile' }).click();
   await page.getByText('Sign Out').click();
   await page.getByRole('button', { name: 'Sign Out' }).click();
+}
+
+const BASE_URL = 'http://localhost:3000';
+
+export async function getTestResetToken(
+  email: string,
+  options?: { forceExpire?: boolean }
+): Promise<string> {
+  const ctx = await request.newContext();
+  const url = `${BASE_URL}/api/test/reset-token?email=${encodeURIComponent(email)}${
+    options?.forceExpire ? '&force_expire=1' : ''
+  }`;
+  const res = await ctx.get(url);
+  const data = await res.json();
+  await ctx.dispose();
+  if (!res.ok()) throw new Error(`getTestResetToken failed: ${data.error}`);
+  return data.token as string;
+}
+
+export async function expireTestUserPassword(email: string): Promise<void> {
+  const ctx = await request.newContext();
+  const res = await ctx.post(`${BASE_URL}/api/test/expire-password`, {
+    data: { email },
+  });
+  await ctx.dispose();
+  if (!res.ok()) throw new Error(`expireTestUserPassword failed`);
 }
 
 export async function performDeleteTestUser(page: Page) {
