@@ -1,5 +1,6 @@
 import { sessionUser } from '@/_hooks/sessionUser';
 import { GENERIC_USER_IMAGE_URL } from '@/constants';
+import Link from 'next/link';
 import { DeleteAccountButton } from './_components/DeleteAccountButton.client';
 import { ProfilePictureButton } from './_components/ProfilePictureButton.client';
 import { SignOutButton } from './_components/SignOutButton.client';
@@ -18,8 +19,14 @@ export default async function UserProfilePage() {
         <div>
           <h1 className="text-5xl font-bold">{userName}</h1>
           <p className="py-6">{email}</p>
-          <div className="flex flex-row justify-between items-center">
+          <div className="flex flex-row justify-between items-center gap-2 flex-wrap">
             <SignOutButton></SignOutButton>
+            <Link
+              href="/profile/change-password"
+              className="btn btn-outline btn-sm"
+            >
+              Change Password
+            </Link>
             <DeleteAccountButton></DeleteAccountButton>
           </div>
         </div>

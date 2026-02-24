@@ -55,6 +55,18 @@ export async function updateUserImage(userId: UserId, imageUrl: string) {
   }
 }
 
+export async function changePassword(
+  userId: UserId,
+  currentPassword: string,
+  newPassword: string
+) {
+  return fetchFromServer(`/users/${userId}/password`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ currentPassword, newPassword }),
+  });
+}
+
 export async function acceptTOS(userId: UserId, tosId: DocumentId) {
   try {
     const response = await fetchFromServer(`/users/${userId}/tos/${tosId}`, {

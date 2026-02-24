@@ -46,6 +46,12 @@ export async function adminSuspendUser(userId: string, reason: string) {
   return res.json();
 }
 
+export async function adminExpireUserPassword(userId: string) {
+  await fetchFromServer(`/admin/users/${userId}/expire-password`, {
+    method: 'POST',
+  });
+}
+
 export async function adminUnsuspendUser(userId: string) {
   const res = await fetchFromServer(`/admin/users/${userId}/suspend`, {
     method: 'DELETE',

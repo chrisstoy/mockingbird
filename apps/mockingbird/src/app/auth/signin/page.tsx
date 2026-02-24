@@ -51,6 +51,12 @@ export default function SignInPage() {
       });
 
       if (result?.error) {
+        if (result.error === 'passwordExpired') {
+          router.push(
+            `/auth/expired-password?email=${encodeURIComponent(email)}`
+          );
+          return;
+        }
         setError(`Invalid Credentials: ${result.error}`);
         setSelectedProvider('');
       } else if (result?.ok) {

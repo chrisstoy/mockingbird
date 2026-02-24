@@ -1,4 +1,5 @@
 import { getUserPermissionOverrides } from '@/_server/adminService';
+import { prisma } from '@/_server/db';
 import { getUserById } from '@/_server/usersService';
 import { UserIdSchema } from '@/_types';
 import { RouteContext } from '@/app/types';
@@ -10,9 +11,10 @@ export default async function AdminUserDetailPage(context: RouteContext) {
   const params = await context.params;
   const userId = UserIdSchema.parse(params['userId']);
 
-  const [user, overrides] = await Promise.all([
+  const [user, overrides, passwordRecord] = await Promise.all([
     getUserById(userId),
     getUserPermissionOverrides(userId),
+    prisma.passwords.findUnique({ where: { userId }, select: { userId: true } }),
   ]);
 
   if (!user) notFound();
@@ -48,6 +50,7 @@ export default async function AdminUserDetailPage(context: RouteContext) {
         currentStatus={user.status}
         suspensionReason={user.suspensionReason ?? undefined}
         permissionOverrides={overrides}
+        hasPassword={!!passwordRecord}
       />
     </div>
   );
