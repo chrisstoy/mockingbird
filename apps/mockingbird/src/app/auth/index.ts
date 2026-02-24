@@ -71,6 +71,9 @@ const nextAuth = NextAuth({
     authorized: async ({ auth, request }) => {
       if (
         request.nextUrl.pathname === '/auth/create-account' ||
+        request.nextUrl.pathname === '/auth/forgot-password' ||
+        request.nextUrl.pathname === '/auth/reset-password' ||
+        request.nextUrl.pathname === '/auth/expired-password' ||
         request.nextUrl.pathname.startsWith('/images') ||
         request.nextUrl.pathname.startsWith('/api')
       ) {

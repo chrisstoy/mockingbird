@@ -2,6 +2,7 @@ import { prisma } from '@/_server/db';
 import baseLogger from '@/_server/logger';
 import { DocumentId, UserId, UserInfoSchema } from '@/_types';
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 import { z } from 'zod';
 
 const logger = baseLogger.child({
@@ -207,6 +208,68 @@ export async function updateUserImage(userId: UserId, imageUrl: string) {
     data: { image: imageUrl },
     where: { id: userId },
   });
+}
+
+export async function createPasswordResetToken(
+  userId: UserId
+): Promise<string> {
+  const token = crypto.randomBytes(32).toString('hex');
+  const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+  await prisma.passwordResetToken.create({
+    data: { userId, token, expiresAt },
+  });
+
+  return token;
+}
+
+export async function validateAndConsumePasswordResetToken(
+  token: string
+): Promise<string> {
+  const record = await prisma.passwordResetToken.findUnique({
+    where: { token },
+  });
+
+  if (!record || record.usedAt !== null || record.expiresAt < new Date()) {
+    throw new Error('Invalid or expired token');
+  }
+
+  await prisma.passwordResetToken.update({
+    where: { token },
+    data: { usedAt: new Date() },
+  });
+
+  return record.userId;
+}
+
+export async function updateUserPassword(
+  userId: UserId,
+  newPassword: string
+): Promise<void> {
+  const hash = await bcrypt.hash(newPassword, 10);
+  const expiresAt = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000);
+
+  await prisma.passwords.upsert({
+    where: { userId },
+    create: { userId, password: hash, expiresAt },
+    update: { password: hash, expiresAt },
+  });
+}
+
+export async function expireUserPassword(userId: UserId): Promise<void> {
+  await prisma.passwords.update({
+    where: { userId },
+    data: { expiresAt: new Date() },
+  });
+}
+
+export async function verifyUserPassword(
+  userId: UserId,
+  password: string
+): Promise<boolean> {
+  const record = await prisma.passwords.findUnique({ where: { userId } });
+  if (!record) return false;
+  return bcrypt.compare(password, record.password);
 }
 
 export async function acceptTOS(userId: UserId, tosId: DocumentId) {
