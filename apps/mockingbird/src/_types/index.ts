@@ -5,5 +5,6 @@ export * from './feeds';
 export * from './ids';
 export * from './images';
 export * from './password';
+export * from './permissions';
 export * from './post';
 export * from './users';

@@ -48,7 +48,13 @@
       "mcp__chrome-devtools__new_page",
       "mcp__chrome-devtools__select_page",
       "mcp__chrome-devtools__wait_for",
-      "Bash(git log:*)"
+      "Bash(git log:*)",
+      "Bash(tail:*)",
+      "Bash(head:*)",
+      "Bash(chmod +x:*)",
+      "Bash(npx dotenv:*)",
+      "Bash(DATABASE_URL=\"postgresql://chrisstoy:fLCeRMT2tnwKxLn4nXyQNg@legal-roarer-11700.7tt.aws-us-east-1.cockroachlabs.cloud:26257/mockingbird-dev?sslmode=verify-full\" npx prisma migrate dev:*)",
+      "Bash(nx run:*)"
     ],
     "deny": [],
     "ask": []

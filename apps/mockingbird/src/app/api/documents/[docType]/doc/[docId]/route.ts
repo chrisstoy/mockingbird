@@ -17,7 +17,7 @@ const ParamsSchema = z.object({
 });
 
 export async function DELETE(_req: NextRequest, context: RouteContext) {
-  const { success, data, error } = ParamsSchema.safeParse(await context.params);
+  const { data, error } = ParamsSchema.safeParse(await context.params);
   if (error) {
     logger.error(`Invalid parameters: ${error.message}`);
     return respondWithError(new ResponseError(400, 'Invalid parameters'));

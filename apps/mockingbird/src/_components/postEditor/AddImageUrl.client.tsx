@@ -11,6 +11,7 @@ interface Props {
 
 export function AddImageUrl({ onImageSelected }: Props) {
   const user = useSessionUser();
+  const userId = user?.id;
 
   const [imageUrl, setImageUrl] = useState<string>('');
 
@@ -25,11 +26,11 @@ export function AddImageUrl({ onImageSelected }: Props) {
 
   const handleAddImageUrl = useCallback(
     async (imageUrl: string | undefined) => {
-      if (!imageUrl || !user?.id) {
+      if (!imageUrl || !userId) {
         return;
       }
       try {
-        const { id } = await addExternalImage(user.id, imageUrl, {
+        const { id } = await addExternalImage(userId, imageUrl, {
           description: 'External image',
         });
         onImageSelected(id);
@@ -37,7 +38,7 @@ export function AddImageUrl({ onImageSelected }: Props) {
         console.error(error);
       }
     },
-    [user?.id, onImageSelected]
+    [userId, onImageSelected]
   );
 
   return (

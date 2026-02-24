@@ -44,7 +44,8 @@ export async function DELETE(_req: NextRequest, context: RouteContext) {
 
     const { userId } = ParamsSchema.parse(await context.params);
 
-    if (userId !== session.user?.id) {
+    const isAdmin = session.user.permissions.includes('users:delete');
+    if (userId !== session.user?.id && !isAdmin) {
       throw new ResponseError(
         403,
         `User ${session.user?.id} tried to delete user ${userId}`

@@ -10,12 +10,13 @@ import { SearchForUsers } from './SearchForUsers.client';
 
 export function FriendsContainer() {
   const user = useSessionUser();
+  const userId = user?.id;
 
   const { setCollection } = useFriendCollectionStore();
 
   useEffect(() => {
     (async () => {
-      if (!user?.id) {
+      if (!userId) {
         setCollection({
           friends: [],
           pendingFriends: [],
@@ -23,23 +24,23 @@ export function FriendsContainer() {
         });
         return;
       }
-      const allFriends = await getFriendsForUser(user.id);
+      const allFriends = await getFriendsForUser(userId);
       setCollection(allFriends);
     })();
-  }, [user?.id, setCollection]);
+  }, [userId, setCollection]);
 
   const handleUpdateFriendStatus = useCallback(
     async (friendId: UserId, status: FriendStatus) => {
-      if (!user?.id) {
+      if (!userId) {
         return;
       }
 
-      await updateFriendStatusWithUser(user.id, friendId, status);
+      await updateFriendStatusWithUser(userId, friendId, status);
       // TODO - refresh friends in store instead of reloading
-      const allFriends = await getFriendsForUser(user.id);
+      const allFriends = await getFriendsForUser(userId);
       setCollection(allFriends);
     },
-    [user?.id, setCollection]
+    [userId, setCollection]
   );
 
   return (

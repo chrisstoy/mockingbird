@@ -49,7 +49,8 @@ export async function DELETE(_req: NextRequest, context: RouteContext) {
     if (!post) {
       throw new ResponseError(404, `Post not found: ${postId}`);
     }
-    if (post.posterId !== session.user.id) {
+    const isAdmin = session.user.permissions.includes('posts:delete');
+    if (post.posterId !== session.user.id && !isAdmin) {
       throw new ResponseError(403, 'Forbidden');
     }
 

@@ -8,7 +8,7 @@ import {
 import { signIn, signOut } from 'next-auth/react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 function MenuItem({ title, onClick }: { title: string; onClick: () => void }) {
   return (
@@ -32,23 +32,11 @@ export function UserButton() {
 
   const [showSignout, setShowSignout] = useState(false);
 
-  const [userData, setUserData] = useState<{
-    name: string;
-    email: string;
-    image: string;
-  }>({
-    name: 'Not Logged In',
-    email: '',
-    image: GENERIC_USER_IMAGE_URL,
-  });
-
-  useEffect(() => {
-    setUserData({
-      name: user?.name ?? 'Not Logged In',
-      email: user?.email ?? '',
-      image: user?.image ?? GENERIC_USER_IMAGE_URL,
-    });
-  }, [user]);
+  const userData = {
+    name: user?.name ?? 'Not Logged In',
+    email: user?.email ?? '',
+    image: user?.image ?? GENERIC_USER_IMAGE_URL,
+  };
 
   function handleSignOutResponse(
     result?: ConfirmationDialogResult | undefined
@@ -92,6 +80,15 @@ export function UserButton() {
           <>
             <MenuItem title="Friends" onClick={() => router.push('/friends')} />
             <MenuItem title="Profile" onClick={() => router.push('/profile')} />
+            {user.permissions?.includes('admin:access') && (
+              <>
+                <hr className="m-1" />
+                <MenuItem
+                  title="Admin"
+                  onClick={() => router.push('/admin')}
+                />
+              </>
+            )}
             <hr className="m-1"></hr>
             <MenuItem
               title="Data & Privacy"

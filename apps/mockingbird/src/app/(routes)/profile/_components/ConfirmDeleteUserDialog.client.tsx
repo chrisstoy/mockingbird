@@ -5,7 +5,7 @@ import {
   ConfirmationDialog,
   ConfirmationDialogResult,
 } from '@mockingbird/stoyponents';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 interface Props {
   onClosed: (result: ConfirmationDialogResult) => void;
@@ -19,13 +19,8 @@ export function InitialConfirmDeleteUserDialog({ onClosed }: Props) {
   }
 
   const [email, setEmail] = useState('');
-  const [enableDelete, setEnableDelete] = useState(false);
-
-  useEffect(() => {
-    setEnableDelete(
-      email.toLocaleLowerCase() === user?.email.toLocaleLowerCase()
-    );
-  }, [user, email]);
+  const enableDelete =
+    email.toLocaleLowerCase() === user?.email?.toLocaleLowerCase();
 
   return (
     <ConfirmationDialog

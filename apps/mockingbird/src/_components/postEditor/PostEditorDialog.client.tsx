@@ -81,7 +81,6 @@ export function PostEditorDialog({
 
   // if there is an original post, get the poster's info
   useEffect(() => {
-    setAudience(originalPost?.audience ?? 'PUBLIC');
     if (originalPost) {
       (async () => {
         const poster = await getUser(originalPost.posterId);
