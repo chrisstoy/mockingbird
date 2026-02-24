@@ -129,9 +129,9 @@ export function TOSViewer({
                     Accept Terms to Continue
                   </h3>
                   <p className="text-sm text-base-content/70 max-w-md mx-auto leading-relaxed">
-                    By clicking "Accept Terms" below, you acknowledge that you
-                    have read, understood, and agree to be bound by these Terms
-                    of Service.
+                    By clicking &quot;Accept Terms&quot; below, you acknowledge
+                    that you have read, understood, and agree to be bound by
+                    these Terms of Service.
                   </p>
                 </div>
 
