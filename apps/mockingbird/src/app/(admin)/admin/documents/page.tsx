@@ -58,7 +58,14 @@ function DocumentTable({
         <tbody>
           {docs.map((doc) => (
             <tr key={doc.id} className="hover">
-              <td className="font-mono font-medium">v{doc.version}</td>
+              <td className="font-mono font-medium">
+                <Link
+                  href={`/admin/documents/${doc.id}`}
+                  className="link link-primary font-semibold hover:underline"
+                >
+                  v{doc.version}
+                </Link>
+              </td>
               <td>
                 <span className="badge badge-sm badge-outline text-xs font-mono">
                   {doc.type}
