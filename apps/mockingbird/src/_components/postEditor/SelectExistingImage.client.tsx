@@ -17,11 +17,28 @@ function SkeletonPhoto() {
   );
 }
 
+function EmptyState() {
+  return (
+    <div className="flex flex-col items-center justify-center h-full gap-3 py-10 text-center">
+      <div className="rounded-full bg-base-200 p-5">
+        <PhotoIcon className="w-10 h-10 opacity-30" />
+      </div>
+      <div>
+        <p className="font-semibold text-base-content">No images yet</p>
+        <p className="text-sm text-base-content/50 mt-1">
+          Upload an image first, then come back to select it.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 export function SelectExistingImage({ onImageSelected }: Props) {
   const user = useSessionUser();
 
   const [selectedImage, setSelectedImage] = useState<ImageId>();
   const [images, setImages] = useState<Image[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!user) return;
@@ -30,6 +47,7 @@ export function SelectExistingImage({ onImageSelected }: Props) {
       // load all image thumbnails for the user
       const images = await getImagesForUser(user.id);
       setImages(images);
+      setLoading(false);
     })();
   }, [user]);
 
@@ -37,9 +55,15 @@ export function SelectExistingImage({ onImageSelected }: Props) {
     <div className="card flex flex-col h-full">
       <div className="card-title mx-4 mt-4 mb-2">Select existing image</div>
       <div className="card-body flex-auto h-[1px] overflow-y-scroll">
-        <div className="grid-cols-3 grid gap-2">
-          {images.length > 0 ? (
-            images.map((image) => (
+        {loading ? (
+          <div className="grid-cols-3 grid gap-2">
+            <SkeletonPhoto />
+            <SkeletonPhoto />
+            <SkeletonPhoto />
+          </div>
+        ) : images.length > 0 ? (
+          <div className="grid-cols-3 grid gap-2">
+            {images.map((image) => (
               <div
                 key={image.id}
                 className={`p-2 flex justify-center border-2 rounded-lg bg-base-100 ${
@@ -52,15 +76,11 @@ export function SelectExistingImage({ onImageSelected }: Props) {
                   alt={image.description ?? 'user image'}
                 ></img>
               </div>
-            ))
-          ) : (
-            <>
-              <SkeletonPhoto></SkeletonPhoto>
-              <SkeletonPhoto></SkeletonPhoto>
-              <SkeletonPhoto></SkeletonPhoto>
-            </>
-          )}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <EmptyState />
+        )}
       </div>
       <div className="card-actions m-1 mt-2 justify-end">
         <button
