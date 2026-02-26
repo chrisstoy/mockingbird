@@ -39,6 +39,22 @@ export async function deleteUser(userId: UserId) {
   }
 }
 
+export async function updateUserImage(userId: UserId, imageUrl: string) {
+  try {
+    const response = await fetchFromServer(`/users/${userId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ imageUrl }),
+    });
+    const rawData = await response.json();
+    const user = UserInfoSchema.parse(rawData);
+    return user;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
 export async function acceptTOS(userId: UserId, tosId: DocumentId) {
   try {
     const response = await fetchFromServer(`/users/${userId}/tos/${tosId}`, {

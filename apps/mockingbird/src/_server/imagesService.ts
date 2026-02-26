@@ -316,6 +316,20 @@ export async function deleteImageForUser(userId: UserId, imageId: ImageId) {
   }
 }
 
+/**
+ * Finds an album by name for the given user, creating it if it doesn't exist.
+ */
+export async function getOrCreateAlbumByName(userId: UserId, name: string) {
+  const existing = await prisma.album.findFirst({
+    where: { ownerId: userId, name },
+  });
+  if (existing) return existing;
+
+  return await prisma.album.create({
+    data: { ownerId: userId, name },
+  });
+}
+
 export async function listImagesForUser(userId: UserId) {
   try {
     const rawData = await prisma.image.findMany({

@@ -201,6 +201,14 @@ export async function deleteUser(userId: UserId) {
   }
 }
 
+export async function updateUserImage(userId: UserId, imageUrl: string) {
+  logger.info(`Updating profile image for user ${userId}`);
+  return await prisma.user.update({
+    data: { image: imageUrl },
+    where: { id: userId },
+  });
+}
+
 export async function acceptTOS(userId: UserId, tosId: DocumentId) {
   logger.info(`User ${userId} accepted TOS ${tosId}`);
 

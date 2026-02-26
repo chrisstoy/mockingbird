@@ -23,7 +23,7 @@ const nextAuth = NextAuth({
   },
   callbacks: {
     // see https://arc.net/l/quote/xmzhdhor
-    async jwt({ token, account, user }) {
+    async jwt({ token, account, user, trigger, session: sessionUpdate }) {
       if (account) {
         token.accessToken = account.access_token;
         token.id = user?.id;
@@ -35,6 +35,7 @@ const nextAuth = NextAuth({
             select: {
               role: true,
               status: true,
+              image: true,
               permissionOverrides: {
                 select: { permission: true, granted: true },
               },
@@ -46,15 +47,25 @@ const nextAuth = NextAuth({
               dbUser.permissionOverrides
             );
             token.status = dbUser.status;
+            token.picture = dbUser.image;
           }
         }
       }
+
+      // Handle session update trigger (e.g. profile picture change)
+      if (trigger === 'update' && sessionUpdate?.image) {
+        token.picture = sessionUpdate.image;
+      }
+
       return token;
     },
     async session({ session, token, user }) {
       session.user.id = token?.sub || user?.id;
       session.user.permissions = (token.permissions as string[]) ?? [];
       session.user.status = (token.status as string) ?? 'ACTIVE';
+      if (token.picture) {
+        session.user.image = token.picture as string;
+      }
       return Promise.resolve(session);
     },
     authorized: async ({ auth, request }) => {

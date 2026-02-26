@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import baseLogger from '@/_server/logger';
-import { deleteUser, getUserById } from '@/_server/usersService';
+import { deleteUser, getUserById, updateUserImage } from '@/_server/usersService';
 import { UserIdSchema } from '@/_types';
 import { RouteContext } from '@/app/types';
 import { z } from 'zod';
@@ -25,6 +25,36 @@ export async function GET(_req: NextRequest, context: RouteContext) {
     if (!user) {
       throw new ResponseError(404, `User '${userId}' does not exist`);
     }
+
+    return NextResponse.json(user, { status: 200 });
+  } catch (error) {
+    logger.error(error);
+    return respondWithError(error);
+  }
+}
+
+/**
+ * Update the user's profile image.
+ *
+ * Only the user themselves can update their profile image.
+ */
+export async function PATCH(req: NextRequest, context: RouteContext) {
+  try {
+    const session = await validateAuthentication();
+
+    const { userId } = ParamsSchema.parse(await context.params);
+
+    if (userId !== session.user?.id) {
+      throw new ResponseError(
+        403,
+        `User ${session.user?.id} tried to update user ${userId}`
+      );
+    }
+
+    const body = await req.json();
+    const { imageUrl } = z.object({ imageUrl: z.string().url() }).parse(body);
+
+    const user = await updateUserImage(userId, imageUrl);
 
     return NextResponse.json(user, { status: 200 });
   } catch (error) {

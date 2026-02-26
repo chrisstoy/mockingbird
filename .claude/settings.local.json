@@ -54,7 +54,10 @@
       "Bash(chmod +x:*)",
       "Bash(npx dotenv:*)",
       "Bash(DATABASE_URL=\"postgresql://chrisstoy:fLCeRMT2tnwKxLn4nXyQNg@legal-roarer-11700.7tt.aws-us-east-1.cockroachlabs.cloud:26257/mockingbird-dev?sslmode=verify-full\" npx prisma migrate dev:*)",
-      "Bash(nx run:*)"
+      "Bash(nx run:*)",
+      "mcp__chrome-devtools__fill_form",
+      "mcp__chrome-devtools__list_console_messages",
+      "mcp__chrome-devtools__list_network_requests"
     ],
     "deny": [],
     "ask": []
