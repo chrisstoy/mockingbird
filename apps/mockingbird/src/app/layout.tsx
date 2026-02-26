@@ -2,18 +2,8 @@ import { DialogManager } from '@/_components/DialogManager.client';
 import { auth } from '@/app/auth';
 import { SessionProvider } from 'next-auth/react';
 import { Suspense } from 'react';
-import { ErrorBoundary } from 'react-error-boundary';
+import { AppErrorBoundary } from './AppErrorBoundary.client';
 import './global.css';
-
-async function renderError({ error }: { error: Error }) {
-  'use server';
-  return (
-    <div role="alert">
-      <p>Unhandle Error When Loading Page</p>
-      <pre style={{ color: 'red' }}>{JSON.stringify(error, null, 2)}</pre>
-    </div>
-  );
-}
 
 export default async function RootLayout({
   children,
@@ -25,7 +15,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className="h-screen bg-neutral">
-        <ErrorBoundary fallbackRender={renderError}>
+        <AppErrorBoundary>
           <SessionProvider session={session}>
             <div className="w-full h-auto bg-neutral">
               <Suspense
@@ -37,7 +27,7 @@ export default async function RootLayout({
             </div>
             <DialogManager></DialogManager>
           </SessionProvider>
-        </ErrorBoundary>
+        </AppErrorBoundary>
       </body>
     </html>
   );

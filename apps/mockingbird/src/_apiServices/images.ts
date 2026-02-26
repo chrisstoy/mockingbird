@@ -1,5 +1,7 @@
 import {
+  AlbumIdSchema,
   ImageSchema,
+  UserIdSchema,
   type AlbumId,
   type Image,
   type ImageId,
@@ -7,6 +9,15 @@ import {
 } from '@/_types';
 import { z } from 'zod';
 import { fetchFromServer } from './fetchFromServer';
+
+// Minimal album shape returned by the API (no images relation loaded)
+const AlbumResponseSchema = z.object({
+  id: AlbumIdSchema,
+  ownerId: UserIdSchema,
+  name: z.string(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+});
 
 /**
  * Upload the image file and associate it with the specified user
@@ -94,6 +105,26 @@ export async function getImage(imageId: ImageId) {
   const rawData = await response.json();
   const image = ImageSchema.parse(rawData);
   return image;
+}
+
+/**
+ * Finds or creates an album with the given name for the user.
+ */
+export async function getOrCreateAlbum(userId: UserId, name: string) {
+  const response = await fetchFromServer(`/users/${userId}/albums`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name }),
+  });
+
+  if (!response.ok) {
+    console.error(
+      `Failed to get/create album: ${response.status}: ${response.statusText}`
+    );
+  }
+
+  const rawData = await response.json();
+  return AlbumResponseSchema.parse(rawData);
 }
 
 /**

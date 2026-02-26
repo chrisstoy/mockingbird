@@ -40,6 +40,18 @@ const nextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'images.mockingbird.club',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images2.mockingbird.club',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
 };
