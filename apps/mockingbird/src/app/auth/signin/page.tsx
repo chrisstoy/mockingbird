@@ -9,6 +9,26 @@ import { requireAcceptToS } from '../requireAcceptToS';
 import { SignInButton } from './_components/SignInButton.client';
 import { SignInEmailPassword } from './_components/SignInEmailPassword.client';
 
+const ERROR_MESSAGES: Record<string, string> = {
+  // Credentials errors from CredentialsError class
+  emailAndPasswordRequired: 'Please enter your email and password.',
+  userNotFound: 'No account found with that email address.',
+  passwordNotFound: 'No account found with that email address.',
+  invalidPassword: 'Incorrect password. Please try again.',
+  invalidEmail: 'Please enter a valid email address.',
+  errorComparingPasswords: 'An error occurred. Please try again.',
+  // NextAuth errors
+  CredentialsSignin: 'Invalid email or password.',
+  AccessDenied: 'Access denied. Your account may be suspended or deleted.',
+  Configuration: 'A server configuration error occurred. Please try again later.',
+  Verification: 'The sign-in link has expired or is invalid.',
+};
+
+function getErrorMessage(error: string | null): string | null {
+  if (!error) return null;
+  return ERROR_MESSAGES[error] ?? 'An unexpected error occurred. Please try again.';
+}
+
 export default function SignInPage() {
   const { update } = useSession();
   const router = useRouter();
@@ -57,7 +77,7 @@ export default function SignInPage() {
           );
           return;
         }
-        setError(`Invalid Credentials: ${result.error}`);
+        setError(result.error);
         setSelectedProvider('');
       } else if (result?.ok) {
         const session = await update();
@@ -102,7 +122,12 @@ export default function SignInPage() {
         <div className="flex flex-col">
           <h1 className="text-2xl text-center mb-2">Sign In</h1>
           {error && (
-            <div className="text-error p-1">Sign In Error: {error}</div>
+            <div role="alert" className="alert alert-error mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>{getErrorMessage(error)}</span>
+            </div>
           )}
 
           {includeCredentialProvider && (

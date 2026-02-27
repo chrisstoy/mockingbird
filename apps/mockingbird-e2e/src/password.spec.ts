@@ -1,8 +1,8 @@
 import { expect, test } from '@playwright/test';
 import {
   expireTestUserPassword,
+  forceDeleteTestUser,
   getTestResetToken,
-  performDeleteTestUser,
   performSignOut,
 } from './utils';
 
@@ -31,15 +31,35 @@ async function createPwTestUser(password = pwTestPassword) {
   return res;
 }
 
+/**
+ * Waits for navigation to the home page, handling a possible TOS redirect.
+ * The authorized callback enforces TOS acceptance before allowing access to any page,
+ * so users who haven't accepted TOS are redirected to /auth/tos automatically.
+ */
+async function waitForHomeHandlingTOS(
+  page: import('@playwright/test').Page
+) {
+  // Wait for either home or TOS page (TOS redirect happens server-side via authorized callback)
+  await page.waitForURL(/\/(auth\/tos.*)?$/, { timeout: 15000 });
+  if (page.url().includes('/auth/tos')) {
+    await page
+      .getByRole('button', { name: 'Accept Terms' })
+      .scrollIntoViewIfNeeded();
+    await page.getByRole('button', { name: 'Accept Terms' }).click();
+    await page.waitForURL(`${BASE_URL}/`);
+  }
+}
+
 async function signInAs(
   page: import('@playwright/test').Page,
   email: string,
   password: string
 ) {
-  await page.goto(BASE_URL);
+  await page.goto(`${BASE_URL}/auth/signin`);
   await page.getByPlaceholder('user@example.com').fill(email);
   await page.getByPlaceholder('Password').fill(password);
   await page.getByRole('button', { name: 'Sign In' }).click();
+  await waitForHomeHandlingTOS(page);
 }
 
 test.describe('password management', () => {
@@ -49,16 +69,13 @@ test.describe('password management', () => {
   let currentPassword = pwTestPassword;
 
   test.beforeAll(async () => {
-    // Ensure a fresh test user exists
+    await forceDeleteTestUser(pwTestEmail);
     await createPwTestUser(pwTestPassword);
     currentPassword = pwTestPassword;
   });
 
-  test.afterAll(async ({ browser }) => {
-    const page = await browser.newPage();
-    await signInAs(page, pwTestEmail, currentPassword);
-    await performDeleteTestUser(page);
-    await page.close();
+  test.afterAll(async () => {
+    await forceDeleteTestUser(pwTestEmail);
   });
 
   test('forgot password - request reset email', async ({ page }) => {
@@ -75,17 +92,19 @@ test.describe('password management', () => {
     await page.goto(`${BASE_URL}/auth/forgot-password`);
     await page.getByPlaceholder('user@example.com').fill(pwTestEmail);
     await page.getByRole('button', { name: 'Send Reset Link' }).click();
-    await page.getByText('If that email exists, a reset link was sent.').waitFor();
+    await page
+      .getByText('If that email exists, a reset link was sent.')
+      .waitFor();
 
     const token = await getTestResetToken(pwTestEmail);
     await page.goto(`${BASE_URL}/auth/reset-password?token=${token}`);
 
-    await page.getByPlaceholder('New password').fill(pwTestNewPassword);
+    await page.getByPlaceholder('New password', { exact: true }).fill(pwTestNewPassword);
     await page.getByPlaceholder('Confirm new password').fill(pwTestNewPassword);
     await page.getByRole('button', { name: 'Reset Password' }).click();
 
-    // Should sign in and redirect to home
-    await page.waitForURL(`${BASE_URL}/`);
+    // Should sign in and redirect to home (may pass through /auth/tos first)
+    await waitForHomeHandlingTOS(page);
     await expect(page).toHaveURL(`${BASE_URL}/`);
     currentPassword = pwTestNewPassword;
 
@@ -98,29 +117,30 @@ test.describe('password management', () => {
     await page.goto(`${BASE_URL}/auth/forgot-password`);
     await page.getByPlaceholder('user@example.com').fill(pwTestEmail);
     await page.getByRole('button', { name: 'Send Reset Link' }).click();
-    await page.getByText('If that email exists, a reset link was sent.').waitFor();
+    await page
+      .getByText('If that email exists, a reset link was sent.')
+      .waitFor();
 
     const token = await getTestResetToken(pwTestEmail);
 
     // Use the token once (success)
     await page.goto(`${BASE_URL}/auth/reset-password?token=${token}`);
     // Reset back to original password so suite stays in sync
-    await page.getByPlaceholder('New password').fill(pwTestPassword);
+    await page.getByPlaceholder('New password', { exact: true }).fill(pwTestPassword);
     await page.getByPlaceholder('Confirm new password').fill(pwTestPassword);
     await page.getByRole('button', { name: 'Reset Password' }).click();
-    await page.waitForURL(`${BASE_URL}/`);
+    // May pass through /auth/tos before landing on home
+    await waitForHomeHandlingTOS(page);
     currentPassword = pwTestPassword;
 
     await performSignOut(page);
 
     // Try the same token again
     await page.goto(`${BASE_URL}/auth/reset-password?token=${token}`);
-    await page.getByPlaceholder('New password').fill('SomePass789');
+    await page.getByPlaceholder('New password', { exact: true }).fill('SomePass789');
     await page.getByPlaceholder('Confirm new password').fill('SomePass789');
     await page.getByRole('button', { name: 'Reset Password' }).click();
-    await expect(
-      page.getByText(/invalid or expired/i)
-    ).toBeVisible();
+    await expect(page.getByText(/invalid or expired/i)).toBeVisible();
   });
 
   test('reset token expires after 24 hours', async ({ page }) => {
@@ -128,18 +148,18 @@ test.describe('password management', () => {
     await page.goto(`${BASE_URL}/auth/forgot-password`);
     await page.getByPlaceholder('user@example.com').fill(pwTestEmail);
     await page.getByRole('button', { name: 'Send Reset Link' }).click();
-    await page.getByText('If that email exists, a reset link was sent.').waitFor();
+    await page
+      .getByText('If that email exists, a reset link was sent.')
+      .waitFor();
 
     // Force-expire the token
     const token = await getTestResetToken(pwTestEmail, { forceExpire: true });
 
     await page.goto(`${BASE_URL}/auth/reset-password?token=${token}`);
-    await page.getByPlaceholder('New password').fill('SomePass789');
+    await page.getByPlaceholder('New password', { exact: true }).fill('SomePass789');
     await page.getByPlaceholder('Confirm new password').fill('SomePass789');
     await page.getByRole('button', { name: 'Reset Password' }).click();
-    await expect(
-      page.getByText(/invalid or expired/i)
-    ).toBeVisible();
+    await expect(page.getByText(/invalid or expired/i)).toBeVisible();
   });
 
   test('expired password is detected at login', async ({ page }) => {
@@ -158,12 +178,14 @@ test.describe('password management', () => {
 
   test('expired password can be changed', async ({ page }) => {
     await page.goto(
-      `${BASE_URL}/auth/expired-password?email=${encodeURIComponent(pwTestEmail)}`
+      `${BASE_URL}/auth/expired-password?email=${encodeURIComponent(
+        pwTestEmail
+      )}`
     );
 
     const changedPassword = 'Changed789';
     await page.getByPlaceholder('Current password').fill(currentPassword);
-    await page.getByPlaceholder('New password').fill(changedPassword);
+    await page.getByPlaceholder('New password', { exact: true }).fill(changedPassword);
     await page.getByPlaceholder('Confirm new password').fill(changedPassword);
     await page.getByRole('button', { name: 'Change Password' }).click();
 
@@ -183,13 +205,11 @@ test.describe('password management', () => {
 
     const changedPassword = 'Profile789';
     await page.getByPlaceholder('Current password').fill(currentPassword);
-    await page.getByPlaceholder('New password').fill(changedPassword);
+    await page.getByPlaceholder('New password', { exact: true }).fill(changedPassword);
     await page.getByPlaceholder('Confirm new password').fill(changedPassword);
     await page.getByRole('button', { name: 'Change Password' }).click();
 
-    await expect(
-      page.getByText('Password changed successfully')
-    ).toBeVisible();
+    await expect(page.getByText(/Password changed successfully/)).toBeVisible();
 
     // Should remain on the change-password page
     await expect(page).toHaveURL(/change-password/);
@@ -210,7 +230,7 @@ test.describe('password management', () => {
     await page.goto(`${BASE_URL}/profile/change-password`);
 
     await page.getByPlaceholder('Current password').fill('WrongPass000');
-    await page.getByPlaceholder('New password').fill('NewPass999');
+    await page.getByPlaceholder('New password', { exact: true }).fill('NewPass999');
     await page.getByPlaceholder('Confirm new password').fill('NewPass999');
     await page.getByRole('button', { name: 'Change Password' }).click();
 
@@ -223,12 +243,10 @@ test.describe('password management', () => {
     await page.goto(`${BASE_URL}/profile/change-password`);
 
     await page.getByPlaceholder('Current password').fill(currentPassword);
-    await page.getByPlaceholder('New password').fill(currentPassword);
+    await page.getByPlaceholder('New password', { exact: true }).fill(currentPassword);
     await page.getByPlaceholder('Confirm new password').fill(currentPassword);
     await page.getByRole('button', { name: 'Change Password' }).click();
 
-    await expect(
-      page.getByText(/must be different/i)
-    ).toBeVisible();
+    await expect(page.getByText(/must be different/i)).toBeVisible();
   });
 });

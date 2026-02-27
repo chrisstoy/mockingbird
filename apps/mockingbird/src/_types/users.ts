@@ -75,6 +75,7 @@ export const SessionUserSchema = z.object({
   email: EmailAddressSchema,
   permissions: z.array(z.string()).default([]),
   status: UserStatusSchema.default('ACTIVE'),
+  requiresTOS: z.boolean().default(false),
 });
 
 /**

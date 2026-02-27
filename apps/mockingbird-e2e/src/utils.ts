@@ -33,44 +33,24 @@ export async function performCreateTestUser(page: Page) {
     .getByPlaceholder('Confirm Password', { exact: true })
     .fill(testUserPassword);
   await page.getByRole('button', { name: 'Create Account' }).click();
+
+  await page
+    .getByRole('button', { name: 'Accept Terms' })
+    .scrollIntoViewIfNeeded();
+
+  await page.getByRole('button', { name: 'Accept Terms' }).click();
 }
 
-export async function performSignIn(page: Page) {
+export async function performSignInTestUser(page: Page) {
   await page.getByPlaceholder('user@example.com').fill(testUserEmail);
   await page.getByPlaceholder('Password').fill(testUserPassword);
-  await page.getByRole('button', { name: 'Sign in' }).click();
+  await page.getByRole('button', { name: 'Sign In' }).click();
 }
 
 export async function performSignOut(page: Page) {
   await page.getByRole('img', { name: 'User Profile' }).click();
   await page.getByText('Sign Out').click();
   await page.getByRole('button', { name: 'Sign Out' }).click();
-}
-
-const BASE_URL = 'http://localhost:3000';
-
-export async function getTestResetToken(
-  email: string,
-  options?: { forceExpire?: boolean }
-): Promise<string> {
-  const ctx = await request.newContext();
-  const url = `${BASE_URL}/api/test/reset-token?email=${encodeURIComponent(email)}${
-    options?.forceExpire ? '&force_expire=1' : ''
-  }`;
-  const res = await ctx.get(url);
-  const data = await res.json();
-  await ctx.dispose();
-  if (!res.ok()) throw new Error(`getTestResetToken failed: ${data.error}`);
-  return data.token as string;
-}
-
-export async function expireTestUserPassword(email: string): Promise<void> {
-  const ctx = await request.newContext();
-  const res = await ctx.post(`${BASE_URL}/api/test/expire-password`, {
-    data: { email },
-  });
-  await ctx.dispose();
-  if (!res.ok()) throw new Error(`expireTestUserPassword failed`);
 }
 
 export async function performDeleteTestUser(page: Page) {
@@ -87,4 +67,43 @@ export async function performDeleteTestUser(page: Page) {
     .getByRole('dialog')
     .getByRole('button', { name: 'Delete Account' })
     .click();
+}
+
+const BASE_URL = 'http://localhost:3000';
+
+export async function forceDeleteTestUser(userEmailToDelete?: string) {
+  const ctx = await request.newContext();
+  const res = await ctx.delete(
+    `${BASE_URL}/api/test/delete-user?email=${encodeURIComponent(
+      userEmailToDelete || testUserEmail
+    )}`
+  );
+  await ctx.dispose();
+  if (!res.ok() && res.status() !== 204) {
+    throw new Error(`forceDeleteTestUser failed: ${res.status()}`);
+  }
+}
+
+export async function getTestResetToken(
+  email: string,
+  options?: { forceExpire?: boolean }
+): Promise<string> {
+  const ctx = await request.newContext();
+  const url = `${BASE_URL}/api/test/reset-token?email=${encodeURIComponent(
+    email
+  )}${options?.forceExpire ? '&force_expire=1' : ''}`;
+  const res = await ctx.get(url);
+  const data = await res.json();
+  await ctx.dispose();
+  if (!res.ok()) throw new Error(`getTestResetToken failed: ${data.error}`);
+  return data.token as string;
+}
+
+export async function expireTestUserPassword(email: string): Promise<void> {
+  const ctx = await request.newContext();
+  const res = await ctx.post(`${BASE_URL}/api/test/expire-password`, {
+    data: { email },
+  });
+  await ctx.dispose();
+  if (!res.ok()) throw new Error(`expireTestUserPassword failed`);
 }

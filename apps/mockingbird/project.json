@@ -8,7 +8,7 @@
     "build": {
       "executor": "@nx/next:build",
       "options": {
-        "outputPath": "apps/mockingbird/.next",
+        "outputPath": "apps/mockingbird",
         "webpack": true
       }
     },

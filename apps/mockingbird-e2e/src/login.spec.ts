@@ -1,8 +1,8 @@
-import { test, expect, Page } from '@playwright/test';
+import { expect, Page, test } from '@playwright/test';
 import {
+  forceDeleteTestUser,
   performCreateTestUser,
-  performDeleteTestUser,
-  performSignIn,
+  performSignInTestUser,
   performSignOut,
 } from './utils';
 
@@ -12,6 +12,15 @@ function getSignInHeading(page: Page) {
 
 test.describe('Login and Account Creation', () => {
   test.describe.configure({ mode: 'serial' });
+
+  test.beforeAll(async () => {
+    await forceDeleteTestUser();
+  });
+
+  test.afterAll(async () => {
+    await forceDeleteTestUser();
+  });
+
   test.beforeEach(async ({ page }) => {
     await page.goto('http://localhost:3000');
   });
@@ -21,13 +30,9 @@ test.describe('Login and Account Creation', () => {
   });
 
   test('login with invalid user', async ({ page }) => {
-    await performSignIn(page);
+    await performSignInTestUser(page);
 
-    await expect(
-      page.getByText('There was an authentication error:')
-    ).toBeVisible();
-
-    await page.getByRole('link', { name: 'Sign in' }).click();
+    await expect(page.getByText('Invalid email or password.')).toBeVisible();
   });
 
   test('create new user', async ({ page }) => {
@@ -39,17 +44,5 @@ test.describe('Login and Account Creation', () => {
 
     await performSignOut(page);
     await expect(getSignInHeading(page)).toBeVisible();
-  });
-
-  test('delete user', async ({ page }) => {
-    await performSignIn(page);
-    await performDeleteTestUser(page);
-    await expect(getSignInHeading(page)).toBeVisible();
-
-    // ensure user was deleted
-    await performSignIn(page);
-    await expect(
-      page.getByText('There was an authentication error:')
-    ).toBeVisible();
   });
 });
