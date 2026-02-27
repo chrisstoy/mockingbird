@@ -1,8 +1,9 @@
-import TermsOfService from '@/_components/TermsOfService.client';
 import { getLatestVersionOfDocument } from '@/_server/documentsService';
 import { UserIdSchema } from '@/_types';
 import { StrictBooleanSchema } from '@/_types/type-utilities';
+import { auth } from '@/app/auth';
 import { signOut } from '@/app/auth/serverFuncs';
+import { TOSViewer } from '@/app/(routes)/privacy/tos/_components/TOSViewer.client';
 import { RouteParams } from '@/app/types';
 import { z } from 'zod';
 
@@ -15,7 +16,10 @@ const SearchParamsSchema = z.object({
 export default async function TOSPage({
   searchParams: _searchParams,
 }: RouteParams) {
-  const tos = await getLatestVersionOfDocument('TOC');
+  const [tos, session] = await Promise.all([
+    getLatestVersionOfDocument('TOC'),
+    auth(),
+  ]);
 
   const { data: searchParams, error } = SearchParamsSchema.safeParse(
     await _searchParams
@@ -26,25 +30,25 @@ export default async function TOSPage({
     return null;
   }
 
+  const userId =
+    searchParams?.userId ??
+    UserIdSchema.safeParse(session?.user?.id).data;
+  const requiresTOS = (session?.user as { requiresTOS?: boolean })?.requiresTOS;
+  const requireAcceptance =
+    searchParams?.requireAcceptance ?? requiresTOS ?? false;
+  const newTOS = searchParams?.newTOS ?? false;
+
+  if (!tos) return null;
+
   return (
-    <div className="flex flex-auto justify-center">
-      <div className="card card-compact w-96 md:w-full bg-base-100 shadow-xl p-10 m-10 flex flex-col md:flex-row">
-        <div className="justify-center flex flex-col flex-auto">
-          {tos && (
-            <TermsOfService
-              newTOS={searchParams?.newTOS ?? false}
-              requireAcceptance={
-                (searchParams?.requireAcceptance || searchParams?.newTOS) ??
-                false
-              }
-              content={tos.content}
-              lastUpdated={tos.updatedAt.toLocaleDateString()}
-              tosId={tos.id}
-              userId={searchParams?.userId}
-            ></TermsOfService>
-          )}
-        </div>
-      </div>
-    </div>
+    <TOSViewer
+      newTOS={newTOS}
+      requireAcceptance={requireAcceptance || newTOS}
+      content={tos.content}
+      version={tos.version}
+      updatedAt={tos.updatedAt}
+      tosId={tos.id}
+      userId={userId}
+    />
   );
 }

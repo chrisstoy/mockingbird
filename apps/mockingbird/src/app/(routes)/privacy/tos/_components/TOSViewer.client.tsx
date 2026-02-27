@@ -5,8 +5,11 @@ import {
   CheckCircleIcon,
   ExclamationTriangleIcon,
 } from '@heroicons/react/24/outline';
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
+import remarkBreaks from 'remark-breaks';
+import remarkGfm from 'remark-gfm';
 
 interface TOSViewerProps {
   content: string;
@@ -27,6 +30,7 @@ export function TOSViewer({
   requireAcceptance,
   newTOS,
 }: TOSViewerProps) {
+  const { update } = useSession();
   const router = useRouter();
 
   async function handleAccept() {
@@ -35,7 +39,8 @@ export function TOSViewer({
 
     if (userId && tosId) {
       await acceptTOS(userId, tosId);
-      router.push('/');
+      await update();
+      router.replace('/');
     }
   }
 
@@ -111,7 +116,9 @@ export function TOSViewer({
         {/* Document Content */}
         <div className="rounded-xl border border-base-300 bg-base-100 p-8 shadow-sm">
           <article className="prose prose-sm max-w-none">
-            <ReactMarkdown>{content}</ReactMarkdown>
+            <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>
+              {content}
+            </ReactMarkdown>
           </article>
         </div>
 
@@ -136,6 +143,7 @@ export function TOSViewer({
                 </div>
 
                 <button
+                  type="button"
                   onClick={handleAccept}
                   className="btn btn-primary btn-lg px-12 shadow-lg hover:shadow-xl transition-all"
                 >

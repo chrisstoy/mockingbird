@@ -1,6 +1,7 @@
 'use client';
 import {
   adminDeleteUser,
+  adminExpireUserPassword,
   adminSetUserPermissions,
   adminSuspendUser,
   adminUnsuspendUser,
@@ -26,6 +27,7 @@ interface Props {
   currentStatus: UserStatus;
   suspensionReason?: string;
   permissionOverrides: PermissionOverride[];
+  hasPassword: boolean;
 }
 
 function SectionCard({
@@ -61,6 +63,7 @@ export function UserAdminControls({
   currentStatus,
   suspensionReason: currentSuspensionReason,
   permissionOverrides,
+  hasPassword,
 }: Props) {
   const router = useRouter();
   const [role, setRole] = useState<UserRole>(currentRole);
@@ -69,6 +72,7 @@ export function UserAdminControls({
   const [deleting, setDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showSuspendModal, setShowSuspendModal] = useState(false);
+  const [expirePasswordSuccess, setExpirePasswordSuccess] = useState(false);
 
   const overrideMap = Object.fromEntries(
     permissionOverrides.map((o) => [o.permission, o.granted])
@@ -105,6 +109,17 @@ export function UserAdminControls({
       await adminUnsuspendUser(userId);
       setStatus('ACTIVE');
       router.refresh();
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function handleExpirePassword() {
+    setSaving(true);
+    try {
+      await adminExpireUserPassword(userId);
+      setExpirePasswordSuccess(true);
+      setTimeout(() => setExpirePasswordSuccess(false), 3000);
     } finally {
       setSaving(false);
     }
@@ -192,6 +207,28 @@ export function UserAdminControls({
             )}
           </button>
         </div>
+
+        {/* Require Password Change */}
+        {hasPassword && (
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-sm text-base-content/60">
+              Force password change at next login
+            </span>
+            <button
+              className="btn btn-sm btn-warning"
+              onClick={handleExpirePassword}
+              disabled={saving}
+            >
+              {saving ? (
+                <span className="loading loading-spinner loading-xs" />
+              ) : expirePasswordSuccess ? (
+                'Done!'
+              ) : (
+                'Require Password Change'
+              )}
+            </button>
+          </div>
+        )}
 
         {/* Suspension Reason Display */}
         {status === 'SUSPENDED' && currentSuspensionReason && (

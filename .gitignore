@@ -4,6 +4,7 @@
 dist
 tmp
 /out-tsc
+test-results
 
 # dependencies
 node_modules
@@ -51,7 +52,7 @@ out
 logs
 .vercel
 
-
+# Local development environment files
 .cursor/rules/nx-rules.mdc
 .github/instructions/nx.instructions.md
 .env*.local

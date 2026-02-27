@@ -6,7 +6,11 @@
       "type": "node-terminal",
       "request": "launch",
       "command": "nx dev mockingbird",
-      "cwd": "${workspaceFolder}"
+      "cwd": "${workspaceFolder}",
+      "sourceMapPathOverrides": {
+        "webpack://_N_E/*": "${workspaceFolder}/apps/mockingbird/src/*",
+        "webpack:///*": "${workspaceFolder}/*"
+      }
     },
     {
       "name": "Next.js: debug server-side (prod)",

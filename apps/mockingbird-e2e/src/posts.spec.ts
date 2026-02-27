@@ -1,10 +1,11 @@
 import { expect, Page, test } from '@playwright/test';
 import {
+  forceDeleteTestUser,
   getPostEditor,
   pauseFor,
   performCreateTestUser,
   performDeleteTestUser,
-  performSignIn,
+  performSignInTestUser,
   testUserName,
 } from './utils';
 
@@ -22,13 +23,17 @@ test.describe('Creating and commenting on posts', () => {
     await page.goto('http://localhost:3000');
   });
 
+  test.afterAll(async () => {
+    await forceDeleteTestUser();
+  });
+
   test('create test user', async ({ page }) => {
     await performCreateTestUser(page);
     await expect(getCreatePostButton(page)).toBeVisible();
   });
 
   test('create post', async ({ page }) => {
-    await performSignIn(page);
+    await performSignInTestUser(page);
     await pauseFor(1000);
 
     const posts = page.getByRole('listitem');
@@ -54,7 +59,7 @@ test.describe('Creating and commenting on posts', () => {
   });
 
   test('comment on post', async ({ page }) => {
-    await performSignIn(page);
+    await performSignInTestUser(page);
 
     const posts = page.getByRole('listitem');
     await expect(posts).toHaveCount(1);
@@ -87,7 +92,7 @@ test.describe('Creating and commenting on posts', () => {
   });
 
   test('reply to comment', async ({ page }) => {
-    await performSignIn(page);
+    await performSignInTestUser(page);
 
     const posts = page.getByRole('listitem');
     // await expect(posts).toHaveCount(2);
@@ -117,7 +122,7 @@ test.describe('Creating and commenting on posts', () => {
   });
 
   test('delete post', async ({ page }) => {
-    await performSignIn(page);
+    await performSignInTestUser(page);
 
     const initialPosts = page.getByRole('listitem');
     await expect(initialPosts).toHaveCount(2);
@@ -134,7 +139,7 @@ test.describe('Creating and commenting on posts', () => {
   });
 
   test('delete test user', async ({ page }) => {
-    await performSignIn(page);
+    await performSignInTestUser(page);
     await performDeleteTestUser(page);
   });
 });

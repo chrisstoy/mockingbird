@@ -1,16 +1,18 @@
-export class CredentialsError {
-  message: string;
-  type:
-    | 'emailAndPasswordRequired'
-    | 'userNotFound'
-    | 'passwordNotFound'
-    | 'invalidPassword'
-    | 'invalidEmail'
-    | 'errorComparingPasswords'
-    | 'passwordExpired';
+import { CredentialsSignin } from 'next-auth';
 
-  constructor(type: CredentialsError['type'], message: string) {
-    this.message = message;
-    this.type = type;
+export class CredentialsError extends CredentialsSignin {
+  constructor(
+    public readonly errorType:
+      | 'emailAndPasswordRequired'
+      | 'userNotFound'
+      | 'passwordNotFound'
+      | 'invalidPassword'
+      | 'invalidEmail'
+      | 'errorComparingPasswords'
+      | 'passwordExpired',
+    message: string
+  ) {
+    super(message);
+    this.code = errorType;
   }
 }

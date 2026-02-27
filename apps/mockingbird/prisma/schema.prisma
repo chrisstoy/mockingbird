@@ -43,6 +43,7 @@ model User {
   posts               Post[]
   friends             Friends[]
   permissionOverrides UserPermission[]
+  passwordResetTokens PasswordResetToken[]
 }
 
 model Account {
@@ -108,6 +109,17 @@ model UserPermission {
   user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, permission])
+}
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userId    String
+  token     String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model AdminAuditLog {

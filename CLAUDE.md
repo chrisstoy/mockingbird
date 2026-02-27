@@ -11,6 +11,8 @@ nx run mockingbird:prisma-studio     # Open Prisma Studio GUI
 nx run-many -t test                  # Run all tests across workspace
 ```
 
+ALWAYS use npm for package management
+
 ## Gotchas
 
 - **Prisma**: Run `nx run mockingbird:prisma-generate` after any `schema.prisma` change
@@ -19,9 +21,13 @@ nx run-many -t test                  # Run all tests across workspace
 - **Env vars**: `DATABASE_URL`, `AUTH_SECRET`, `CLOUDFLARE_*` required to run locally
 - **Nx caching**: If stale output, use `--skip-nx-cache` flag
 
-## Architecture Reference
+## Reference
 
 See `.claude/reference/architecture.md` for full architecture docs (stack, directory structure, DB schema, API routes, auth, image storage, patterns).
+
+See `.claude/reference/vercel-cli.md` for information about the vercel CLI
+
+See `.claude/reference/auth-and-tos.md` when you need to know about authentication or the terms of service (TOS) system.
 
 <!-- nx configuration start-->
 <!-- Leave the start & end comments to automatically receive updates. -->

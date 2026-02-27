@@ -6,6 +6,7 @@ declare module 'next-auth' {
       id: string;
       permissions: string[];
       status: string;
+      requiresTOS: boolean;
     } & DefaultSession['user'];
   }
 }
