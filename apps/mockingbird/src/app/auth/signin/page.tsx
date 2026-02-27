@@ -20,13 +20,16 @@ const ERROR_MESSAGES: Record<string, string> = {
   // NextAuth errors
   CredentialsSignin: 'Invalid email or password.',
   AccessDenied: 'Access denied. Your account may be suspended or deleted.',
-  Configuration: 'A server configuration error occurred. Please try again later.',
+  Configuration:
+    'A server configuration error occurred. Please try again later.',
   Verification: 'The sign-in link has expired or is invalid.',
 };
 
 function getErrorMessage(error: string | null): string | null {
   if (!error) return null;
-  return ERROR_MESSAGES[error] ?? 'An unexpected error occurred. Please try again.';
+  return (
+    ERROR_MESSAGES[error] ?? 'An unexpected error occurred. Please try again.'
+  );
 }
 
 export default function SignInPage() {
@@ -71,7 +74,7 @@ export default function SignInPage() {
       });
 
       if (result?.error) {
-        if (result.error === 'passwordExpired') {
+        if (result.code === 'passwordExpired') {
           router.push(
             `/auth/expired-password?email=${encodeURIComponent(email)}`
           );
@@ -123,8 +126,18 @@ export default function SignInPage() {
           <h1 className="text-2xl text-center mb-2">Sign In</h1>
           {error && (
             <div role="alert" className="alert alert-error mb-2">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 shrink-0 stroke-current"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
               </svg>
               <span>{getErrorMessage(error)}</span>
             </div>
