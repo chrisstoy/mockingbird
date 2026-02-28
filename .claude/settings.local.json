@@ -80,7 +80,8 @@
       "WebSearch",
       "WebFetch(domain:nx.dev)",
       "WebFetch(domain:vercel.com)",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Bash(npm ci:*)"
     ],
     "deny": [],
     "ask": []
