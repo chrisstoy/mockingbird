@@ -75,7 +75,12 @@
       "mcp__playwright-test__test_run",
       "WebFetch(domain:mockingbird.com)",
       "WebFetch(domain:www.prisma.io)",
-      "Bash(DATABASE_URL=\"postgresql://chrisstoy:fLCeRMT2tnwKxLn4nXyQNg@legal-roarer-11700.7tt.aws-us-east-1.cockroachlabs.cloud:26257/mockingbird-dev?sslmode=verify-full\" npx prisma:*)"
+      "Bash(DATABASE_URL=\"postgresql://chrisstoy:fLCeRMT2tnwKxLn4nXyQNg@legal-roarer-11700.7tt.aws-us-east-1.cockroachlabs.cloud:26257/mockingbird-dev?sslmode=verify-full\" npx prisma:*)",
+      "Bash(vercel ls:*)",
+      "WebSearch",
+      "WebFetch(domain:nx.dev)",
+      "WebFetch(domain:vercel.com)",
+      "WebFetch(domain:github.com)"
     ],
     "deny": [],
     "ask": []
