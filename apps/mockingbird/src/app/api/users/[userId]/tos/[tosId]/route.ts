@@ -1,5 +1,5 @@
 import baseLogger from '@/_server/logger';
-import { acceptTOS } from '@/_server/usersService';
+import { acceptTOS, initiateEmailVerification } from '@/_server/usersService';
 import { DocumentIdSchema, UserIdSchema } from '@/_types';
 import { respondWithError } from '@/app/api/errors';
 import { RouteContext } from '@/app/types';
@@ -18,11 +18,13 @@ const ParamsSchema = z.object({
 /**
  * Accept the Terms of Service for a user.
  */
-export async function POST(_req: NextRequest, context: RouteContext) {
+export async function POST(request: NextRequest, context: RouteContext) {
   try {
     const { userId, tosId } = ParamsSchema.parse(await context.params);
 
     await acceptTOS(userId, tosId);
+    const baseUrl = request.nextUrl.origin;
+    await initiateEmailVerification(userId, baseUrl);
     return NextResponse.json({ accepted: tosId }, { status: 200 });
   } catch (error) {
     logger.error(error);

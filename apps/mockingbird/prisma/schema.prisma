@@ -20,6 +20,7 @@ enum UserStatus {
   ACTIVE
   SUSPENDED
   DELETED
+  PENDING_EMAIL_VERIFICATION
 }
 
 model User {
@@ -43,7 +44,8 @@ model User {
   posts               Post[]
   friends             Friends[]
   permissionOverrides UserPermission[]
-  passwordResetTokens PasswordResetToken[]
+  passwordResetTokens        PasswordResetToken[]
+  emailVerificationTokens    EmailVerificationToken[]
 }
 
 model Account {
@@ -112,6 +114,17 @@ model UserPermission {
 }
 
 model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userId    String
+  token     String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model EmailVerificationToken {
   id        String    @id @default(cuid())
   userId    String
   token     String    @unique

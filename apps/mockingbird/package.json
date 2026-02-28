@@ -28,9 +28,9 @@
     "resend": "6.9.2",
     "sanitize-html": "2.17.0",
     "sharp": "0.32.6",
+    "typescript": "5.5.4",
     "winston": "3.18.3",
-    "zustand": "5.0.8",
-    "typescript": "5.5.4"
+    "zustand": "5.0.8"
   },
   "overrides": {
     "@types/react": "19.2.14",

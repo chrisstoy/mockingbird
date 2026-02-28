@@ -13,7 +13,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { SuspensionDialog } from './SuspensionDialog.client';
 
-type UserStatus = 'ACTIVE' | 'SUSPENDED' | 'DELETED';
+type UserStatus = 'ACTIVE' | 'SUSPENDED' | 'DELETED' | 'PENDING_EMAIL_VERIFICATION';
 
 interface PermissionOverride {
   id: string;
