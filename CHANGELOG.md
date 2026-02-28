@@ -1,3 +1,13 @@
+# Release notes - Mockingbird - 0.3.0
+
+### Task
+
+- [MOC-40](https://stoy.atlassian.net/browse/MOC-40) Implement forgot password and force reset password
+- [MOC-45](https://stoy.atlassian.net/browse/MOC-45) Add profile picture change feature with live session update
+- [MOC-65](https://stoy.atlassian.net/browse/MOC-65) Show empty state in SelectExistingImage when user has no images
+- [MOC-78](https://stoy.atlassian.net/browse/MOC-78) Add authorization system
+- [MOC-80](https://stoy.atlassian.net/browse/MOC-80) Require new user to verify email before allowing login
+
 # Release notes - Mockingbird - 0.2.6
 
 ### Task
