@@ -67,6 +67,8 @@ const nextAuth = NextAuth({
         }
       } else if (token.requiresTOS === true) {
         // Re-check TOS from DB on each request while requiresTOS is true.
+        // Also re-check status so that if TOS acceptance triggers email verification,
+        // the new status is picked up in the same pass.
         // This self-corrects after the user accepts TOS without relying on
         // update() persisting a new cookie (which is unreliable in NextAuth v5 beta).
         const userId =
@@ -74,7 +76,7 @@ const nextAuth = NextAuth({
         if (userId) {
           const dbUser = await prisma.user.findUnique({
             where: { id: userId },
-            select: { acceptedToS: true },
+            select: { acceptedToS: true, status: true },
           });
           if (dbUser) {
             const latestTos = await prisma.document.findFirst({
@@ -85,7 +87,20 @@ const nextAuth = NextAuth({
             token.requiresTOS =
               !dbUser.acceptedToS ||
               (!!latestTos && latestTos.id !== dbUser.acceptedToS);
+            token.status = dbUser.status;
           }
+        }
+      } else if (token.status === 'PENDING_EMAIL_VERIFICATION') {
+        // Re-check status from DB while pending verification.
+        // Self-corrects once user verifies email.
+        const userId =
+          (token.id as string | undefined) || (token.sub as string | undefined);
+        if (userId) {
+          const dbUser = await prisma.user.findUnique({
+            where: { id: userId },
+            select: { status: true },
+          });
+          if (dbUser) token.status = dbUser.status;
         }
       }
 
@@ -126,6 +141,16 @@ const nextAuth = NextAuth({
         if (request.nextUrl.pathname !== '/account/suspended') {
           return NextResponse.redirect(
             new URL('/account/suspended', request.nextUrl)
+          );
+        }
+        return true;
+      }
+
+      // Check if user needs to verify email
+      if (userStatus === 'PENDING_EMAIL_VERIFICATION') {
+        if (request.nextUrl.pathname !== '/auth/verify-email') {
+          return NextResponse.redirect(
+            new URL('/auth/verify-email', request.nextUrl)
           );
         }
         return true;

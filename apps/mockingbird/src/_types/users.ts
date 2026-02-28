@@ -34,7 +34,7 @@ export const UserRoleSchema = z.enum([
 ]);
 export type UserRole = z.infer<typeof UserRoleSchema>;
 
-export const UserStatusSchema = z.enum(['ACTIVE', 'SUSPENDED', 'DELETED']);
+export const UserStatusSchema = z.enum(['ACTIVE', 'SUSPENDED', 'DELETED', 'PENDING_EMAIL_VERIFICATION']);
 export type UserStatus = z.infer<typeof UserStatusSchema>;
 
 export const SimpleUserInfoSchema = z.object({

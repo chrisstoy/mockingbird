@@ -1,3 +1,4 @@
+import { sendEmailVerificationEmail } from '@/_server/emailService';
 import { prisma } from '@/_server/db';
 import baseLogger from '@/_server/logger';
 import { DocumentId, UserId, UserInfoSchema } from '@/_types';
@@ -270,6 +271,67 @@ export async function verifyUserPassword(
   const record = await prisma.passwords.findUnique({ where: { userId } });
   if (!record) return false;
   return bcrypt.compare(password, record.password);
+}
+
+export async function createEmailVerificationToken(
+  userId: UserId
+): Promise<string> {
+  const token = crypto.randomBytes(32).toString('hex');
+  const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+  await prisma.emailVerificationToken.create({
+    data: { userId, token, expiresAt },
+  });
+
+  return token;
+}
+
+export async function validateAndConsumeEmailVerificationToken(
+  token: string
+): Promise<string> {
+  const record = await prisma.emailVerificationToken.findUnique({
+    where: { token },
+  });
+
+  if (!record || record.usedAt !== null || record.expiresAt < new Date()) {
+    throw new Error('Invalid or expired token');
+  }
+
+  await prisma.emailVerificationToken.update({
+    where: { token },
+    data: { usedAt: new Date() },
+  });
+
+  return record.userId;
+}
+
+export async function initiateEmailVerification(
+  userId: UserId,
+  baseUrl: string
+): Promise<void> {
+  // Delete old unused tokens for this user
+  await prisma.emailVerificationToken.deleteMany({
+    where: { userId, usedAt: null },
+  });
+
+  const token = await createEmailVerificationToken(userId);
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { email: true },
+  });
+
+  if (!user?.email) {
+    throw new Error('User email not found');
+  }
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: { status: 'PENDING_EMAIL_VERIFICATION' },
+  });
+
+  const verifyUrl = `${baseUrl}/api/auth/verify-email?token=${token}`;
+  await sendEmailVerificationEmail(user.email, verifyUrl);
 }
 
 export async function acceptTOS(userId: UserId, tosId: DocumentId) {
