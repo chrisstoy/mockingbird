@@ -55,8 +55,7 @@
     }
   },
   "defaultProject": "mockingbird",
-  "nxCloudAccessToken": "Mzc0MmI4YWMtOTk3Yi00ODhlLTk3OGItNzQzYzk3NzE0ODVkfHJlYWQtd3JpdGU=",
-  "targetDefaults": {
+"targetDefaults": {
     "@nx/js:tsc": {
       "cache": true,
       "dependsOn": ["^build"],
