@@ -1,5 +1,6 @@
 {
   "buildCommand": "npx nx run mockingbird:build-vercel",
+  "outputDirectory": "apps/mockingbird/.next",
   "installCommand": "npm install",
   "framework": "nextjs"
 }
