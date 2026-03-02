@@ -81,7 +81,10 @@
       "WebFetch(domain:nx.dev)",
       "WebFetch(domain:vercel.com)",
       "WebFetch(domain:github.com)",
-      "Bash(npm ci:*)"
+      "Bash(npm ci:*)",
+      "Bash(vercel:*)",
+      "Bash(DATABASE_URL=\"postgresql://chrisstoy:fLCeRMT2tnwKxLn4nXyQNg@legal-roarer-11700.7tt.aws-us-east-1.cockroachlabs.cloud:26257/mockingbird-prod?sslmode=verify-full\" npx prisma:*)",
+      "Bash(DATABASE_URL=\"postgresql://chrisstoy:fLCeRMT2tnwKxLn4nXyQNg@legal-roarer-11700.7tt.aws-us-east-1.cockroachlabs.cloud:26257/mockingbird-prod?sslmode=verify-full\" psql:*)"
     ],
     "deny": [],
     "ask": []
