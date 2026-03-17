@@ -84,7 +84,12 @@
       "Bash(npm ci:*)",
       "Bash(vercel:*)",
       "Bash(DATABASE_URL=\"postgresql://chrisstoy:fLCeRMT2tnwKxLn4nXyQNg@legal-roarer-11700.7tt.aws-us-east-1.cockroachlabs.cloud:26257/mockingbird-prod?sslmode=verify-full\" npx prisma:*)",
-      "Bash(DATABASE_URL=\"postgresql://chrisstoy:fLCeRMT2tnwKxLn4nXyQNg@legal-roarer-11700.7tt.aws-us-east-1.cockroachlabs.cloud:26257/mockingbird-prod?sslmode=verify-full\" psql:*)"
+      "Bash(DATABASE_URL=\"postgresql://chrisstoy:fLCeRMT2tnwKxLn4nXyQNg@legal-roarer-11700.7tt.aws-us-east-1.cockroachlabs.cloud:26257/mockingbird-prod?sslmode=verify-full\" psql:*)",
+      "Bash(git checkout develop)",
+      "Bash(ls -R /Users/cstoy/dev/mockingbird/apps/mockingbird/src/app/\\\\\\(routes\\\\\\)/)",
+      "Bash(cat \"/Users/cstoy/dev/mockingbird/apps/mockingbird/src/app/\\(admin\\)/admin/documents/page.tsx\")",
+      "Bash(cat \"/Users/cstoy/dev/mockingbird/apps/mockingbird/src/app/\\(admin\\)/admin/logs/page.tsx\")",
+      "Bash(cat \"/Users/cstoy/dev/mockingbird/apps/mockingbird/src/app/\\(admin\\)/admin/users/[userId]/page.tsx\")"
     ],
     "deny": [],
     "ask": []

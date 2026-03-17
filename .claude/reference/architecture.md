@@ -10,10 +10,11 @@ Mockingbird is a full-stack social media application built with modern web techn
 - **Runtime**: Node.js
 - **Language**: TypeScript 5.5.4
 - **Frontend Framework**: React 19.0.0
-- **Styling**: Tailwind CSS 3.4.3 + DaisyUI 4.12.10
-- **Build System**: Nx 19.8.4 (Monorepo)
+- **Styling**: Tailwind CSS 4.1 + DaisyUI 5.5
+- **Build System**: Nx 20+ (Monorepo)
 - **Deployment**: Vercel (with Docker support)
-- **Database**: CockroachDB (via Prisma)
+- **Database**: CockroachDB (via Prisma 7)
+- **ORM**: Prisma 7 — no `url` in `datasource` block; DB config lives in `apps/mockingbird/prisma.config.ts`
 
 ## Monorepo Structure
 
@@ -198,11 +199,29 @@ NextAuth Tables
 
 ### Key Design Patterns
 
-- **Cascade Deletes**: Posts, Friends, and Images cascade delete with their owner
+- **Cascade Deletes**: Posts, Friends, and Images cascade delete with their owner; deleting a Post also cascades to all its comments (`responses`)
 - **Optional Relations**: Images and Responses are optional
-- **Audience Control**: Posts have PUBLIC/PRIVATE audience for access control
+- **Audience Control**: Posts have `PUBLIC`/`PRIVATE` audience. `PRIVATE` means visible only to the poster's accepted friends.
 - **Versioned Documents**: Legal documents have version tracking
 - **Soft Relationships**: Friends model stores user IDs with acceptance flag
+
+### Critical Data Model Notes
+
+- **Posts double as comments**: `Post.responseToPostId = null` means a top-level post; non-null means it's a comment on that parent post. Always filter `responseToPostId: null` when querying for feed posts (not comments).
+- **Friends is asymmetric**: `userId` = requester, `friendId` = target. To find any friendship record for a user, always query with `OR: [{ userId }, { friendId }]` — never just one direction.
+- **Document type for ToS is `TOC`** (not `TOS`). The `DocumentType` enum values are `TOC` and `PRIVACY`.
+- **`Post.likeCount` / `Post.dislikeCount`** fields exist in the schema but there are currently no API endpoints to increment/decrement them — this is a known stub.
+- **`Passwords` table has no cascade delete** — when deleting a user, the `Passwords` row must be deleted manually before the user row.
+- **`AdminAuditLog.metadata`** is `Json?` — use `Prisma.JsonNull` for null values and cast objects to `Prisma.InputJsonValue` for writes.
+- **`User.acceptedToS`** stores a `DocumentId` string (the ID of the accepted ToS document), not a boolean.
+
+### Feed Sources
+
+`FeedSource = 'public' | 'private' | <cuid2-string>`
+
+- `public`: all PUBLIC top-level posts from accepted friends + self, paginated with cursor
+- `private`: top-level posts (public + private) from self + accepted friends, no cursor pagination
+- Any other cuid2 string: **not yet implemented** — `getFeed()` will throw `Unknown feed source`
 
 ## Authentication
 

@@ -25,9 +25,23 @@ ALWAYS use npm for package management
 
 See `.claude/reference/architecture.md` for full architecture docs (stack, directory structure, DB schema, API routes, auth, image storage, patterns).
 
+See `.claude/reference/features-api.md` for backend/API feature inventory, business rules, and unimplemented stubs.
+
+See `.claude/reference/features-web-app.md` for user-facing web app feature inventory and page structure.
+
+See `.claude/reference/features-admin.md` for admin panel feature inventory, permissions, and admin-specific business rules.
+
+See `.claude/reference/data-model.md` for full DB schema, Prisma 7 gotchas, cascade behavior, and query patterns.
+
+See `.claude/reference/api-contracts.md` for complete API endpoint contracts, request/response shapes, auth requirements, and validation rules.
+
+See `.claude/reference/ui-patterns.md` for component naming conventions, session access patterns, Suspense/loading patterns, and client-side data fetching.
+
 See `.claude/reference/vercel-cli.md` for information about the vercel CLI
 
 See `.claude/reference/auth-and-tos.md` when you need to know about authentication or the terms of service (TOS) system.
+
+Whenever anything in the architecture changes (such as changes to UI, APIs, Database schema, features, etc.), update the relevant reference files to keep them up to date.
 
 <!-- nx configuration start-->
 <!-- Leave the start & end comments to automatically receive updates. -->
