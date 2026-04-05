@@ -89,7 +89,9 @@
       "Bash(ls -R /Users/cstoy/dev/mockingbird/apps/mockingbird/src/app/\\\\\\(routes\\\\\\)/)",
       "Bash(cat \"/Users/cstoy/dev/mockingbird/apps/mockingbird/src/app/\\(admin\\)/admin/documents/page.tsx\")",
       "Bash(cat \"/Users/cstoy/dev/mockingbird/apps/mockingbird/src/app/\\(admin\\)/admin/logs/page.tsx\")",
-      "Bash(cat \"/Users/cstoy/dev/mockingbird/apps/mockingbird/src/app/\\(admin\\)/admin/users/[userId]/page.tsx\")"
+      "Bash(cat \"/Users/cstoy/dev/mockingbird/apps/mockingbird/src/app/\\(admin\\)/admin/users/[userId]/page.tsx\")",
+      "Bash(env)",
+      "Bash(git config:*)"
     ],
     "deny": [],
     "ask": []
