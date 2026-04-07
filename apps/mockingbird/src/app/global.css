@@ -10,34 +10,35 @@
   default: true;
   color-scheme: light;
 
-  --color-primary: #8e7d75;
+  /* Stitch "Mockingbird" design system — Editorial Organicism */
+  --color-primary: #F49D37;
   --color-primary-content: #ffffff;
-  --color-secondary: #774f43;
+  --color-secondary: #595f66;
   --color-secondary-content: #ffffff;
-  --color-accent: #e5d9db;
-  --color-accent-content: #3b2e2b;
-  --color-neutral: #796a6f;
-  --color-neutral-content: #f6f4f5;
-  --color-base-100: #f6f4f5;
-  --color-base-200: #ede9ea;
-  --color-base-300: #ddd7d8;
-  --color-base-content: #2c2624;
-  --color-info: #77a7d8;
+  --color-accent: #37bdf1;
+  --color-accent-content: #004961;
+  --color-neutral: #2e3133;
+  --color-neutral-content: #f0f1f4;
+  --color-base-100: #f8f9fc;
+  --color-base-200: #edeef1;
+  --color-base-300: #e1e2e6;
+  --color-base-content: #191c1e;
+  --color-info: #37bdf1;
   --color-info-content: #ffffff;
   --color-success: #2fd479;
   --color-success-content: #0a3a1f;
   --color-warning: #b9530f;
   --color-warning-content: #ffffff;
-  --color-error: #d62200;
+  --color-error: #ba1a1a;
   --color-error-content: #ffffff;
 
-  --radius-selector: 2rem;
-  --radius-field: 0.5rem;
-  --radius-box: 1rem;
+  /* ROUND_FOUR = 4px fields, 8px boxes */
+  --radius-selector: 1.5rem;
+  --radius-field: 0.25rem;
+  --radius-box: 0.5rem;
 
   --border: 1px;
-
-  --card-p: 1rem;
+  --card-p: 1.25rem;
   --depth: 0;
 }
 
@@ -51,8 +52,8 @@
 
 html {
   -webkit-text-size-adjust: 100%;
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-    Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif,
+  font-family: var(--font-manrope), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    Segoe UI, Helvetica Neue, Arial, Noto Sans, sans-serif,
     Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
   line-height: 1.5;
   tab-size: 4;

@@ -60,12 +60,33 @@ export function ResetPasswordForm({ token }: Props) {
 
   if (!token) {
     return (
-      <div className="flex flex-col items-center text-center gap-4">
-        <h1 className="text-2xl mb-2">Reset Password</h1>
-        <div className="text-error p-1">
-          This link is invalid or expired. Please request a new password reset.
+      <div className="flex flex-col gap-6">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-base-content">
+            Reset Password
+          </h1>
+          <p className="text-sm text-base-content/60 mt-1">Invalid link</p>
         </div>
-        <Link className="link link-hover" href="/auth/forgot-password">
+        <div role="alert" className="alert alert-error">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5 shrink-0 stroke-current"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <span className="text-sm">
+            This link is invalid or expired. Please request a new password
+            reset.
+          </span>
+        </div>
+        <Link className="btn btn-primary w-full" href="/auth/forgot-password">
           Request new reset link
         </Link>
       </div>
@@ -73,68 +94,98 @@ export function ResetPasswordForm({ token }: Props) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col" autoComplete="off">
-      <h1 className="text-2xl text-center mb-2">Reset Password</h1>
-      <p className="text-sm text-base-content/60 text-center mb-4">
-        Enter your new password below.
-      </p>
+    <div className="flex flex-col gap-6">
+      {/* Heading */}
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-base-content">
+          Reset Password
+        </h1>
+        <p className="text-sm text-base-content/60 mt-1">
+          Enter your new password below.
+        </p>
+      </div>
 
-      {error && (
-        <div className="text-error p-1 mb-2">
-          {error}
-          {error.includes('invalid or expired') && (
-            <>
-              {' '}
-              <Link className="link" href="/auth/forgot-password">
-                Request a new one.
-              </Link>
-            </>
-          )}
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4" autoComplete="off">
+        {error && (
+          <div role="alert" className="alert alert-error">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 shrink-0 stroke-current"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span className="text-sm">
+              {error}
+              {error.includes('invalid or expired') && (
+                <>
+                  {' '}
+                  <Link className="underline font-medium" href="/auth/forgot-password">
+                    Request a new one.
+                  </Link>
+                </>
+              )}
+            </span>
+          </div>
+        )}
+
+        <div className="flex flex-col gap-3">
+          <div className="form-control w-full">
+            <input
+              type="password"
+              className="input input-bordered w-full"
+              placeholder="New password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              required
+              disabled={isProcessing}
+              minLength={8}
+              maxLength={20}
+            />
+          </div>
+          <div className="form-control w-full">
+            <input
+              type="password"
+              className="input input-bordered w-full"
+              placeholder="Confirm new password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+              disabled={isProcessing}
+              minLength={8}
+              maxLength={20}
+            />
+          </div>
         </div>
-      )}
-
-      <div className="card-actions flex flex-col gap-2">
-        <input
-          type="password"
-          className="input input-bordered w-full"
-          placeholder="New password"
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-          required
-          disabled={isProcessing}
-          minLength={8}
-          maxLength={20}
-        />
-        <input
-          type="password"
-          className="input input-bordered w-full"
-          placeholder="Confirm new password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          required
-          disabled={isProcessing}
-          minLength={8}
-          maxLength={20}
-        />
 
         {isProcessing ? (
-          <div className="justify-center w-full flex m-4">
-            <span className="loading loading-ring loading-lg"></span>
+          <div className="flex items-center justify-center gap-3 py-2">
+            <span className="loading loading-spinner loading-sm text-primary" />
+            <span className="text-sm text-base-content/60">
+              Updating password...
+            </span>
           </div>
         ) : (
-          <>
-            <button type="submit" className="btn btn-primary w-full">
-              Reset Password
-            </button>
-            <Link
-              className="link link-hover self-center"
-              href="/auth/forgot-password"
-            >
-              Request a new link
-            </Link>
-          </>
+          <button type="submit" className="btn btn-primary w-full">
+            Reset Password
+          </button>
         )}
-      </div>
-    </form>
+      </form>
+
+      <p className="text-center text-sm text-base-content/60">
+        <Link
+          className="text-primary font-semibold hover:underline"
+          href="/auth/forgot-password"
+        >
+          Request a different reset link
+        </Link>
+      </p>
+    </div>
   );
 }

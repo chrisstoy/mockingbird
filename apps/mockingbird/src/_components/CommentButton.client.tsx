@@ -3,16 +3,17 @@ import { uploadImage } from '@/_apiServices/images';
 import { commentOnPost } from '@/_apiServices/post';
 import { useSessionUser } from '@/_hooks/useSessionUser';
 import { Post } from '@/_types';
-import { ChatBubbleLeftEllipsisIcon } from '@heroicons/react/20/solid';
+import { ChatBubbleLeftIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
 import { useDialogManager } from './DialogManager.client';
 import { SubmitPostParams } from './postEditor/PostEditorDialog.client';
 
 type Props = {
   post: Post;
+  numberOfComments?: number;
 };
 
-export function CommentButton({ post }: Props) {
+export function CommentButton({ post, numberOfComments = 0 }: Props) {
   const dialogManager = useDialogManager();
   const router = useRouter();
   const user = useSessionUser();
@@ -31,13 +32,7 @@ export function CommentButton({ post }: Props) {
 
     const imageId = image instanceof File ? await uploadNewImage(image) : image;
 
-    const result = await commentOnPost(
-      user.id,
-      post.id,
-      content ?? '',
-      imageId
-    );
-    console.log(`Commented on a post with content: ${JSON.stringify(result)}`);
+    await commentOnPost(user.id, post.id, content ?? '', imageId);
     router.refresh();
   }
 
@@ -49,9 +44,14 @@ export function CommentButton({ post }: Props) {
   }
 
   return (
-    <button className="btn btn-xs" onClick={handleShowEditor}>
-      <ChatBubbleLeftEllipsisIcon className="h-4 w-4" />
-      Comment
+    <button
+      onClick={handleShowEditor}
+      className="flex items-center gap-1.5 text-base-content/50 hover:text-primary transition-colors text-sm font-medium py-1 px-2 rounded-lg hover:bg-primary/5"
+    >
+      <ChatBubbleLeftIcon className="w-4 h-4" />
+      {numberOfComments > 0 && (
+        <span>{numberOfComments}</span>
+      )}
     </button>
   );
 }

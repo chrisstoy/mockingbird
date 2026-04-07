@@ -2,7 +2,6 @@
 import { PasswordSchema } from '@/_types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormTextInput } from '@mockingbird/stoyponents';
-import { Dispatch, SetStateAction, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -18,71 +17,40 @@ interface Props {
 }
 
 export function SignInEmailPassword({ onSignIn }: Props) {
-  const form = useForm<LoginEmailPassword>({
-    resolver: zodResolver(LoginEmailPasswordSchema),
-  });
   const {
     register,
     formState: { errors },
     handleSubmit,
-  } = form;
+  } = useForm<LoginEmailPassword>({
+    resolver: zodResolver(LoginEmailPasswordSchema),
+  });
 
-  const [error, setError] = useState<string | null>(null);
-  const [_isProcessing, setIsProcessing] = useState(false);
-
-  const createLoginHandler = (
-    setError: Dispatch<SetStateAction<string | null>>,
-    setIsProcessing: Dispatch<SetStateAction<boolean>>
-  ) =>
-    async function handleSignInWithEmailAndPassword({
-      email,
-      password,
-    }: LoginEmailPassword) {
-      setError(``);
-      setIsProcessing(true);
-
-      try {
-        console.log(
-          `Logging in with User: ${JSON.stringify({
-            email,
-            password,
-          })}`
-        );
-
-        onSignIn(email, password);
-      } catch (error) {
-        console.error(error);
-        setError(`${error}`);
-        setIsProcessing(false);
-        throw error;
-      }
-    };
+  async function handleSignIn({ email, password }: LoginEmailPassword) {
+    onSignIn(email, password);
+  }
 
   return (
     <form
-      onSubmit={handleSubmit(createLoginHandler(setError, setIsProcessing))}
-      className="flex flex-col"
+      onSubmit={handleSubmit(handleSignIn)}
+      className="flex flex-col gap-4"
       autoComplete="off"
     >
-      <div className="card-actions flex flex-col">
+      <div className="flex flex-col gap-3">
         <FormTextInput
           {...register('email')}
           error={errors?.email}
-          placeholder="user@example.com"
+          placeholder="Email address"
         />
-
         <FormTextInput
           {...register('password')}
           error={errors?.password}
           placeholder="Password"
           type="password"
         />
-
-        <button type="submit" className="btn btn-primary w-full">
-          Sign In
-        </button>
       </div>
-      {error && <div className="text-error p-1">{error}</div>}
+      <button type="submit" className="btn btn-primary w-full">
+        Sign In
+      </button>
     </form>
   );
 }

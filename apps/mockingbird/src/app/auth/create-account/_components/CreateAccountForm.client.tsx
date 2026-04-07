@@ -22,7 +22,6 @@ export function CreateAccountForm() {
   const [error, setError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState<string>('');
-
   const [turnstileSiteKey, setTurnstileSiteKey] = useState<string>('');
 
   useEffect(() => {
@@ -40,52 +39,27 @@ export function CreateAccountForm() {
       return;
     }
 
-    setError(``);
+    setError('');
     setIsProcessing(true);
 
-    console.log(
-      `Creating new User: ${JSON.stringify({
-        name,
-        email,
-        password,
-        confirmPassword,
-      })}`
-    );
-
-    // create user
     try {
       const response = await fetchFromServer('/users', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name,
-          email,
-          password,
-          turnstileToken,
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password, turnstileToken }),
       });
 
       if (response.status !== 201) {
-        // something went wrong
         const { message } = await response.json();
-        console.error(message);
         setError(`${message}`);
         return;
       }
 
-      console.log(`Created User: ${JSON.stringify(response)}`);
-      await signIn('credentials', {
-        email,
-        password,
-        callbackUrl: '/',
-      });
-    } catch (error) {
-      console.error(error);
-      setError(`${error}`);
+      await signIn('credentials', { email, password, callbackUrl: '/' });
+    } catch (err) {
+      setError(`${err}`);
       setIsProcessing(false);
-      throw error;
+      throw err;
     }
   };
 
@@ -95,35 +69,42 @@ export function CreateAccountForm() {
   };
 
   const handleTurnstileError = () => {
-    setError('CAPTCHA verification failed. Please refresh page and again.');
+    setError('CAPTCHA verification failed. Please refresh and try again.');
     setTurnstileToken('');
   };
 
   const handleTurnstileExpire = () => {
-    setError('CAPTCHA expired. Please refresh page and try again.');
+    setError('CAPTCHA expired. Please refresh and try again.');
     setTurnstileToken('');
   };
 
   return (
-    <>
+    <div className="flex flex-col gap-6">
+      {/* Heading */}
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-base-content">
+          Create Account
+        </h1>
+        <p className="text-sm text-base-content/60 mt-1">
+          Join the Mockingbird community
+        </p>
+      </div>
+
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col text-center"
+        className="flex flex-col gap-4"
         autoComplete="off"
       >
-        <h1 className="font-bold mb-2 text-lg">
-          Join the Mockingbird Community
-        </h1>
-        <div className="card-actions flex flex-col text-start">
+        <div className="flex flex-col gap-3">
           <FormTextInput
             {...register('name')}
             error={errors?.name}
-            placeholder="Full Name"
-          ></FormTextInput>
+            placeholder="Full name"
+          />
           <FormTextInput
             {...register('email')}
             error={errors?.email}
-            placeholder="user@example.com"
+            placeholder="Email address"
           />
           <FormTextInput
             {...register('password')}
@@ -134,49 +115,73 @@ export function CreateAccountForm() {
           <FormTextInput
             {...register('confirmPassword')}
             error={errors?.confirmPassword}
-            placeholder="Confirm Password"
+            placeholder="Confirm password"
             type="password"
           />
+        </div>
 
-          {isProcessing ? (
-            <div className="justify-center w-full flex m-8">
-              <div className="loading loading-spinner mr-4"></div>
-              Creating account...
-            </div>
-          ) : (
-            <>
-              <button
-                type="submit"
-                disabled={!turnstileToken}
-                className="btn btn-primary w-full"
-              >
-                Create Account
-              </button>
-              <Link className="link link-hover self-center" href="/auth/signin">
-                Cancel
-              </Link>
-            </>
-          )}
-        </div>
-        {error && <div className="text-error p-1">{error}</div>}
+        {error && (
+          <div role="alert" className="alert alert-error">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 shrink-0 stroke-current"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span className="text-sm">{error}</span>
+          </div>
+        )}
+
+        {isProcessing ? (
+          <div className="flex items-center justify-center gap-3 py-2">
+            <span className="loading loading-spinner loading-sm text-primary" />
+            <span className="text-sm text-base-content/60">
+              Creating your account...
+            </span>
+          </div>
+        ) : (
+          <button
+            type="submit"
+            disabled={!turnstileToken}
+            className="btn btn-primary w-full"
+          >
+            Create Account
+          </button>
+        )}
       </form>
+
       {turnstileSiteKey && (
-        <div id="test" className="w-full">
-          <Turnstile
-            className="w-full"
-            options={{
-              theme: 'light',
-              size: 'flexible',
-              responseField: false,
-              appearance: 'always',
-            }}
-            siteKey={turnstileSiteKey}
-            onError={handleTurnstileError}
-            onExpire={handleTurnstileExpire}
-            onSuccess={handleTurnstileVerify}
-          />
-        </div>
+        <Turnstile
+          className="w-full"
+          options={{
+            theme: 'light',
+            size: 'flexible',
+            responseField: false,
+            appearance: 'always',
+          }}
+          siteKey={turnstileSiteKey}
+          onError={handleTurnstileError}
+          onExpire={handleTurnstileExpire}
+          onSuccess={handleTurnstileVerify}
+        />
       )}
-    </>
+
+      <p className="text-center text-sm text-base-content/60">
+        Already have an account?{' '}
+        <Link
+          className="text-primary font-semibold hover:underline"
+          href="/auth/signin"
+        >
+          Sign in
+        </Link>
+      </p>
+    </div>
   );
 }

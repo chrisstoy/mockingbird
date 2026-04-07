@@ -35,14 +35,35 @@ export function ForgotPasswordForm() {
 
   if (success) {
     return (
-      <div className="flex flex-col items-center text-center gap-4">
-        <h1 className="text-2xl mb-2">Check your inbox</h1>
-        <div className="alert alert-success w-full">
-          <span>
-            If that email exists, a reset link was sent. Check your inbox.
+      <div className="flex flex-col gap-6">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-base-content">
+            Check your inbox
+          </h1>
+          <p className="text-sm text-base-content/60 mt-1">
+            A reset link is on its way
+          </p>
+        </div>
+        <div role="alert" className="alert alert-success">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5 shrink-0 stroke-current"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <span className="text-sm">
+            If that email exists, a reset link was sent. Check your inbox and
+            spam folder.
           </span>
         </div>
-        <Link className="link link-hover" href="/auth/signin">
+        <Link className="btn btn-outline w-full" href="/auth/signin">
           Back to Sign In
         </Link>
       </div>
@@ -50,43 +71,67 @@ export function ForgotPasswordForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col" autoComplete="off">
-      <h1 className="text-2xl text-center mb-2">Forgot Password</h1>
-      <p className="text-sm text-base-content/60 text-center mb-4">
-        Enter your email and we&apos;ll send you a reset link.
-      </p>
+    <div className="flex flex-col gap-6">
+      {/* Heading */}
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-base-content">
+          Forgot Password
+        </h1>
+        <p className="text-sm text-base-content/60 mt-1">
+          Enter your email and we&apos;ll send a reset link.
+        </p>
+      </div>
 
-      {error && <div className="text-error p-1 mb-2">{error}</div>}
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4" autoComplete="off">
+        {error && (
+          <div role="alert" className="alert alert-error">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 shrink-0 stroke-current"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span className="text-sm">{error}</span>
+          </div>
+        )}
 
-      <div className="card-actions flex flex-col gap-2">
-        <input
-          type="email"
-          className="input input-bordered w-full"
-          placeholder="user@example.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          disabled={isProcessing}
-        />
+        <div className="form-control w-full">
+          <input
+            type="email"
+            className="input input-bordered w-full"
+            placeholder="Email address"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            disabled={isProcessing}
+          />
+        </div>
 
         {isProcessing ? (
-          <div className="justify-center w-full flex m-4">
-            <span className="loading loading-ring loading-lg"></span>
+          <div className="flex items-center justify-center gap-3 py-2">
+            <span className="loading loading-spinner loading-sm text-primary" />
+            <span className="text-sm text-base-content/60">Sending link...</span>
           </div>
         ) : (
-          <>
-            <button type="submit" className="btn btn-primary w-full">
-              Send Reset Link
-            </button>
-            <Link
-              className="link link-hover self-center"
-              href="/auth/signin"
-            >
-              Back to Sign In
-            </Link>
-          </>
+          <button type="submit" className="btn btn-primary w-full">
+            Send Reset Link
+          </button>
         )}
-      </div>
-    </form>
+      </form>
+
+      <p className="text-center text-sm text-base-content/60">
+        Remember it?{' '}
+        <Link className="text-primary font-semibold hover:underline" href="/auth/signin">
+          Sign in
+        </Link>
+      </p>
+    </div>
   );
 }

@@ -91,7 +91,11 @@
       "Bash(cat \"/Users/cstoy/dev/mockingbird/apps/mockingbird/src/app/\\(admin\\)/admin/logs/page.tsx\")",
       "Bash(cat \"/Users/cstoy/dev/mockingbird/apps/mockingbird/src/app/\\(admin\\)/admin/users/[userId]/page.tsx\")",
       "Bash(env)",
-      "Bash(git config:*)"
+      "Bash(git config:*)",
+      "mcp__stitch__get_screen",
+      "mcp__stitch__get_project",
+      "mcp__stitch__list_screens",
+      "mcp__stitch__list_design_systems"
     ],
     "deny": [],
     "ask": []

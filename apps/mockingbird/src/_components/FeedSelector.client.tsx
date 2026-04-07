@@ -3,6 +3,16 @@ import { FeedSource, FeedSourceSchema } from '@/_types';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useEffect } from 'react';
 
+export type FeedItem = {
+  key: FeedSource;
+  label: string;
+};
+
+const DEFAULT_FEEDS: FeedItem[] = [
+  { key: 'public', label: 'Public' },
+  { key: 'private', label: 'Friends' },
+];
+
 const feedFromSearchParams = (params: URLSearchParams): FeedSource => {
   const result = FeedSourceSchema.safeParse(params.get('feed'));
   if (result.success) {
@@ -11,7 +21,11 @@ const feedFromSearchParams = (params: URLSearchParams): FeedSource => {
   return 'public';
 };
 
-export function FeedSelector() {
+type Props = {
+  feeds?: FeedItem[];
+};
+
+export function FeedSelector({ feeds = DEFAULT_FEEDS }: Props) {
   const params = useSearchParams();
   const router = useRouter();
 
@@ -30,21 +44,23 @@ export function FeedSelector() {
   };
 
   return (
-    <div role="tablist" className="tabs tabs-box">
-      <button
-        onClick={() => handleSelectChange('public')}
-        role="tab"
-        className={`tab ${activeFeed === 'public' ? 'tab-active text-base-content' : ''}`}
-      >
-        Public
-      </button>
-      <button
-        onClick={() => handleSelectChange('private')}
-        role="tab"
-        className={`tab ${activeFeed === 'private' ? 'tab-active text-base-content' : ''}`}
-      >
-        Friends
-      </button>
+    <div className="flex gap-1 bg-base-200 rounded-xl p-1 overflow-x-auto max-w-full scrollbar-none">
+      {feeds.map((feed) => {
+        const isActive = activeFeed === feed.key;
+        return (
+          <button
+            key={feed.key}
+            onClick={() => handleSelectChange(feed.key)}
+            className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-colors whitespace-nowrap shrink-0 ${
+              isActive
+                ? 'bg-primary text-primary-content shadow-sm'
+                : 'text-base-content/50 hover:text-base-content'
+            }`}
+          >
+            {feed.label}
+          </button>
+        );
+      })}
     </div>
   );
 }

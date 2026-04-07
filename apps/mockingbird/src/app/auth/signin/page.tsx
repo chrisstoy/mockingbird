@@ -10,14 +10,12 @@ import { SignInButton } from './_components/SignInButton.client';
 import { SignInEmailPassword } from './_components/SignInEmailPassword.client';
 
 const ERROR_MESSAGES: Record<string, string> = {
-  // Credentials errors from CredentialsError class
   emailAndPasswordRequired: 'Please enter your email and password.',
   userNotFound: 'No account found with that email address.',
   passwordNotFound: 'No account found with that email address.',
   invalidPassword: 'Incorrect password. Please try again.',
   invalidEmail: 'Please enter a valid email address.',
   errorComparingPasswords: 'An error occurred. Please try again.',
-  // NextAuth errors
   CredentialsSignin: 'Invalid email or password.',
   AccessDenied: 'Access denied. Your account may be suspended or deleted.',
   Configuration:
@@ -119,69 +117,90 @@ export default function SignInPage() {
     signIn(serviceId, { callbackUrl });
   }
 
-  return (
-    <>
-      {!selectedProvider && (
-        <div className="flex flex-col">
-          <h1 className="text-2xl text-center mb-2">Sign In</h1>
-          {error && (
-            <div role="alert" className="alert alert-error mb-2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 shrink-0 stroke-current"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <span>{getErrorMessage(error)}</span>
-            </div>
-          )}
+  if (selectedProvider) {
+    return (
+      <div className="flex flex-col items-center gap-6 py-8">
+        <span className="loading loading-ring loading-lg text-primary" />
+        <p className="text-sm text-base-content/60">Joining the plagiary...</p>
+      </div>
+    );
+  }
 
-          {includeCredentialProvider && (
-            <div className="text-center">
-              <SignInEmailPassword
-                onSignIn={handleSignInWithEmailAndPassword}
-              ></SignInEmailPassword>
-              <div className="flex flex-col items-center space-y-4">
-                <Link className="link link-hover" href="/auth/forgot-password">
-                  Forgot Password
-                </Link>
-                <Link
-                  className="btn btn-sm btn-secondary w-full max-w-xs"
-                  href="/auth/create-account"
-                >
-                  Create new account
-                </Link>
-              </div>
-              <div className="divider"></div>
-              <h2 className="text-xl text-center mb-5">or sign in with...</h2>
-            </div>
-          )}
-          <div className="card-actions flex flex-col items-center">
-            {providers.map(({ id, name, iconSrc }) => (
-              <SignInButton
-                key={id}
-                id={id}
-                name={name}
-                imageSrc={iconSrc}
-                onSignIn={handleSignInWithService}
-              />
-            ))}
+  return (
+    <div className="flex flex-col gap-6">
+      {/* Heading */}
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-base-content">
+          Sign In
+        </h1>
+        <p className="text-sm text-base-content/60 mt-1">
+          Welcome back to Mockingbird
+        </p>
+      </div>
+
+      {/* Error */}
+      {error && (
+        <div role="alert" className="alert alert-error">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5 shrink-0 stroke-current"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <span className="text-sm">{getErrorMessage(error)}</span>
+        </div>
+      )}
+
+      {/* Credentials form */}
+      {includeCredentialProvider && (
+        <div className="flex flex-col gap-3">
+          <SignInEmailPassword onSignIn={handleSignInWithEmailAndPassword} />
+          <div className="text-right">
+            <Link
+              className="text-sm text-primary hover:underline"
+              href="/auth/forgot-password"
+            >
+              Forgot password?
+            </Link>
           </div>
         </div>
       )}
-      {selectedProvider && (
-        <div className="flex flex-col items-center">
-          <div className="text-xl mb-5">Joining the plagiary...</div>
-          <span className="loading loading-ring loading-lg"></span>
+
+      {/* OAuth */}
+      <div className="flex flex-col gap-3">
+        <div className="divider text-xs text-base-content/40 my-0">
+          or continue with
         </div>
-      )}
-    </>
+        <div className="flex flex-col gap-2">
+          {providers.map(({ id, name, iconSrc }) => (
+            <SignInButton
+              key={id}
+              id={id}
+              name={name}
+              imageSrc={iconSrc}
+              onSignIn={handleSignInWithService}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Create account */}
+      <p className="text-center text-sm text-base-content/60">
+        Don&apos;t have an account?{' '}
+        <Link
+          className="text-primary font-semibold hover:underline"
+          href="/auth/create-account"
+        >
+          Create one
+        </Link>
+      </p>
+    </div>
   );
 }

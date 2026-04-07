@@ -3,6 +3,7 @@ import { uploadImage } from '@/_apiServices/images';
 import { createPost } from '@/_apiServices/post';
 import { type SessionUser } from '@/_types';
 import { GENERIC_USER_IMAGE_URL } from '@/constants';
+import { PencilSquareIcon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
@@ -12,6 +13,7 @@ import { type SubmitPostParams } from './postEditor/PostEditorDialog.client';
 type Props = {
   user: SessionUser | undefined;
 };
+
 export function NewPost({ user }: Props) {
   const dialogManager = useDialogManager();
   const router = useRouter();
@@ -38,14 +40,12 @@ export function NewPost({ user }: Props) {
     }
 
     const uploadNewImage = async (imageFile: File) => {
-      const image = await uploadImage(user.id, imageFile);
-      return image.id;
+      const img = await uploadImage(user.id, imageFile);
+      return img.id;
     };
 
     const imageId = image instanceof File ? await uploadNewImage(image) : image;
-
-    const result = await createPost(user.id, content, audience, imageId);
-    console.log(`Create a post with content: ${JSON.stringify(result)}`);
+    await createPost(user.id, content, audience, imageId);
     router.refresh();
   }
 
@@ -56,28 +56,30 @@ export function NewPost({ user }: Props) {
   }
 
   return (
-    <div className="card bg-base-100 shadow-xl w-full">
-      <div className="card-body">
-        <div className="flex flex-row">
-          <div className="avatar">
-            <div className="rounded-full">
-              <Image
-                src={userImage}
-                alt="Profile Picture"
-                width={42}
-                height={42}
-              ></Image>
-            </div>
-          </div>
-          <div className="flex flex-grow flex-col ml-2 justify-center">
-            <button
-              className="btn btn-block no-animation content-center justify-start text-primary"
-              onClick={handleShowEditor}
-            >
-              {`What's going on, ${firstName}?`}
-            </button>
-          </div>
+    <div className="bg-white rounded-2xl border border-base-200 shadow-sm px-4 py-3 mb-6">
+      <div className="flex items-center gap-3">
+        <div className="w-9 h-9 rounded-full overflow-hidden flex-shrink-0">
+          <Image
+            src={userImage}
+            alt="Profile Picture"
+            width={36}
+            height={36}
+            className="w-full h-full object-cover"
+          />
         </div>
+        <button
+          onClick={handleShowEditor}
+          className="flex-1 text-left bg-base-100 hover:bg-base-200 transition-colors rounded-full px-4 py-2.5 text-sm text-base-content/40"
+        >
+          {`What's on your mind, ${firstName}?`}
+        </button>
+        <button
+          onClick={handleShowEditor}
+          className="flex-shrink-0 w-9 h-9 rounded-full bg-primary hover:bg-primary/90 transition-colors flex items-center justify-center"
+          aria-label="New post"
+        >
+          <PencilSquareIcon className="w-4 h-4 text-white" />
+        </button>
       </div>
     </div>
   );
