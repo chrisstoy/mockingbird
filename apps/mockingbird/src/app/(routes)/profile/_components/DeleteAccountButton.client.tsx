@@ -58,7 +58,7 @@ export function DeleteAccountButton() {
     <>
       {user?.id && (
         <button
-          className="btn btn-error btn-sm btn-link"
+          className="btn btn-error btn-sm btn-outline"
           onClick={() => {
             setShowFirstConfirmDelete(true);
           }}
