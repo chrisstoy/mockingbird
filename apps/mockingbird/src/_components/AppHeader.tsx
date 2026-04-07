@@ -15,7 +15,7 @@ export async function AppHeader() {
     <header className="fixed top-0 left-0 right-0 h-14 z-50 bg-white/95 backdrop-blur-sm border-b border-base-200 flex items-center px-6 gap-4">
       <Link href="/" className="flex items-center gap-2.5 flex-shrink-0">
         <Image
-          src="/images/mockingbird-dark.png"
+          src="/images/mockingbird-logo.png"
           alt="Mockingbird"
           width={28}
           height={28}

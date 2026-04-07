@@ -18,7 +18,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
         <div className="hidden md:block absolute right-0 top-[15%] bottom-[15%] w-0.5 rounded-full bg-gradient-to-b from-transparent via-primary/60 to-transparent" />
 
         <Image
-          src="/images/mockingbird-dark.png"
+          src="/images/mockingbird-logo.png"
           alt="Mockingbird"
           width={160}
           height={160}

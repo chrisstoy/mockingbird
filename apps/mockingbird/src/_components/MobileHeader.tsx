@@ -14,7 +14,7 @@ export async function MobileHeader() {
       <div className="flex items-center justify-between px-5 h-14">
         <Link href="/" className="flex items-center gap-2.5">
           <Image
-            src="/images/mockingbird-dark.png"
+            src="/images/mockingbird-logo.png"
             alt="Mockingbird"
             width={26}
             height={26}

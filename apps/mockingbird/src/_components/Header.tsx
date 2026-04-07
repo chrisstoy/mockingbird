@@ -9,7 +9,7 @@ export function Header() {
       <Link href="/" className="w-1/3 flex justify-start">
         <Image
           className={'ml-2 w-auto h-auto'}
-          src="/images/mockingbird-white.png"
+          src="/images/mockingbird-logo.png"
           alt="Mockingbird"
           width={64}
           height={64}
