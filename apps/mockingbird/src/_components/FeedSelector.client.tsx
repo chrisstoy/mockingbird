@@ -13,12 +13,21 @@ const DEFAULT_FEEDS: FeedItem[] = [
   { key: 'private', label: 'Friends' },
 ];
 
-const feedFromSearchParams = (params: URLSearchParams): FeedSource => {
+const STORAGE_KEY = 'activeFeed';
+
+const feedFromSearchParams = (params: URLSearchParams): FeedSource | null => {
   const result = FeedSourceSchema.safeParse(params.get('feed'));
-  if (result.success) {
-    return result.data;
+  return result.success ? result.data : null;
+};
+
+const feedFromStorage = (): FeedSource => {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    const result = FeedSourceSchema.safeParse(stored);
+    return result.success ? result.data : 'public';
+  } catch {
+    return 'public';
   }
-  return 'public';
 };
 
 type Props = {
@@ -29,16 +38,21 @@ export function FeedSelector({ feeds = DEFAULT_FEEDS }: Props) {
   const params = useSearchParams();
   const router = useRouter();
 
-  const [activeFeed, setActiveFeed] = React.useState<FeedSource>(
-    feedFromSearchParams(params)
-  );
+  const [activeFeed, setActiveFeed] = React.useState<FeedSource>('public');
 
+  // On mount and param changes: prefer URL param, fall back to localStorage
   useEffect(() => {
-    setActiveFeed(feedFromSearchParams(params));
+    const fromUrl = feedFromSearchParams(params);
+    const resolved = fromUrl ?? feedFromStorage();
+    setActiveFeed(resolved);
+    if (fromUrl) {
+      try { localStorage.setItem(STORAGE_KEY, fromUrl); } catch { /* ignore */ }
+    }
   }, [params]);
 
   const handleSelectChange = (newFeed: FeedSource) => {
     if (newFeed !== activeFeed) {
+      try { localStorage.setItem(STORAGE_KEY, newFeed); } catch { /* ignore */ }
       router.push(`/?feed=${newFeed}`);
     }
   };
