@@ -1,10 +1,5 @@
 'use client';
-import {
-  BellIcon,
-  HomeIcon,
-  UserGroupIcon,
-  UserIcon,
-} from '@heroicons/react/24/outline';
+import { HomeIcon, UserGroupIcon, UserIcon } from '@heroicons/react/24/outline';
 import { HomeIcon as HomeIconSolid } from '@heroicons/react/24/solid';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -45,14 +40,6 @@ export function LeftSidebar() {
         >
           <UserGroupIcon className="w-6 h-6" />
           <span>Friends</span>
-        </Link>
-
-        <Link
-          href="#"
-          className="flex items-center gap-4 px-4 py-3 rounded-xl transition-colors font-semibold text-lg text-base-content/60 hover:text-base-content hover:bg-base-200/60"
-        >
-          <BellIcon className="w-6 h-6" />
-          <span>Alerts</span>
         </Link>
 
         <Link

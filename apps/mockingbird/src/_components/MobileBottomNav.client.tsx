@@ -1,10 +1,5 @@
 'use client';
-import {
-  BellIcon,
-  HomeIcon,
-  UserGroupIcon,
-  UserIcon,
-} from '@heroicons/react/24/outline';
+import { HomeIcon, UserGroupIcon, UserIcon } from '@heroicons/react/24/outline';
 import {
   HomeIcon as HomeIconSolid,
   UserGroupIcon as UserGroupIconSolid,
@@ -21,17 +16,25 @@ interface NavItemProps {
   active: boolean;
 }
 
-function NavItem({ href, label, icon: Icon, activeIcon: ActiveIcon, active }: NavItemProps) {
+function NavItem({
+  href,
+  label,
+  icon: Icon,
+  activeIcon: ActiveIcon,
+  active,
+}: NavItemProps) {
   return (
     <Link
       href={href}
       className={`flex flex-col items-center justify-center px-4 py-2 rounded-2xl transition-colors ${
-        active
-          ? 'text-primary bg-primary/10'
-          : 'text-base-content/50'
+        active ? 'text-primary bg-primary/10' : 'text-base-content/50'
       }`}
     >
-      {active ? <ActiveIcon className="w-6 h-6" /> : <Icon className="w-6 h-6" />}
+      {active ? (
+        <ActiveIcon className="w-6 h-6" />
+      ) : (
+        <Icon className="w-6 h-6" />
+      )}
       <span className="text-[10px] uppercase tracking-widest font-bold mt-1">
         {label}
       </span>
@@ -57,13 +60,6 @@ export function MobileBottomNav() {
         icon={UserGroupIcon}
         activeIcon={UserGroupIconSolid}
         active={pathname.startsWith('/friends')}
-      />
-      <NavItem
-        href="#"
-        label="Alerts"
-        icon={BellIcon}
-        activeIcon={BellIcon}
-        active={false}
       />
       <NavItem
         href="/profile"

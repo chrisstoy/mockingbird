@@ -1,5 +1,6 @@
 import { sessionUser } from '@/_hooks/sessionUser';
 import { GENERIC_USER_IMAGE_URL } from '@/constants';
+import { BellIcon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FeedSelector } from './FeedSelector.client';
@@ -30,7 +31,13 @@ export async function AppHeader() {
         <FeedSelector />
       </div>
 
-      <div className="ml-auto">
+      <div className="ml-auto flex items-center gap-1">
+        <button
+          className="p-2.5 rounded-full hover:bg-base-200 active:bg-base-300 transition-colors"
+          aria-label="Notifications"
+        >
+          <BellIcon className="w-5.5 h-5.5 text-base-content/55" />
+        </button>
         {user && (
           <Link
             href="/profile"

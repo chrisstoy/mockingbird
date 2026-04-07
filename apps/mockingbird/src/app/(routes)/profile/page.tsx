@@ -1,7 +1,14 @@
+import { ThemeSwitcher } from '@/_components/ThemeSwitcher.client';
+import { Version } from '@/_components/Version';
 import { sessionUser } from '@/_hooks/sessionUser';
 import { GENERIC_USER_IMAGE_URL } from '@/constants';
-import { ThemeSwitcher } from '@/_components/ThemeSwitcher.client';
-import { DocumentTextIcon, KeyIcon, PaintBrushIcon, ShieldCheckIcon, UserCircleIcon } from '@heroicons/react/24/outline';
+import {
+  DocumentTextIcon,
+  KeyIcon,
+  PaintBrushIcon,
+  ShieldCheckIcon,
+  UserCircleIcon,
+} from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { DeleteAccountButton } from './_components/DeleteAccountButton.client';
 import { ProfilePictureButton } from './_components/ProfilePictureButton.client';
@@ -21,7 +28,6 @@ export default async function UserProfilePage() {
 
   return (
     <div className="flex flex-col gap-4 max-w-2xl mx-auto">
-
       {/* Profile card */}
       <div className="bg-base-100 rounded-2xl border border-base-200 shadow-sm overflow-hidden">
         {/* Banner */}
@@ -171,6 +177,10 @@ export default async function UserProfilePage() {
           </div>
           <DeleteAccountButton />
         </div>
+      </div>
+
+      <div className="flex justify-center py-4">
+        <Version></Version>
       </div>
     </div>
   );
