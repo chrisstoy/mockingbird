@@ -69,18 +69,18 @@ export function FormDialog<Result>({
   return (
     <dialog
       ref={dialogRef}
-      className="m-auto bg-transparent open:animate-fade-in open:backdrop:animate-fade-in"
+      className="m-auto bg-transparent open:animate-fade-in open:backdrop:animate-fade-in backdrop:backdrop-blur-sm backdrop:bg-black/40"
       style={{ maxWidth }}
     >
       <form
         onSubmit={handleSubmit}
-        className="card card-bordered shadow-xl bg-base-100"
+        className="rounded-2xl border border-base-200 shadow-2xl bg-base-100 flex flex-col overflow-hidden"
       >
         <DialogHeader title={title} onClosed={handleCancel} />
         <DialogBody>
-          <div className="m-4">
+          <div className="px-5 py-4 flex flex-col gap-3">
             {description && (
-              <p className="text-xs text-base-content/50 mb-4">{description}</p>
+              <p className="text-xs text-base-content/50">{description}</p>
             )}
             {children}
           </div>

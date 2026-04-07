@@ -150,9 +150,9 @@ export function PostEditorDialog({
   return (
     <dialog
       ref={dialogRef}
-      className="m-auto w-full max-w-2xl h-full md:h-[90%] bg-transparent backdrop:backdrop-brightness-50"
+      className="m-auto w-full max-w-2xl h-full md:h-[90%] bg-transparent backdrop:backdrop-blur-sm backdrop:bg-black/40"
     >
-      <div className="flex flex-col h-full">
+      <div className="flex flex-col h-full rounded-2xl border border-base-200 shadow-2xl bg-base-100 overflow-hidden">
         <DialogHeader
           title={
             originalPost ? `${posterInfo.userName}'s Post` : `Create a Post`
@@ -208,6 +208,7 @@ export function PostEditorDialog({
           }}
         >
           <DialogButton
+            intent="primary"
             disabled={!newContent && !imageFile && !imageId}
             onClick={handleSubmitPost}
           >
