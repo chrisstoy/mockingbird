@@ -273,10 +273,10 @@ export function ChangeProfilePictureDialog({ currentImageSrc, onClosed }: Props)
             <img
               src={previewUrl ?? currentImageSrc}
               alt="Profile preview"
-              className="w-24 h-24 rounded-2xl object-cover ring-4 ring-white shadow-md"
+              className="w-24 h-24 rounded-2xl object-cover ring-4 ring-base-100 shadow-md"
             />
             {previewUrl && (
-              <div className="absolute -bottom-1 -right-1 bg-success rounded-full p-1 shadow ring-2 ring-white">
+              <div className="absolute -bottom-1 -right-1 bg-success rounded-full p-1 shadow ring-2 ring-base-100">
                 <CheckIconSolid className="w-3 h-3 text-white" />
               </div>
             )}
@@ -293,7 +293,7 @@ export function ChangeProfilePictureDialog({ currentImageSrc, onClosed }: Props)
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
                   activeTab === tab.id
-                    ? 'bg-white text-base-content shadow-sm'
+                    ? 'bg-base-100 text-base-content shadow-sm'
                     : 'text-base-content/50 hover:text-base-content'
                 }`}
               >

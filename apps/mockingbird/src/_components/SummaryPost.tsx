@@ -40,7 +40,7 @@ export async function SummaryPost({
   const numberOfComments = await getNumberOfCommentsForPost(post.id);
 
   return (
-    <div className="bg-white rounded-2xl border border-base-200 shadow-sm overflow-hidden">
+    <div className="bg-base-100 rounded-2xl border border-base-200 shadow-sm overflow-hidden">
       <div className="px-4 pt-4 pb-2">
         <PostHeader
           name={userName}

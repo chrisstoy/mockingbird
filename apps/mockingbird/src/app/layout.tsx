@@ -1,4 +1,5 @@
 import { DialogManager } from '@/_components/DialogManager.client';
+import { ThemeProvider } from '@/_providers/ThemeProvider.client';
 import { auth } from '@/app/auth';
 import { Manrope } from 'next/font/google';
 import { SessionProvider } from 'next-auth/react';
@@ -24,15 +25,17 @@ export default async function RootLayout({
       <body className="min-h-screen bg-base-100">
         <AppErrorBoundary>
           <SessionProvider session={session}>
-            <div className="w-full min-h-screen bg-base-100">
-              <Suspense
-                fallback={
-                  <span className="loading loading-ball loading-lg"></span>
-                }
-              ></Suspense>
-              {children}
-            </div>
-            <DialogManager></DialogManager>
+            <ThemeProvider>
+              <div className="w-full min-h-screen bg-base-100">
+                <Suspense
+                  fallback={
+                    <span className="loading loading-ball loading-lg"></span>
+                  }
+                ></Suspense>
+                {children}
+              </div>
+              <DialogManager></DialogManager>
+            </ThemeProvider>
           </SessionProvider>
         </AppErrorBoundary>
       </body>

@@ -43,7 +43,7 @@ export function MobileBottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pt-3 pb-8 lg:hidden bg-white/90 backdrop-blur-xl z-50 rounded-t-3xl shadow-[0_-8px_30px_rgb(0,0,0,0.04)] border-t border-base-200">
+    <nav className="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pt-3 pb-8 lg:hidden bg-base-100/90 backdrop-blur-xl z-50 rounded-t-3xl shadow-[0_-8px_30px_rgb(0,0,0,0.04)] border-t border-base-200">
       <NavItem
         href="/"
         label="Home"

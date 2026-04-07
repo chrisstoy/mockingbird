@@ -1,6 +1,7 @@
 import { sessionUser } from '@/_hooks/sessionUser';
 import { GENERIC_USER_IMAGE_URL } from '@/constants';
-import { DocumentTextIcon, KeyIcon, ShieldCheckIcon, UserCircleIcon } from '@heroicons/react/24/outline';
+import { ThemeSwitcher } from '@/_components/ThemeSwitcher.client';
+import { DocumentTextIcon, KeyIcon, PaintBrushIcon, ShieldCheckIcon, UserCircleIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { DeleteAccountButton } from './_components/DeleteAccountButton.client';
 import { ProfilePictureButton } from './_components/ProfilePictureButton.client';
@@ -22,7 +23,7 @@ export default async function UserProfilePage() {
     <div className="flex flex-col gap-4 max-w-2xl mx-auto">
 
       {/* Profile card */}
-      <div className="bg-white rounded-2xl border border-base-200 shadow-sm overflow-hidden">
+      <div className="bg-base-100 rounded-2xl border border-base-200 shadow-sm overflow-hidden">
         {/* Banner */}
         <div
           className="h-28 w-full"
@@ -36,7 +37,7 @@ export default async function UserProfilePage() {
         <div className="px-6 pb-6">
           {/* Avatar — overlaps banner */}
           <div className="flex items-end justify-between -mt-12 mb-4">
-            <div className="ring-4 ring-white rounded-2xl shadow-lg">
+            <div className="ring-4 ring-base-100 rounded-2xl shadow-lg">
               <ProfilePictureButton currentImageSrc={imageSrc} />
             </div>
           </div>
@@ -54,8 +55,31 @@ export default async function UserProfilePage() {
         </div>
       </div>
 
+      {/* Appearance card */}
+      <div className="bg-base-100 rounded-2xl border border-base-200 shadow-sm overflow-hidden">
+        <div className="px-5 py-4 border-b border-base-200">
+          <h2 className="text-xs font-bold uppercase tracking-widest text-base-content/40">
+            Appearance
+          </h2>
+        </div>
+        <div className="flex items-center gap-4 px-5 py-4">
+          <div className="w-9 h-9 rounded-xl bg-base-200 flex items-center justify-center shrink-0">
+            <PaintBrushIcon className="w-4.5 h-4.5 text-base-content/50" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-base-content leading-none mb-0.5">
+              Theme
+            </p>
+            <p className="text-xs text-base-content/40 mb-3">
+              Choose light, dark, or match your OS
+            </p>
+            <ThemeSwitcher />
+          </div>
+        </div>
+      </div>
+
       {/* Account settings card */}
-      <div className="bg-white rounded-2xl border border-base-200 shadow-sm overflow-hidden">
+      <div className="bg-base-100 rounded-2xl border border-base-200 shadow-sm overflow-hidden">
         <div className="px-5 py-4 border-b border-base-200">
           <h2 className="text-xs font-bold uppercase tracking-widest text-base-content/40">
             Account Settings

@@ -2,7 +2,7 @@ import { SkeletonPostHeader } from './SkeletonPostHeader';
 
 export async function SkeletonSummaryPost() {
   return (
-    <div className="bg-white rounded-2xl border border-base-200 shadow-sm overflow-hidden">
+    <div className="bg-base-100 rounded-2xl border border-base-200 shadow-sm overflow-hidden">
       <div className="px-4 pt-4 pb-2">
         <SkeletonPostHeader />
       </div>

@@ -56,7 +56,7 @@ export function NewPost({ user }: Props) {
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-base-200 shadow-sm px-4 py-3 mb-6">
+    <div className="bg-base-100 rounded-2xl border border-base-200 shadow-sm px-4 py-3 mb-6">
       <div className="flex items-center gap-3">
         <div className="w-9 h-9 rounded-full overflow-hidden flex-shrink-0">
           <Image
