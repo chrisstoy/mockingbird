@@ -1,6 +1,6 @@
 import { sessionUser } from '@/_hooks/sessionUser';
 import { GENERIC_USER_IMAGE_URL } from '@/constants';
-import { KeyIcon, UserCircleIcon } from '@heroicons/react/24/outline';
+import { DocumentTextIcon, KeyIcon, ShieldCheckIcon, UserCircleIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { DeleteAccountButton } from './_components/DeleteAccountButton.client';
 import { ProfilePictureButton } from './_components/ProfilePictureButton.client';
@@ -96,6 +96,44 @@ export default async function UserProfilePage() {
           </div>
           <SignOutButton />
         </div>
+
+        {/* Terms of Service */}
+        <Link
+          href="/privacy/tos"
+          className="flex items-center gap-4 px-5 py-4 hover:bg-base-100 transition-colors border-b border-base-200 group"
+        >
+          <div className="w-9 h-9 rounded-xl bg-base-200 flex items-center justify-center shrink-0 group-hover:bg-accent/10 transition-colors">
+            <DocumentTextIcon className="w-4.5 h-4.5 text-base-content/50 group-hover:text-accent transition-colors" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-base-content leading-none mb-0.5">
+              Terms of Service
+            </p>
+            <p className="text-xs text-base-content/40">
+              Review the terms governing your use
+            </p>
+          </div>
+          <span className="text-base-content/25 text-lg leading-none">›</span>
+        </Link>
+
+        {/* Privacy Policy */}
+        <Link
+          href="/privacy/policy"
+          className="flex items-center gap-4 px-5 py-4 hover:bg-base-100 transition-colors border-b border-base-200 group"
+        >
+          <div className="w-9 h-9 rounded-xl bg-base-200 flex items-center justify-center shrink-0 group-hover:bg-accent/10 transition-colors">
+            <ShieldCheckIcon className="w-4.5 h-4.5 text-base-content/50 group-hover:text-accent transition-colors" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-base-content leading-none mb-0.5">
+              Privacy Policy
+            </p>
+            <p className="text-xs text-base-content/40">
+              Learn how your data is collected and used
+            </p>
+          </div>
+          <span className="text-base-content/25 text-lg leading-none">›</span>
+        </Link>
 
         {/* Danger zone */}
         <div className="flex items-center gap-4 px-5 py-4">
