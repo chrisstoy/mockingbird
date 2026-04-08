@@ -17,6 +17,7 @@ import {
   ConfirmationDialog,
   ConfirmationDialogResult,
 } from '@mockingbird/stoyponents';
+import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 
 interface Props {
@@ -38,6 +39,7 @@ export function FriendCard({ friend, friendStatus, onFriendStatusChange }: Props
 
   const user = useSessionUser();
   const userId = user?.id;
+  const router = useRouter();
 
   const handleRequestFriend = useCallback(async () => {
     if (!userId) return;
@@ -49,7 +51,15 @@ export function FriendCard({ friend, friendStatus, onFriendStatusChange }: Props
     if (!userId) return;
     await acceptFriendRequest(userId, friendId);
     onFriendStatusChange(friendId, 'friend');
-  }, [userId, friendId, onFriendStatusChange]);
+    router.refresh();
+  }, [userId, friendId, onFriendStatusChange, router]);
+
+  const handleRejectFriendRequest = useCallback(async () => {
+    if (!userId) return;
+    await removeFriend(userId, friendId);
+    onFriendStatusChange(friendId, 'none');
+    router.refresh();
+  }, [userId, friendId, onFriendStatusChange, router]);
 
   const handleConfirmCancel = useCallback(async (result?: ConfirmationDialogResult) => {
     setShowCancelDialog(false);
@@ -120,14 +130,24 @@ export function FriendCard({ friend, friendStatus, onFriendStatusChange }: Props
             </button>
           )}
           {friendStatus === 'requested' && (
-            <button
-              onClick={handleAcceptFriendRequest}
-              title="Accept Request"
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-success/10 hover:bg-success/20 text-success text-xs font-semibold transition-colors"
-            >
-              <CheckIcon className="w-3.5 h-3.5" />
-              Accept
-            </button>
+            <div className="flex items-center gap-1.5">
+              <button
+                onClick={handleAcceptFriendRequest}
+                title="Accept Request"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-success/10 hover:bg-success/20 text-success text-xs font-semibold transition-colors"
+              >
+                <CheckIcon className="w-3.5 h-3.5" />
+                Accept
+              </button>
+              <button
+                onClick={handleRejectFriendRequest}
+                title="Reject Request"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-error/10 hover:bg-error/20 text-error text-xs font-semibold transition-colors"
+              >
+                <XMarkIcon className="w-3.5 h-3.5" />
+                Reject
+              </button>
+            </div>
           )}
         </div>
       </div>

@@ -1,9 +1,10 @@
 import { sessionUser } from '@/_hooks/sessionUser';
+import { getNotificationCount } from '@/_server/notificationCount';
 import { GENERIC_USER_IMAGE_URL } from '@/constants';
-import { BellIcon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FeedSelector } from './FeedSelector.client';
+import { NotificationsAlert } from './NotificationsAlert.client';
 
 function nameToHandle(name: string) {
   return '@' + name.toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -11,6 +12,7 @@ function nameToHandle(name: string) {
 
 export async function AppHeader() {
   const user = await sessionUser();
+  const notificationCount = user ? await getNotificationCount(user.id) : 0;
 
   return (
     <header className="fixed top-0 left-0 right-0 h-14 z-50 bg-base-100/95 backdrop-blur-sm border-b border-base-200 flex items-center px-6 gap-4">
@@ -32,12 +34,7 @@ export async function AppHeader() {
       </div>
 
       <div className="ml-auto flex items-center gap-1">
-        <button
-          className="p-2.5 rounded-full hover:bg-base-200 active:bg-base-300 transition-colors"
-          aria-label="Notifications"
-        >
-          <BellIcon className="w-5.5 h-5.5 text-base-content/55" />
-        </button>
+        <NotificationsAlert count={notificationCount} />
         {user && (
           <Link
             href="/profile"
