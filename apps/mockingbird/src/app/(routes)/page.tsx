@@ -21,23 +21,18 @@ export default async function AppPage({ searchParams }: Props) {
   const feedSource: FeedSource = success ? data.feed : 'public';
 
   return (
-    <div className="flex flex-col flex-auto">
-      <NewPost user={user}></NewPost>
+    <div>
+      <NewPost user={user} />
+
       <Suspense
         fallback={
-          <div className="text-secondary-content m-2 text-center">
-            <ul>
-              <li className="m-2" key="1">
-                <SkeletonSummaryPost></SkeletonSummaryPost>
-              </li>
-              <li className="m-2" key="2">
-                <SkeletonSummaryPost></SkeletonSummaryPost>
-              </li>
-            </ul>
+          <div className="flex flex-col gap-4">
+            <SkeletonSummaryPost />
+            <SkeletonSummaryPost />
           </div>
         }
       >
-        <FeedList userId={user.id} feedSource={feedSource}></FeedList>
+        <FeedList userId={user.id} feedSource={feedSource} />
       </Suspense>
     </div>
   );

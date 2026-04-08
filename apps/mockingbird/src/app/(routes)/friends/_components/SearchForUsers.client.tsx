@@ -8,9 +8,7 @@ import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { useFriendCollectionStore } from '../_service/state';
 import { FriendCard } from './FriendCard.client';
 
-type ExtendedUserInfo = SimpleUserInfo & {
-  friendStatus?: FriendStatus;
-};
+type ExtendedUserInfo = SimpleUserInfo & { friendStatus?: FriendStatus };
 
 type Props = {
   onFriendStatusChange: (friendId: UserId, status: FriendStatus) => void;
@@ -18,136 +16,97 @@ type Props = {
 
 export function SearchForUsers({ onFriendStatusChange }: Props) {
   const user = useSessionUser();
+  const friends = useFriendCollectionStore((s) => s.friends);
+  const friendRequests = useFriendCollectionStore((s) => s.friendRequests);
+  const pendingFriends = useFriendCollectionStore((s) => s.pendingFriends);
 
-  const friends = useFriendCollectionStore((state) => state.friends);
-  const friendRequests = useFriendCollectionStore(
-    (state) => state.friendRequests
-  );
-  const pendingFriends = useFriendCollectionStore(
-    (state) => state.pendingFriends
-  );
-
-  const [foundUsers, setFoundUsers] = useState<Array<ExtendedUserInfo>>([]);
-  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [foundUsers, setFoundUsers] = useState<ExtendedUserInfo[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [isSearching, setIsSearching] = useState(false);
 
   const debouncedSearchTerm = useDebounce(searchTerm, 1000);
 
   const updateUserFriendStatus = useCallback(
-    (user: ExtendedUserInfo): ExtendedUserInfo => {
-      const withUserId = ({ id }: ExtendedUserInfo) => id === user.id;
-      if (friends.find(withUserId)) {
-        return {
-          ...user,
-          friendStatus: 'friend',
-        };
-      }
-      if (friendRequests.find(withUserId)) {
-        return {
-          ...user,
-          friendStatus: 'requested',
-        };
-      }
-
-      if (pendingFriends.find(withUserId)) {
-        return {
-          ...user,
-          friendStatus: 'pending',
-        };
-      }
-
-      return {
-        ...user,
-        friendStatus: 'none',
-      };
+    (u: ExtendedUserInfo): ExtendedUserInfo => {
+      const byId = ({ id }: ExtendedUserInfo) => id === u.id;
+      if (friends.find(byId)) return { ...u, friendStatus: 'friend' };
+      if (friendRequests.find(byId)) return { ...u, friendStatus: 'requested' };
+      if (pendingFriends.find(byId)) return { ...u, friendStatus: 'pending' };
+      return { ...u, friendStatus: 'none' };
     },
     [friends, friendRequests, pendingFriends]
   );
 
-  const updateSearchTerm = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      setSearchTerm(e.target.value);
-    },
-    [setSearchTerm]
-  );
+  const updateSearchTerm = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  }, []);
 
   useEffect(() => {
     if (debouncedSearchTerm.length < 3) {
-      setFoundUsers([]);
+      setFoundUsers([]); // eslint-disable-line react-hooks/set-state-in-effect -- resetting search results in response to external debounced input
       return;
     }
-
     (async () => {
       setIsSearching(true);
-      const matchedUsers: ExtendedUserInfo[] = await getUsersMatchingSearchTerm(
-        debouncedSearchTerm
-      );
+      const matched: ExtendedUserInfo[] = await getUsersMatchingSearchTerm(debouncedSearchTerm);
       setIsSearching(false);
-
-      const updatedMatchedUsers = matchedUsers
-        .filter((u) => u.id !== user?.id)
-        .map(updateUserFriendStatus);
-
-      setFoundUsers(updatedMatchedUsers);
+      setFoundUsers(
+        matched
+          .filter((u) => u.id !== user?.id)
+          .map(updateUserFriendStatus)
+      );
     })();
-  }, [
-    debouncedSearchTerm,
-    setIsSearching,
-    setFoundUsers,
-    user?.id,
-    updateUserFriendStatus,
-  ]);
+  }, [debouncedSearchTerm, user?.id, updateUserFriendStatus]);
 
   useEffect(() => {
-    const updatedFoundUsers = foundUsers.map(updateUserFriendStatus);
-    setFoundUsers(updatedFoundUsers);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- do NOT trigger effect when foundUsers changes since that will cause an infinite loop
+    setFoundUsers((prev) => prev.map(updateUserFriendStatus)); // eslint-disable-line react-hooks/set-state-in-effect -- re-mapping friend statuses when friend collection changes
   }, [friends, friendRequests, pendingFriends, updateUserFriendStatus]);
 
   return (
-    <div className="form-control">
-      <label
-        className={`input flex items-center gap-2 ${
-          isSearching
-            ? 'border-solid border-[oklch(var(--wa))]'
-            : 'input-bordered'
-        }`}
-      >
-        <div className="tooltip" data-tip="Clear">
-          <button
-            className="btn btn-circle btn-ghost btn-xs"
-            onClick={() => setSearchTerm('')}
-          >
-            <XMarkIcon className="h-4 w-4 opacity-70"></XMarkIcon>
-          </button>
-        </div>
+    <div className="flex flex-col gap-3">
+      {/* Search input */}
+      <div className="relative">
+        <MagnifyingGlassIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-base-content/40 pointer-events-none" />
         <input
           type="text"
-          placeholder="Enter Name or Email address"
-          className="grow"
+          placeholder="Search by name or email…"
+          className="w-full bg-base-200 border-none rounded-xl py-2.5 pl-10 pr-10 text-sm text-base-content placeholder:text-base-content/40 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-shadow"
           value={searchTerm}
           onChange={updateSearchTerm}
         />
+        {searchTerm && (
+          <button
+            className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 rounded-full hover:bg-base-300 transition-colors"
+            onClick={() => setSearchTerm('')}
+            aria-label="Clear"
+          >
+            <XMarkIcon className="w-4 h-4 text-base-content/40" />
+          </button>
+        )}
+      </div>
 
-        <MagnifyingGlassIcon className="h-4 w-4 opacity-70"></MagnifyingGlassIcon>
-      </label>
-
-      <div className="mt-1 flex flex-row flex-wrap gap-2">
-        {isSearching ? (
-          <div className="text-xs">Searching...</div>
-        ) : foundUsers.length > 0 ? (
-          foundUsers.map((user) => (
+      {/* Results */}
+      {isSearching && (
+        <p className="text-xs text-base-content/40 px-1">Searching…</p>
+      )}
+      {!isSearching && foundUsers.length > 0 && (
+        <div className="flex flex-col gap-2">
+          {foundUsers.map((u) => (
             <FriendCard
-              key={user.id}
-              friend={user}
-              friendStatus={user.friendStatus ?? 'none'}
+              key={u.id}
+              friend={u}
+              friendStatus={u.friendStatus ?? 'none'}
               onFriendStatusChange={onFriendStatusChange}
             />
-          ))
-        ) : searchTerm.length > 0 ? (
-          <div className="text-xs">No users found.</div>
-        ) : null}
-      </div>
+          ))}
+        </div>
+      )}
+      {!isSearching && searchTerm.length >= 3 && foundUsers.length === 0 && (
+        <p className="text-xs text-base-content/40 px-1">No users found.</p>
+      )}
+      {!isSearching && searchTerm.length > 0 && searchTerm.length < 3 && (
+        <p className="text-xs text-base-content/40 px-1">Type at least 3 characters to search.</p>
+      )}
     </div>
   );
 }

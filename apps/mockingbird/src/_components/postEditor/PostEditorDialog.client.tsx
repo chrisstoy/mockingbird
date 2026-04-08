@@ -150,9 +150,9 @@ export function PostEditorDialog({
   return (
     <dialog
       ref={dialogRef}
-      className="m-auto w-full max-w-2xl h-full md:h-[90%] bg-transparent backdrop:backdrop-brightness-50"
+      className="m-auto w-full max-w-2xl h-full md:h-[90%] bg-transparent backdrop:backdrop-blur-sm backdrop:bg-black/40"
     >
-      <div className="flex flex-col h-full">
+      <div className="flex flex-col h-full rounded-2xl border border-base-200 shadow-2xl bg-base-100 overflow-hidden">
         <DialogHeader
           title={
             originalPost ? `${posterInfo.userName}'s Post` : `Create a Post`
@@ -170,7 +170,7 @@ export function PostEditorDialog({
             ></AddImageUrl>
           ) : (
             <div className="h-full flex flex-col">
-              <div className="h-[1px] flex flex-col flex-auto overflow-scroll">
+              <div className="h-px flex flex-col flex-auto overflow-scroll">
                 {originalPost && (
                   <PostView
                     posterInfo={posterInfo}
@@ -185,7 +185,7 @@ export function PostEditorDialog({
                 ></ImageView>
                 <TextEditor onChangeDelta={setNewContent}></TextEditor>
               </div>
-              <div className="flex flex-row border-2 border-b-2 px-2">
+              <div className="flex flex-row items-center border-t border-base-200 bg-base-100 px-3 py-1.5">
                 <AddToPostOptions
                   onImageSelected={handleImageSelected}
                   onPickImage={() => setEditorMode(EditorMode.SELECT_IMAGE)}
@@ -208,6 +208,7 @@ export function PostEditorDialog({
           }}
         >
           <DialogButton
+            intent="primary"
             disabled={!newContent && !imageFile && !imageId}
             onClick={handleSubmitPost}
           >

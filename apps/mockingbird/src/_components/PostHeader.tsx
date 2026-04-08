@@ -15,6 +15,10 @@ type Props = {
   audience?: Audience;
 };
 
+function nameToHandle(name: string) {
+  return '@' + name.toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
 export function PostHeader({
   date,
   image,
@@ -27,31 +31,30 @@ export function PostHeader({
   small = false,
 }: Props) {
   return (
-    <div className="flex flex-row">
-      <div className="flex flex-row flex-auto">
-        <div className="avatar">
-          <div className={`${small ? 'h-8' : 'h-12'} rounded-full`}>
-            <img src={image} alt="Profile Picture"></img>
-          </div>
+    <div className="flex flex-row items-start">
+      <div className="flex flex-row flex-auto gap-3">
+        <div className={`${small ? 'w-8 h-8' : 'w-10 h-10'} rounded-full overflow-hidden flex-shrink-0`}>
+          <img src={image} alt={name} className="w-full h-full object-cover" />
         </div>
-        <div className="flex flex-col ml-2 justify-center">
-          <div className={`${small ? 'mb-0.5 text-sm' : 'mb-1 text-base'}`}>
+        <div className="flex flex-col min-w-0 justify-center">
+          <div className={`font-bold text-base-content truncate ${small ? 'text-sm' : 'text-sm'}`}>
             {name}
           </div>
-          <div className={`${small ? 'text-xs' : 'text-sm'}`}>
-            {`${isComment ? 'Commented' : 'Posted'} on ${toLocalTime(date)}`}
+          <div className="flex items-center gap-1.5 text-xs text-base-content/40">
+            <span>{nameToHandle(name)}</span>
+            <span>·</span>
+            <span>{toLocalTime(date)}</span>
+            {audience && (
+              <>
+                <span>·</span>
+                <span>{toCapitalized(audience)}</span>
+              </>
+            )}
           </div>
         </div>
       </div>
-      {audience && (
-        <div className="">
-          <div className="font-semibold self-center text-sm px-4 opacity-40">
-            {toCapitalized(audience)}
-          </div>
-        </div>
-      )}
       {showOptionsMenu && (
-        <PostMenu isComment={isComment} postId={postId}></PostMenu>
+        <PostMenu isComment={isComment} postId={postId} />
       )}
     </div>
   );

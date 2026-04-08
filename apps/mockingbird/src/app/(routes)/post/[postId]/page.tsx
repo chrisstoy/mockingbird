@@ -1,3 +1,4 @@
+import { BackButton } from '@/_components/BackButton.client';
 import { SkeletonSummaryPost } from '@/_components/SkeletonSummaryPost';
 import { SummaryPost } from '@/_components/SummaryPost';
 import { getPostWithId } from '@/_server/postsService';
@@ -24,6 +25,7 @@ export default async function PostDetailPage({ params }: Props) {
 
   return (
     <div className="flex flex-col flex-auto bg-transparent">
+      <BackButton />
       <Suspense fallback={<SkeletonSummaryPost></SkeletonSummaryPost>}>
         <SummaryPost post={post}></SummaryPost>
       </Suspense>

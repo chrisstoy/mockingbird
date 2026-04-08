@@ -10,7 +10,7 @@ export interface DialogButton<_Result> {
 }
 
 export interface DialogProps<_Result> extends PropsWithChildren {
-  title: ReactNode; //=>
+  title: ReactNode;
   defaultResult?: _Result;
   buttons?: Array<DialogButton<_Result>>;
   width?: string;
@@ -23,22 +23,17 @@ export function DialogHeader<_Result>({
   onClosed,
 }: Pick<DialogProps<_Result>, 'title' | 'onClosed'>) {
   return (
-    <div
-      className={`flex-none block rounded-t-2xl bg-primary text-primary-content`}
-    >
-      <div
-        className={
-          'flex w-full px-5 font-bold py-4 items-center justify-between text-xl'
-        }
-      >
+    <div className="flex-none flex items-center justify-between px-5 py-4 border-b border-base-200">
+      <h2 className="font-bold text-base text-base-content leading-none">
         {title}
-        <button
-          className="grow-0 shrink-0 w-5"
-          onClick={() => onClosed()}
-        >
-          <XMarkIcon></XMarkIcon>
-        </button>
-      </div>
+      </h2>
+      <button
+        className="w-7 h-7 rounded-full flex items-center justify-center text-base-content/40 hover:text-base-content hover:bg-base-200 transition-colors"
+        onClick={() => onClosed()}
+        aria-label="Close"
+      >
+        <XMarkIcon className="w-4 h-4" />
+      </button>
     </div>
   );
 }
@@ -65,7 +60,7 @@ export function DialogButton({
   children,
   ...props
 }: DialogButtonProps) {
-  const intentClass = intent ? `btn-${intent}` : '';
+  const intentClass = intent ? `btn-${intent}` : 'btn-ghost';
   return (
     <button
       disabled={disabled}
@@ -85,7 +80,7 @@ export function DialogSubmitButton({
   children,
   ...props
 }: Omit<DialogButtonProps, 'onClick'>) {
-  const intentClass = intent ? `btn-${intent}` : '';
+  const intentClass = intent ? `btn-${intent}` : 'btn-primary';
   return (
     <button
       type="submit"
@@ -107,12 +102,11 @@ export function DialogActions<_Result>({
   'buttons' | 'onClosed' | 'defaultResult' | 'children'
 >) {
   return (
-    <div className="flex-none flex rounded-b-2xl bg-primary text-primary-content justify-end p-2">
+    <div className="flex-none flex items-center justify-end gap-2 px-4 py-3 border-t border-base-200 bg-base-100 rounded-b-2xl">
       {children}
       {buttons &&
         buttons.map(({ title, result, intent, disabled }, index) => (
           <DialogButton
-            className="m-1"
             disabled={disabled}
             intent={intent}
             key={index}

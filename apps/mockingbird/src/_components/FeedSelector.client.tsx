@@ -3,48 +3,78 @@ import { FeedSource, FeedSourceSchema } from '@/_types';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useEffect } from 'react';
 
-const feedFromSearchParams = (params: URLSearchParams): FeedSource => {
-  const result = FeedSourceSchema.safeParse(params.get('feed'));
-  if (result.success) {
-    return result.data;
-  }
-  return 'public';
+export type FeedItem = {
+  key: FeedSource;
+  label: string;
 };
 
-export function FeedSelector() {
+const DEFAULT_FEEDS: FeedItem[] = [
+  { key: 'public', label: 'Public' },
+  { key: 'private', label: 'Friends' },
+];
+
+const STORAGE_KEY = 'activeFeed';
+
+const feedFromSearchParams = (params: URLSearchParams): FeedSource | null => {
+  const result = FeedSourceSchema.safeParse(params.get('feed'));
+  return result.success ? result.data : null;
+};
+
+const feedFromStorage = (): FeedSource => {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    const result = FeedSourceSchema.safeParse(stored);
+    return result.success ? result.data : 'public';
+  } catch {
+    return 'public';
+  }
+};
+
+type Props = {
+  feeds?: FeedItem[];
+};
+
+export function FeedSelector({ feeds = DEFAULT_FEEDS }: Props) {
   const params = useSearchParams();
   const router = useRouter();
 
-  const [activeFeed, setActiveFeed] = React.useState<FeedSource>(
-    feedFromSearchParams(params)
-  );
+  const [activeFeed, setActiveFeed] = React.useState<FeedSource>('public');
 
+  // On mount and param changes: prefer URL param, fall back to localStorage
   useEffect(() => {
-    setActiveFeed(feedFromSearchParams(params));
+    const fromUrl = feedFromSearchParams(params);
+    const resolved = fromUrl ?? feedFromStorage();
+    setActiveFeed(resolved); // eslint-disable-line react-hooks/set-state-in-effect -- syncing external state (URL params + localStorage) into React state requires effect
+    if (fromUrl) {
+      try { localStorage.setItem(STORAGE_KEY, fromUrl); } catch { /* ignore */ }
+    }
   }, [params]);
 
   const handleSelectChange = (newFeed: FeedSource) => {
     if (newFeed !== activeFeed) {
+      try { localStorage.setItem(STORAGE_KEY, newFeed); } catch { /* ignore */ }
       router.push(`/?feed=${newFeed}`);
     }
   };
 
   return (
-    <div role="tablist" className="tabs tabs-box">
-      <button
-        onClick={() => handleSelectChange('public')}
-        role="tab"
-        className={`tab ${activeFeed === 'public' ? 'tab-active text-base-content' : ''}`}
-      >
-        Public
-      </button>
-      <button
-        onClick={() => handleSelectChange('private')}
-        role="tab"
-        className={`tab ${activeFeed === 'private' ? 'tab-active text-base-content' : ''}`}
-      >
-        Friends
-      </button>
+    <div className="flex gap-1 bg-base-200 rounded-xl p-1 overflow-x-auto max-w-full scrollbar-none">
+      {feeds.map((feed) => {
+        const isActive = activeFeed === feed.key;
+        return (
+          <button
+            key={feed.key}
+            onClick={() => handleSelectChange(feed.key)}
+            className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-colors whitespace-nowrap shrink-0 ${
+              isActive
+                ? 'bg-primary text-primary-content shadow-sm'
+                : 'text-base-content/50 hover:text-base-content'
+            }`}
+          >
+            {feed.label}
+          </button>
+        );
+      })}
     </div>
   );
 }

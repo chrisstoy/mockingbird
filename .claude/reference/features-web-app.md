@@ -1,6 +1,6 @@
 # Web App Features
 
-The main web app is the authenticated user-facing interface under `src/app/(routes)/` and `src/app/auth/`. It uses the Header + Footer layout for authenticated pages and a bare layout for auth flow pages.
+The main web app is the authenticated user-facing interface under `src/app/(routes)/` and `src/app/auth/`. Auth flow pages use `AuthShell` (split-panel layout). Authenticated pages use a 3-column layout: fixed `LeftSidebar` (w-72, desktop), scrollable main content, fixed `RightSidebar` (w-96, desktop), `MobileHeader` (mobile top bar), and `MobileBottomNav` (mobile bottom tabs).
 
 ---
 
@@ -36,7 +36,7 @@ The main web app is the authenticated user-facing interface under `src/app/(rout
 ## Page Structure
 
 ### Auth Flow Pages (`src/app/auth/`)
-No shared layout. Bare pages with their own card/form styling.
+Use `AuthShell` component (`auth/_components/AuthShell.tsx`) — split panel: dark brand sidebar (mobile: top strip, desktop: left column) + white form area on right.
 
 | Route | Component file |
 |---|---|
@@ -49,7 +49,13 @@ No shared layout. Bare pages with their own card/form styling.
 | `/auth/expired-password` | `auth/expired-password/page.tsx` |
 
 ### Authenticated App Pages (`src/app/(routes)/`)
-Wrapped by `(routes)/layout.tsx` which provides `Header` + `max-w-2xl` container + `Footer`.
+Wrapped by `(routes)/layout.tsx` — 3-column layout: `LeftSidebar` (fixed, desktop) + main content area (lg:ml-72 lg:mr-96, max-w-2xl mx-auto) + `RightSidebar` (fixed, desktop) + `MobileHeader` + `MobileBottomNav`.
+
+Key layout components in `src/_components/`:
+- `LeftSidebar.client.tsx` — brand, nav (active state), Post button, user profile section
+- `RightSidebar.tsx` — search, trending, who to follow, footer
+- `MobileHeader.tsx` — top bar with logo + bell icon (mobile only)
+- `MobileBottomNav.client.tsx` — Home/Friends/Alerts/Me tabs (mobile only)
 
 | Route | Component file |
 |---|---|

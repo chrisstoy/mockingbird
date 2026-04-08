@@ -32,26 +32,26 @@ export function ImageDisplay({ imageId }: Props) {
   }
 
   return (
-    <div className={`flex flex-col content-center`}>
+    <div className="mt-3 mb-1 rounded-xl overflow-hidden">
       {missingImage ? (
         <img
           src={MISSING_IMAGE_URL}
           alt="Missing Image"
-          className="max-w-[50%] max-h-96 m-auto"
+          className="w-full max-h-96 object-cover"
         />
       ) : image ? (
         <img
           src={image.imageUrl}
           alt={image.description}
-          className="max-w-[50%] max-h-96 m-auto"
+          className="w-full max-h-96 object-cover"
           onError={(event) => {
             event.currentTarget.onerror = null;
             setMissingImage(true);
           }}
         />
       ) : (
-        <div className="skeleton flex flex-col max-w-[50%] m-auto items-center">
-          <PhotoIcon className=" opacity-25 w-[30%]"></PhotoIcon>
+        <div className="skeleton w-full h-48 flex items-center justify-center">
+          <PhotoIcon className="w-12 h-12 opacity-25" />
         </div>
       )}
     </div>

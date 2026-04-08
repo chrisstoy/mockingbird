@@ -9,14 +9,14 @@ interface Props {
 }
 
 export function SignInButton({ id, name, imageSrc, onSignIn }: Props) {
-  async function handleSignin() {
-    onSignIn(id);
-  }
-
   return (
-    <button key={id} className="btn btn-primary w-[75%]" onClick={handleSignin}>
-      <Image src={imageSrc} alt={`${name} Icon`} width="32" height="32" />
-      <span className="text-primary-content">{name}</span>
+    <button
+      key={id}
+      className="btn btn-outline w-full gap-3 font-medium"
+      onClick={() => onSignIn(id)}
+    >
+      <Image src={imageSrc} alt={`${name} icon`} width={20} height={20} />
+      Continue with {name}
     </button>
   );
 }

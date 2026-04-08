@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mockingbird | Social Feed</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;family=Public+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-primary-fixed-variant": "#5a5c5e",
+                        "on-surface": "#2b3437",
+                        "secondary": "#5c5f62",
+                        "on-tertiary": "#f7f9fc",
+                        "on-tertiary-container": "#595c5f",
+                        "surface-tint": "#5d5e61",
+                        "on-secondary-fixed-variant": "#595c5f",
+                        "tertiary-fixed": "#f2f4f7",
+                        "surface-container-high": "#e3e9ec",
+                        "surface-container-highest": "#dbe4e7",
+                        "surface-container-low": "#f1f4f6",
+                        "on-secondary-fixed": "#3c4042",
+                        "surface-bright": "#f8f9fa",
+                        "secondary-dim": "#505356",
+                        "on-primary-container": "#505254",
+                        "inverse-on-surface": "#9b9d9e",
+                        "inverse-primary": "#f9f9fc",
+                        "tertiary-container": "#f2f4f7",
+                        "background": "#f8f9fa",
+                        "on-tertiary-fixed": "#474a4d",
+                        "error-dim": "#4e0309",
+                        "primary-fixed-dim": "#d4d4d7",
+                        "on-error-container": "#752121",
+                        "error-container": "#fe8983",
+                        "tertiary-fixed-dim": "#e3e5e9",
+                        "secondary-container": "#e1e2e6",
+                        "secondary-fixed-dim": "#d2d4d8",
+                        "tertiary-dim": "#505356",
+                        "on-background": "#2b3437",
+                        "on-secondary": "#f7f9fc",
+                        "primary": "#5d5e61",
+                        "inverse-surface": "#0c0f10",
+                        "on-primary": "#f7f7fa",
+                        "on-surface-variant": "#586064",
+                        "on-tertiary-fixed-variant": "#636669",
+                        "on-primary-fixed": "#3e3f42",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-variant": "#dbe4e7",
+                        "tertiary": "#5c5f62",
+                        "error": "#9f403d",
+                        "primary-container": "#e2e2e5",
+                        "secondary-fixed": "#e1e2e6",
+                        "outline-variant": "#abb3b7",
+                        "surface-dim": "#d1dce0",
+                        "primary-dim": "#515255",
+                        "on-secondary-container": "#4f5255",
+                        "outline": "#737c7f",
+                        "primary-fixed": "#e2e2e5",
+                        "surface-container": "#eaeff1",
+                        "on-error": "#fff7f6",
+                        "surface": "#f8f9fa"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Public Sans"],
+                        "label": ["Public Sans"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Public Sans', sans-serif; background-color: #f8f9fa; color: #2b3437; }
+        h1, h2, h3 { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background selection:bg-primary-container">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-slate-50/80 dark:bg-zinc-900/80 backdrop-blur-md">
+<div class="flex justify-between items-center px-4 md:px-12 py-3 max-w-full mx-auto">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings: 'FILL' 1;">flutter_dash</span>
+<span class="text-2xl font-bold tracking-tighter text-zinc-800 dark:text-zinc-100">Mockingbird</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors duration-200 rounded-full active:scale-95 transition-transform">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors duration-200 rounded-full active:scale-95 transition-transform">
+<span class="material-symbols-outlined" data-icon="mail">mail</span>
+</button>
+<img alt="User profile" class="w-8 h-8 rounded-full bg-surface-container" data-alt="portrait of an older woman with gentle eyes and graying hair, smiling warmly in soft outdoor sunlight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFRxwJmMQSSMcakSe-ku7ALEViciBcbOVp6qKMbJckElvpSSjXhVVVsGn0FKcQDhMDGJK4IW3U4pPLQOzGZHzJjoODBHbekXe7JJqPo35lQj0fpjUnCmPJRst7u_UpBg0e0A7InxfDhN2zV84XJ-W3Ygc8j7X0IoLQZYeG5HtzIliYh4Y6F4YxcpBseBhwlj2Krr3wH2hfEkHuONDG9XKRyc309kdg5r1fKaL8img-xcMAX-mAykhUBYeyB5vgPPo45TuT3ENac7Y"/>
+</div>
+</div>
+<div class="bg-zinc-200/50 dark:bg-zinc-800/50 h-[1px] w-full block"></div>
+</header>
+<!-- Main Content Canvas -->
+<main class="pt-20 pb-32 px-4 max-w-2xl mx-auto space-y-6">
+<!-- Post Composer -->
+<section class="bg-surface-container-lowest rounded-xl p-6 shadow-sm">
+<div class="flex gap-4">
+<img alt="User Avatar" class="w-12 h-12 rounded-full" data-alt="close up headshot of a mature woman with a kind expression and silver hair" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCyDBfSDLsYaUo8dTBKfjRxXfQRN-9HK_26vvgBohcGmKYm0UFEUGxO5_2PU2njXVnWZomb2KNOecqcBsZhTVv9WNPi_MsU67KRa0X24_NagpkPgB-Fmfj4KYsSGSbulp1COOrlgewG-WmuV7Flu_lbiGTkQlTlDUPwQtuvBQbvXRYDU0UAG-kcOViDUMUtsiKjccw6Du1PtxQNmAkF8WSrlmiIU8YIJHEFaZxWnrdGXqEIzH9j5mhVxbkiUboTvpq7SV3DEiWJ5bk"/>
+<div class="flex-1 space-y-4">
+<textarea class="w-full bg-surface-container-highest border-none rounded-lg p-4 text-on-surface focus:ring-2 focus:ring-primary/40 resize-none font-body text-lg placeholder:text-on-surface-variant/50" placeholder="What's on your mind?" rows="3"></textarea>
+<div class="flex justify-between items-center">
+<div class="flex gap-2">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors">
+<span class="material-symbols-outlined" data-icon="image">image</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors">
+<span class="material-symbols-outlined" data-icon="mood">mood</span>
+</button>
+</div>
+<button class="bg-primary hover:bg-primary-dim text-on-primary font-headline font-bold py-2 px-8 rounded-lg shadow-sm transition-all active:scale-95">
+                            Post
+                        </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Status/Stories Row -->
+<div class="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
+<div class="flex-shrink-0 flex flex-col items-center gap-2">
+<div class="w-16 h-16 rounded-full p-1 ring-2 ring-primary bg-surface-container-lowest">
+<img class="w-full h-full rounded-full object-cover" data-alt="professional portrait of a man in his 50s with stylish glasses and a friendly smile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAe3lSuDZBvkaKlpJ75LI_2a-1_uCZFu4gopmNzl6RO8TrNYbjjYHCFTIy5BcyI9sM7YLCesbbDiOkerJjDhUxh8-8QPtVd5_QfMTv-6Nm7aHFNk5CgtMNMtk1AksuCYAZh1kdQlD2ra973pmqDuMg_FXg0iftA17KnLFKc-hc7YZNlZF11LTP889cg985Rdfeb2TmxI8-Krx--hcznP6XC_5t8dY6l24bUiX4666pjvELLwcWgpNa8QMjaOCr7oSiRfQR9NpqWt_M"/>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">David</span>
+</div>
+<div class="flex-shrink-0 flex flex-col items-center gap-2">
+<div class="w-16 h-16 rounded-full p-1 ring-2 ring-primary-container bg-surface-container-lowest">
+<img class="w-full h-full rounded-full object-cover" data-alt="candid portrait of a woman laughing outdoors, soft afternoon lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuATRbq9WlVKiYfFuGmC9nnbm5Anc3LFhBok1fpkAnm03FSH-qKMq0LRkI6l-1z1cg_1O8jCfwog3L-jQJuYl_Q7tV2lF0M8kQb3kqYkomDab3nkGNXsX4_h6SFYI04FlH04xrf6Axvq-EH0ozub4GYq-e2BiBKQ1blKmevkqwjVsYCxBOFYhdxyQKxJJNqFfj3SQSN4bdRZWCfX5dqFs8iOnfDslMMenHc-HEvx9Kxlt9RHmyBNu96Ue68kau9E-v1Fi42I_A-xTgo"/>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Sarah</span>
+</div>
+<div class="flex-shrink-0 flex flex-col items-center gap-2">
+<div class="w-16 h-16 rounded-full p-1 ring-2 ring-primary-container bg-surface-container-lowest">
+<img class="w-full h-full rounded-full object-cover" data-alt="portrait of a man with salt and pepper hair in a blue linen shirt" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBNrFOQd3ENlmBZuvZH-leL0p-FH3jzR_z-mAeNbmxAen4Q8Q_1fbG_3lUKh5HTiG6uXMqDr6fBA80VQNczA7gm7aRDFCuvpBCRbYeMOpMRJ0zOnG0WGLItqfuIwS2lggM8it2LbGxYAi7GjZEQR93LgQgm4FCe3v8pzz_QvBIv6cAvELX7hui_gW4WbvEJ5WPx1HLdeGZCOisGmbdJEaMniOhAD2D3eQv67aicFniVIumgUmnfFKYSh5d3CPzaqR6S0nVgEwdvukg"/>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Robert</span>
+</div>
+<div class="flex-shrink-0 flex flex-col items-center gap-2">
+<div class="w-16 h-16 rounded-full p-1 ring-2 ring-primary-container bg-surface-container-lowest">
+<img class="w-full h-full rounded-full object-cover" data-alt="expressive close up portrait of a mature woman with bright eyes" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHGj_k27dmgCsWODoPm65GDUlCZpX-gySrBvDI1gEfP4pA4kWFJHJHoJymIjl_MfadoT8pXzIhGRbNCNdT994pebm_uJmF2Zam-cxjeHBL9RvUAyfsDwvJn7qFGJ7BiM1EwBwRTBIl3Yo04lzN7sbMx5lT2SeRQnQnfkiHXvA74Kqn31OM_CniyPtRnlYQqKrCq1ix-npiPIqipbXHSSxKd6Veb8ueqyWqYeF7Og8PdSNor1n0dPK1RAUSZAbZzailpmmy6UuOOHM"/>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Elena</span>
+</div>
+</div>
+<!-- Feed Item 1: High Contrast Text Focus -->
+<article class="bg-surface-container-lowest rounded-xl p-6 shadow-sm">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-3">
+<img class="w-12 h-12 rounded-full" data-alt="headshot of a smiling gentleman with gray hair and a blue sweater" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAuOKAY0Rz7QS-ThhMDdNKwsCnTKjzP5BgxffjwH9vGh0OOSkDq1Rr3jCuusdbEdJ8hphQv0VYEqLf4KO0IkEhd3wFQJG4_wK6n5uiHoisHt3y3PobHxaPhUInHDx99iz0arcJa6mRhhiETfLbArhMq5NM6FnN3QKxu5SPaDsRXSoErFbi8i8LKl3HZAmLT65Wlf1gTpoyHDEPDFSGiBnu6THK5P7WurnGSbU5WnGfp5rLUbtPFQx_O6_9J00HZQZ-mPnOSYo1k2M0"/>
+<div>
+<h3 class="text-on-surface font-bold text-lg leading-tight">Arthur Morgan</h3>
+<p class="text-on-surface-variant text-sm font-medium">2 hours ago</p>
+</div>
+</div>
+<button class="text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="more_horiz">more_horiz</span>
+</button>
+</div>
+<div class="mb-6">
+<p class="text-on-surface text-xl leading-relaxed font-body">
+                    Just finished planting the garden for the season. There's something truly peaceful about spending time in the earth. Does anyone have tips for keeping rabbits away from lettuce? 🥬
+                </p>
+</div>
+<div class="bg-surface-container-low h-[1px] w-full mb-4"></div>
+<div class="flex justify-between items-center">
+<div class="flex gap-6">
+<button class="flex items-center gap-2 text-on-surface-variant font-bold hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="favorite">favorite</span>
+<span class="text-sm">24</span>
+</button>
+<button class="flex items-center gap-2 text-on-surface-variant font-bold hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="chat_bubble">chat_bubble</span>
+<span class="text-sm">12</span>
+</button>
+</div>
+<button class="text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="share">share</span>
+</button>
+</div>
+</article>
+<!-- Feed Item 2: Media Focus -->
+<article class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm">
+<div class="p-6">
+<div class="flex items-center gap-3 mb-4">
+<img class="w-12 h-12 rounded-full" data-alt="portrait of a woman with a warm smile and dark curly hair" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTmx8rrjaeMrleRPA00p4zItpwqHROQQUOv09s1orIVrPiIvDuCnGs2JilnaaI-B8RYONCZ4W9pOsfuW5VNTe9nJidXF0GGK_QBr7meOarM6qdO7vJ-9iEHfpIO0a5FnZbhcQp9PdWkvA3I9FmBed65vSyHAk9yjFOSzWX3e6SPPuhUkIjJ-vSgeqYJb-lbuJ-hAX7ReZooI2CekE_j-mrFD5TBXYvn5t-8G2lbynclgVOOOFZbWpYTQWq8i-vZ-1FV6-N6H0Xbgk"/>
+<div>
+<h3 class="text-on-surface font-bold text-lg leading-tight">Sarah Thompson</h3>
+<p class="text-on-surface-variant text-sm font-medium">5 hours ago</p>
+</div>
+</div>
+<p class="text-on-surface text-lg leading-relaxed font-body mb-4">
+                    The view from our hike today was absolutely breathtaking. Mockingbird Peak never disappoints!
+                </p>
+</div>
+<div class="relative aspect-video bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="scenic mountain range under a clear sky with rolling green hills and a winding path in the foreground" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXxax8FDHiW-Hty52J8HZxI7MbsMACLiAUNo4Qu3J8DuMHuIirvGniRrVjMhZpk3XF453RZj6zhtNNAVN5duVn4WO88XlPd0tVb5mhlkx1gpXPIM3UMMZhXFccTcYUvFWqMP7PRreQIp6Ejje9f3xRkkVKHbXSMWo7DuTEbYuSdZmy6JSut2h1zvpyqh-FkZb1AqtiVBVrX3j_92dvWk3WlqbfI9VgSCMTs63FpZs-0C71i8gDnd3qPyLxd8m2brwuIIegxx_WcOA"/>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-center">
+<div class="flex gap-6">
+<button class="flex items-center gap-2 text-on-surface-variant font-bold">
+<span class="material-symbols-outlined" data-icon="favorite">favorite</span>
+<span class="text-sm">156</span>
+</button>
+<button class="flex items-center gap-2 text-on-surface-variant font-bold">
+<span class="material-symbols-outlined" data-icon="chat_bubble">chat_bubble</span>
+<span class="text-sm">45</span>
+</button>
+</div>
+<button class="text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="bookmark">bookmark</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Feed Item 3: Shared Link / Card -->
+<article class="bg-surface-container-lowest rounded-xl p-6 shadow-sm">
+<div class="flex items-center gap-3 mb-4">
+<img class="w-12 h-12 rounded-full" data-alt="man in his 50s with spectacles and a kind smile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDW7aAn8R-9K5q6IVcZUzfsySallNtjdG4dosOiLYHocQn6jQSCuZP1j82KTJ45rHbVbYiKSbitgrEyveha5NzuGpR6t4lLvO0U8LDqD2Lu37RkWrx3peLLbFgf3ME5YcdFngzHEIvpR4QwGfIxlSRDy3LT2zXgDf_bGhP9TrmiUJlY9dyGNBf97LUDuo3GRFXIvL2ibW68ECP-l_6tb4wR68I0284nxX5cEypoXhON2xicSuj2M0mHxHWof68dOe-xR7MCEcBTm9Q"/>
+<div>
+<h3 class="text-on-surface font-bold text-lg leading-tight">David Wilson</h3>
+<p class="text-on-surface-variant text-sm font-medium">Yesterday</p>
+</div>
+</div>
+<p class="text-on-surface text-lg leading-relaxed font-body mb-4">
+                Found this great article about bird watching in the suburbs. Highly recommend for a Sunday morning read!
+            </p>
+<div class="bg-surface-container-low rounded-xl p-4 flex gap-4 items-center">
+<div class="bg-primary/10 w-16 h-16 rounded-lg flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="menu_book">menu_book</span>
+</div>
+<div>
+<h4 class="text-on-surface font-bold text-base leading-tight">The Joy of Suburban Birding</h4>
+<p class="text-on-surface-variant text-sm truncate">natureweekly.com • 5 min read</p>
+</div>
+</div>
+</article>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pt-3 pb-8 lg:hidden bg-white/90 dark:bg-zinc-950/90 backdrop-blur-xl rounded-t-3xl border-t border-zinc-100 dark:border-zinc-800 shadow-[0_-8px_30px_rgb(0,0,0,0.04)] z-50">
+<!-- Active Home Tab -->
+<a class="flex flex-col items-center justify-center text-zinc-900 dark:text-zinc-50 bg-zinc-100 dark:bg-zinc-800 rounded-2xl px-4 py-2 tap-highlight-transparent" href="#">
+<span class="material-symbols-outlined" data-icon="home" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-manrope text-[10px] uppercase tracking-widest font-bold mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-zinc-400 dark:text-zinc-500 px-4 py-2 tap-highlight-transparent" href="#">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+<span class="font-manrope text-[10px] uppercase tracking-widest font-bold mt-1">Explore</span>
+</a>
+<a class="flex flex-col items-center justify-center text-zinc-400 dark:text-zinc-500 px-4 py-2 tap-highlight-transparent" href="#">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="font-manrope text-[10px] uppercase tracking-widest font-bold mt-1">Alerts</span>
+</a>
+<a class="flex flex-col items-center justify-center text-zinc-400 dark:text-zinc-500 px-4 py-2 tap-highlight-transparent" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-manrope text-[10px] uppercase tracking-widest font-bold mt-1">Me</span>
+</a>
+</nav>
+<!-- Floating Action Button (FAB) - Contextually Suppressed on scroll usually, but here for composer shortcut -->
+<button class="fixed bottom-24 right-6 bg-primary text-on-primary w-14 h-14 rounded-full shadow-2xl flex items-center justify-center hover:scale-105 transition-transform active:scale-95 lg:hidden">
+<span class="material-symbols-outlined" data-icon="edit_square">edit_square</span>
+</button>
+</body></html>

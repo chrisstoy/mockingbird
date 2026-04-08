@@ -3,7 +3,7 @@ import {
   GlobeAltIcon,
   PhotoIcon,
   SquaresPlusIcon,
-} from '@heroicons/react/24/solid';
+} from '@heroicons/react/24/outline';
 import { FileSelectButton } from '@mockingbird/stoyponents';
 
 interface Props {
@@ -13,6 +13,31 @@ interface Props {
   onAddImageURL: () => void;
 }
 
+function ToolbarButton({
+  onClick,
+  disabled,
+  tooltip,
+  children,
+}: {
+  onClick: () => void;
+  disabled?: boolean;
+  tooltip: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      aria-label={tooltip}
+      title={tooltip}
+      className="p-2 rounded-xl text-base-content/50 hover:text-primary hover:bg-primary/10 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+    >
+      <span className="w-5 h-5 block">{children}</span>
+    </button>
+  );
+}
+
 export function AddToPostOptions({
   onImageSelected,
   onPickImage,
@@ -20,35 +45,33 @@ export function AddToPostOptions({
   disableImageSelection,
 }: Props) {
   return (
-    <div className="flex flex-none join">
-      <div className="content-center pr-2 join-item">Add...</div>
+    <div className="flex items-center gap-0.5">
+      <span className="text-xs font-semibold text-base-content/30 uppercase tracking-widest mr-1">
+        Add
+      </span>
       <FileSelectButton
-        className="join-item"
         tooltip="Upload Image"
         accept="image/*"
         onFileSelected={onImageSelected}
         disabled={disableImageSelection}
+        buttonClassName="p-2 rounded-xl text-base-content/50 hover:text-primary hover:bg-primary/10 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
       >
-        <PhotoIcon></PhotoIcon>
+        <PhotoIcon className="w-5 h-5" />
       </FileSelectButton>
-      <button
-        className="join-item btn btn-ghost btn-primary"
+      <ToolbarButton
+        onClick={onPickImage}
         disabled={disableImageSelection}
-        onClick={() => onPickImage()}
+        tooltip="Select from library"
       >
-        <span className="w-6 h-6 tooltip" data-tip="Select Image">
-          <SquaresPlusIcon></SquaresPlusIcon>
-        </span>
-      </button>
-      <button
-        className="join-item btn btn-ghost btn-primary"
+        <SquaresPlusIcon />
+      </ToolbarButton>
+      <ToolbarButton
+        onClick={onAddImageURL}
         disabled={disableImageSelection}
-        onClick={() => onAddImageURL()}
+        tooltip="Add external image"
       >
-        <span className="w-6 h-6 tooltip" data-tip="Add External Image">
-          <GlobeAltIcon></GlobeAltIcon>
-        </span>
-      </button>
+        <GlobeAltIcon />
+      </ToolbarButton>
     </div>
   );
 }

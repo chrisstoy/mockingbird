@@ -56,58 +56,107 @@ export function ExpiredPasswordForm({ email }: Props) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col" autoComplete="off">
-      <h1 className="text-2xl text-center mb-2">Password Expired</h1>
-
-      <div className="alert alert-warning mb-4">
-        <span>Your password has expired and must be changed.</span>
+    <div className="flex flex-col gap-6">
+      {/* Heading */}
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-base-content">
+          Update Password
+        </h1>
+        <p className="text-sm text-base-content/60 mt-1">
+          Your password has expired and must be changed to continue.
+        </p>
       </div>
 
-      {error && <div className="text-error p-1 mb-2">{error}</div>}
+      <div role="alert" className="alert alert-warning">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-5 w-5 shrink-0 stroke-current"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+          />
+        </svg>
+        <span className="text-sm">Password expired for {email}</span>
+      </div>
 
-      <div className="card-actions flex flex-col gap-2">
-        <input
-          type="password"
-          className="input input-bordered w-full"
-          placeholder="Current password"
-          value={currentPassword}
-          onChange={(e) => setCurrentPassword(e.target.value)}
-          required
-          disabled={isProcessing}
-        />
-        <input
-          type="password"
-          className="input input-bordered w-full"
-          placeholder="New password"
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-          required
-          disabled={isProcessing}
-          minLength={8}
-          maxLength={20}
-        />
-        <input
-          type="password"
-          className="input input-bordered w-full"
-          placeholder="Confirm new password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          required
-          disabled={isProcessing}
-          minLength={8}
-          maxLength={20}
-        />
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4" autoComplete="off">
+        {error && (
+          <div role="alert" className="alert alert-error">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 shrink-0 stroke-current"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span className="text-sm">{error}</span>
+          </div>
+        )}
+
+        <div className="flex flex-col gap-3">
+          <div className="form-control w-full">
+            <input
+              type="password"
+              className="input input-bordered w-full"
+              placeholder="Current password"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              required
+              disabled={isProcessing}
+            />
+          </div>
+          <div className="form-control w-full">
+            <input
+              type="password"
+              className="input input-bordered w-full"
+              placeholder="New password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              required
+              disabled={isProcessing}
+              minLength={8}
+              maxLength={20}
+            />
+          </div>
+          <div className="form-control w-full">
+            <input
+              type="password"
+              className="input input-bordered w-full"
+              placeholder="Confirm new password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+              disabled={isProcessing}
+              minLength={8}
+              maxLength={20}
+            />
+          </div>
+        </div>
 
         {isProcessing ? (
-          <div className="justify-center w-full flex m-4">
-            <span className="loading loading-ring loading-lg"></span>
+          <div className="flex items-center justify-center gap-3 py-2">
+            <span className="loading loading-spinner loading-sm text-primary" />
+            <span className="text-sm text-base-content/60">
+              Updating password...
+            </span>
           </div>
         ) : (
           <button type="submit" className="btn btn-primary w-full">
             Change Password
           </button>
         )}
-      </div>
-    </form>
+      </form>
+    </div>
   );
 }

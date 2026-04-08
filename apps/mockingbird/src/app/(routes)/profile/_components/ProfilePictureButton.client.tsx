@@ -24,13 +24,13 @@ export function ProfilePictureButton({ currentImageSrc }: Props) {
 
   return (
     <>
-      <div className="relative w-40 h-40 group">
+      <div className="relative w-24 h-24 group">
         <img
           src={imageSrc}
           alt="Profile Picture"
-          width={160}
-          height={160}
-          className="w-40 h-40 rounded-lg shadow-2xl object-cover"
+          width={96}
+          height={96}
+          className="w-24 h-24 rounded-xl object-cover"
         />
         {/* Camera icon overlay button */}
         <button

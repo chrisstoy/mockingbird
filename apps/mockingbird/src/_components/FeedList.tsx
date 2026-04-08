@@ -7,6 +7,7 @@ type Props = {
   userId: UserId;
   feedSource: FeedSource;
 };
+
 export async function FeedList({ userId, feedSource }: Props) {
   let feed: Array<Post> = [];
 
@@ -18,18 +19,14 @@ export async function FeedList({ userId, feedSource }: Props) {
   }
 
   return (
-    <ul className="list-none max-w-2xl">
+    <div className="flex flex-col gap-4">
       {feed.length > 0 ? (
         feed.map((post) => (
-          <li className="m-2" key={post.id}>
-            <SummaryPost post={post} linkToDetails showFirstComment />
-          </li>
+          <SummaryPost key={post.id} post={post} linkToDetails showFirstComment />
         ))
       ) : (
-        <li className="m-2">
-          <NoPostsInFeed></NoPostsInFeed>
-        </li>
+        <NoPostsInFeed />
       )}
-    </ul>
+    </div>
   );
 }

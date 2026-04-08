@@ -1,0 +1,73 @@
+{
+  "designSystems": [
+    {
+      "name": "assets/beb61344349d482aae15d0a82a1335fb",
+      "version": "2",
+      "designSystem": {
+        "displayName": "Mockingbird",
+        "theme": {
+          "bodyFont": "MANROPE",
+          "headlineFont": "MANROPE",
+          "labelFont": "MANROPE",
+          "colorMode": "LIGHT",
+          "colorVariant": "FIDELITY",
+          "customColor": "#F49D37",
+          "roundness": "ROUND_FOUR",
+          "overridePrimaryColor": "#F49D37",
+          "overrideSecondaryColor": "#454B52",
+          "overrideNeutralColor": "#75777A",
+          "namedColors": {
+            "background": "#f8f9fc",
+            "error": "#ba1a1a",
+            "error_container": "#ffdad6",
+            "inverse_on_surface": "#f0f1f4",
+            "inverse_primary": "#ffb86e",
+            "inverse_surface": "#2e3133",
+            "on_background": "#191c1e",
+            "on_error": "#ffffff",
+            "on_error_container": "#93000a",
+            "on_primary": "#ffffff",
+            "on_primary_container": "#643900",
+            "on_primary_fixed": "#2c1600",
+            "on_primary_fixed_variant": "#693c00",
+            "on_secondary": "#ffffff",
+            "on_secondary_container": "#5d636a",
+            "on_secondary_fixed": "#161c22",
+            "on_secondary_fixed_variant": "#41474e",
+            "on_surface": "#191c1e",
+            "on_surface_variant": "#534436",
+            "on_tertiary": "#ffffff",
+            "on_tertiary_container": "#004961",
+            "on_tertiary_fixed": "#001e2b",
+            "on_tertiary_fixed_variant": "#004d66",
+            "outline": "#867464",
+            "outline_variant": "#d9c3b0",
+            "primary": "#8a5100",
+            "primary_container": "#f49d37",
+            "primary_fixed": "#ffdcbd",
+            "primary_fixed_dim": "#ffb86e",
+            "secondary": "#595f66",
+            "secondary_container": "#dbe0e9",
+            "secondary_fixed": "#dde3eb",
+            "secondary_fixed_dim": "#c1c7cf",
+            "surface": "#f8f9fc",
+            "surface_bright": "#f8f9fc",
+            "surface_container": "#edeef1",
+            "surface_container_high": "#e7e8eb",
+            "surface_container_highest": "#e1e2e6",
+            "surface_container_low": "#f3f3f7",
+            "surface_container_lowest": "#ffffff",
+            "surface_dim": "#d9dadd",
+            "surface_tint": "#8a5100",
+            "surface_variant": "#e1e2e6",
+            "tertiary": "#006686",
+            "tertiary_container": "#37bdf1",
+            "tertiary_fixed": "#c0e8ff",
+            "tertiary_fixed_dim": "#71d2ff"
+          },
+          "designMd": "# Design System Specification: Editorial Organicism\n\n## 1. Overview & Creative North Star\nThe Creative North Star for this design system is **\"The Avian Editorial.\"** This concept draws inspiration from the mockingbird's agility and precision, blending the grounded, authoritative feel of a high-end broadsheet with a vibrant, modern energy. \n\nWe break the \"template\" look by leaning into intentional asymmetry and tonal depth. By utilizing the new, high-contrast orange derived from the mockingbird's eye and feet against a foundation of \"Slate\" (charcoal) and \"Plume\" (soft grays), we create an interface that feels both scholarly and alive. This is not a flat UI; it is a layered experience where white space is treated as a premium material and typography dictates the rhythm of the page.\n\n---\n\n## 2. Colors: Tonal Architecture\nOur palette is divided into high-performance neutrals and a singular, electric accent.\n\n### The Signature Accent (The Mockingbird Eye)\nThe orange tokens are the soul of the interface. Use them sparingly to command attention.\n*   **Primary (`#F49D37`):** Used for primary CTAs and critical active states.\n*   **Primary Container (`#f49d37`):** Use for large-scale \"Call-to-Outs\" or hero background accents.\n*   **Signature Gradient:** For high-end polish, apply a linear gradient from `primary` to `primary_container` on hero buttons.\n\n### The Neutral Base\n*   **Background (`#f8f9fc`):** A crisp, cool slate-white canvas.\n*   **Secondary (`#454B52`):** The \"Slate\" component. Used for secondary actions and supporting text.\n*   **Surface Tiers:** Use `surface_container_lowest` (`#ffffff`) through `surface_container_highest` (`#e1e2e6`) for architectural depth.\n\n### The \"No-Line\" Rule & Glassmorphism\n*   **Prohibition of Borders:** 1px solid borders are strictly forbidden for sectioning.\n*   **Glassmorphism:** For floating menus or navigation bars, utilize `surface_container_lowest` at 80% opacity with a `24px` backdrop-blur.\n\n---\n\n## 3. Typography: The Manrope Scale\nWe use **Manrope** exclusively.\n\n*   **Display (lg/md/sm):** `3.5rem` to `2.25rem`, tight letter-spacing (-0.02em).\n*   **Headline & Title:** Guide the user through the narrative with generous padding.\n*   **Body (lg/md/sm):** line-height of 1.6 for `body-lg`.\n*   **Label:** Semi-bold for contrast against lighter body copy.\n\n---\n\n## 4. Elevation & Depth: Tonal Layering\n*   **The Stack:** `surface_container_lowest` (#ffffff) card on `surface_container_low` (#f3f3f7) background.\n*   **Ambient Shadows:** `0px 12px 32px`, 6% opacity tint of `on_surface` (#191c1e).\n*   **Ghost Borders:** `outline_variant` (#d9c3b0) at 15% opacity when accessibility requires.\n\n---\n\n## 5. Components\n\n### Buttons & Chips\n*   **Primary Button:** Background: `primary` (#F49D37); Text: `on_primary` (#ffffff). Border Radius: `md` (0.375rem).\n*   **Secondary/Tertiary:** `primary` text on transparent background.\n*   **Chips:** `secondary_container` background with `on_secondary_container` text.\n\n### Cards & Lists\n*   **No Dividers:** Use vertical white space (`spacing-4` or `spacing-6`) or card structure.\n*   **Layout:** Asymmetry — images bleed to edges, text inset with 24px+ padding.\n\n### Input Fields\n*   **Focused:** 2px stroke of `primary` (#F49D37). Fill: `surface_container_high`.\n\n### Signature Component: The \"Plume\" Header\nLarge-scale header using `tertiary_container` to `surface` gradient with `display-lg` typography.\n\n---\n\n## 6. Do's and Don'ts\n\n### Do\n*   **DO** use `primary` orange for \"Success\" or \"Active\" states.\n*   **DO** use varying Manrope weights for hierarchy.\n*   **DO** leave at least 32px margin between unrelated content blocks.\n\n### Don't\n*   **DON'T** use 100% black text — use `on_surface` (#191c1e).\n*   **DON'T** use `primary` orange for large background areas.\n*   **DON'T** use standard 1px borders or heavy drop shadows."
+        }
+      }
+    }
+  ]
+}
