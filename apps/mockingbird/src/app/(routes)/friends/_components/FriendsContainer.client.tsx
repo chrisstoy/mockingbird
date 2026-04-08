@@ -11,17 +11,12 @@ import { SearchForUsers } from './SearchForUsers.client';
 export function FriendsContainer() {
   const user = useSessionUser();
   const userId = user?.id;
-
   const { setCollection } = useFriendCollectionStore();
 
   useEffect(() => {
     (async () => {
       if (!userId) {
-        setCollection({
-          friends: [],
-          pendingFriends: [],
-          friendRequests: [],
-        });
+        setCollection({ friends: [], pendingFriends: [], friendRequests: [] });
         return;
       }
       const allFriends = await getFriendsForUser(userId);
@@ -31,12 +26,8 @@ export function FriendsContainer() {
 
   const handleUpdateFriendStatus = useCallback(
     async (friendId: UserId, status: FriendStatus) => {
-      if (!userId) {
-        return;
-      }
-
+      if (!userId) return;
       await updateFriendStatusWithUser(userId, friendId, status);
-      // TODO - refresh friends in store instead of reloading
       const allFriends = await getFriendsForUser(userId);
       setCollection(allFriends);
     },
@@ -44,16 +35,20 @@ export function FriendsContainer() {
   );
 
   return (
-    <div className="flex flex-col flex-auto gap-4">
-      <div className="card bg-base-100 shadow-xl">
-        <div className="card-title p-3">Add Friends</div>
-        <div className="card-body">
-          <SearchForUsers
-            onFriendStatusChange={handleUpdateFriendStatus}
-          ></SearchForUsers>
+    <div className="flex flex-col gap-4">
+      {/* Find friends card */}
+      <div className="bg-base-100 rounded-2xl border border-base-200 shadow-sm overflow-hidden">
+        <div className="px-5 py-4 border-b border-base-200">
+          <h2 className="text-xs font-bold uppercase tracking-widest text-base-content/40">
+            Find Friends
+          </h2>
+        </div>
+        <div className="p-4">
+          <SearchForUsers onFriendStatusChange={handleUpdateFriendStatus} />
         </div>
       </div>
-      <Friends onFriendStatusChange={handleUpdateFriendStatus}></Friends>
+
+      <Friends onFriendStatusChange={handleUpdateFriendStatus} />
     </div>
   );
 }
