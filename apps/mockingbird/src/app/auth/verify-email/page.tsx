@@ -1,4 +1,5 @@
 import { auth } from '@/app/auth';
+import Link from 'next/link';
 import { ResendVerificationButton } from './_components/ResendVerificationButton.client';
 
 export default async function VerifyEmailPage() {
@@ -28,6 +29,16 @@ export default async function VerifyEmailPage() {
       </div>
 
       <ResendVerificationButton />
+
+      <p className="text-sm text-center text-base-content/50">
+        Not you?{' '}
+        <Link
+          href="/auth/signin"
+          className="text-primary hover:underline font-medium"
+        >
+          Sign in
+        </Link>
+      </p>
     </div>
   );
 }

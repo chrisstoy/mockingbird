@@ -31,7 +31,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
             Mockingbird
           </div>
           <p className="hidden md:block mt-3 text-sm leading-relaxed text-neutral-content/55 font-light max-w-[210px] mx-auto">
-            Your community of authentic voices.
+            Welcome to the flock.
           </p>
         </div>
 
