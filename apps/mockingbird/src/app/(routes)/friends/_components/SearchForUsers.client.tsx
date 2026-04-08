@@ -43,7 +43,7 @@ export function SearchForUsers({ onFriendStatusChange }: Props) {
 
   useEffect(() => {
     if (debouncedSearchTerm.length < 3) {
-      setFoundUsers([]);
+      setFoundUsers([]); // eslint-disable-line react-hooks/set-state-in-effect -- resetting search results in response to external debounced input
       return;
     }
     (async () => {
@@ -59,8 +59,7 @@ export function SearchForUsers({ onFriendStatusChange }: Props) {
   }, [debouncedSearchTerm, user?.id, updateUserFriendStatus]);
 
   useEffect(() => {
-    setFoundUsers((prev) => prev.map(updateUserFriendStatus));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    setFoundUsers((prev) => prev.map(updateUserFriendStatus)); // eslint-disable-line react-hooks/set-state-in-effect -- re-mapping friend statuses when friend collection changes
   }, [friends, friendRequests, pendingFriends, updateUserFriendStatus]);
 
   return (

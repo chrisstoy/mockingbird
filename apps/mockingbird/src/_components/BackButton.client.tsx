@@ -19,7 +19,7 @@ export function BackButton() {
   const [activeFeed, setActiveFeed] = useState<FeedSource | null>(null);
 
   useEffect(() => {
-    setActiveFeed(feedFromStorage());
+    setActiveFeed(feedFromStorage()); // eslint-disable-line react-hooks/set-state-in-effect -- reading localStorage on mount requires effect; null guards SSR hydration
   }, []);
 
   if (activeFeed === null) return null;

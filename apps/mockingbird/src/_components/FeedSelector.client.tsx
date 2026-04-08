@@ -44,7 +44,7 @@ export function FeedSelector({ feeds = DEFAULT_FEEDS }: Props) {
   useEffect(() => {
     const fromUrl = feedFromSearchParams(params);
     const resolved = fromUrl ?? feedFromStorage();
-    setActiveFeed(resolved);
+    setActiveFeed(resolved); // eslint-disable-line react-hooks/set-state-in-effect -- syncing external state (URL params + localStorage) into React state requires effect
     if (fromUrl) {
       try { localStorage.setItem(STORAGE_KEY, fromUrl); } catch { /* ignore */ }
     }

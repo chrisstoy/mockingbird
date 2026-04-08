@@ -186,8 +186,9 @@ export function ChangeProfilePictureDialog({ currentImageSrc, onClosed }: Props)
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    dialogRef.current?.showModal();
-    return () => dialogRef.current?.close();
+    const dialog = dialogRef.current;
+    dialog?.showModal();
+    return () => dialog?.close();
   }, []);
 
   useEffect(() => {

@@ -4,7 +4,8 @@
       "Read(//private/tmp/**)",
       "Skill(update-config)",
       "Skill(update-config:*)",
-      "Edit(/.claude/skills/deploy-app/**)"
+      "Edit(/.claude/skills/deploy-app/**)",
+      "Bash(npx nx:*)"
     ],
     "additionalDirectories": [
       "/private/tmp"

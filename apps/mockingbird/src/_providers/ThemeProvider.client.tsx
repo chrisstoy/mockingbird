@@ -15,7 +15,8 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue>({
   mode: 'system',
-  setMode: () => {},
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  setMode: (_mode: ThemeMode) => {},
   resolvedTheme: 'light',
 });
 
@@ -29,7 +30,7 @@ function getStoredMode(): ThemeMode {
     if (stored === 'light' || stored === 'dark' || stored === 'system') {
       return stored;
     }
-  } catch {}
+  } catch (_e) { /* localStorage unavailable */ }
   return 'system';
 }
 
@@ -38,12 +39,12 @@ function getSystemPreference(): 'light' | 'dark' {
     return window.matchMedia('(prefers-color-scheme: dark)').matches
       ? 'dark'
       : 'light';
-  } catch {}
+  } catch (_e) { /* matchMedia unavailable */ }
   return 'light';
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [mode, setModeState] = useState<ThemeMode>('system');
+  const [mode, setModeState] = useState<ThemeMode>(getStoredMode);
   const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light');
 
   // Apply theme to <html> data-theme attribute
@@ -54,13 +55,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     setResolvedTheme(resolved);
   }
 
-  // On mount: read from localStorage, apply
+  // On mount: apply stored theme and listen for OS preference changes
   useEffect(() => {
-    const stored = getStoredMode();
-    setModeState(stored);
-    applyTheme(stored);
+    applyTheme(getStoredMode()); // eslint-disable-line react-hooks/set-state-in-effect -- applyTheme sets resolvedTheme to sync DOM data-theme with React state on mount
 
-    // Listen for OS preference changes when in system mode
     const mq = window.matchMedia('(prefers-color-scheme: dark)');
     const handler = () => {
       if (getStoredMode() === 'system') applyTheme('system');
@@ -72,7 +70,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const setMode = (newMode: ThemeMode) => {
     try {
       localStorage.setItem(STORAGE_KEY, newMode);
-    } catch {}
+    } catch (_e) { /* localStorage unavailable */ }
     setModeState(newMode);
     applyTheme(newMode);
   };

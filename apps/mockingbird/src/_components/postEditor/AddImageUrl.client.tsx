@@ -25,7 +25,7 @@ export function AddImageUrl({ onImageSelected }: Props) {
     } catch (error) {
       console.error(error);
     }
-  }, [user?.id, onImageSelected]);
+  }, [user, onImageSelected]);
 
   return (
     <div className="flex flex-col h-full">

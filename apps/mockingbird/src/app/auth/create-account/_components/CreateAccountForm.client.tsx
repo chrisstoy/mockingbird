@@ -32,7 +32,7 @@ export function CreateAccountForm() {
   }, []);
 
   const onSubmit: SubmitHandler<CreateUser> = async (data: CreateUser) => {
-    const { name, email, password, confirmPassword } = data;
+    const { name, email, password, confirmPassword: _confirmPassword } = data;
 
     if (!turnstileToken) {
       setError('Please complete the CAPTCHA verification.');
