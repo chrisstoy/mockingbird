@@ -197,7 +197,10 @@ This is configured in `apps/mockingbird/project.json` (`build-vercel` target) an
 git checkout develop
 git pull origin develop
 
-# 2. Run DB migrations against preview database (manual step)
+# 2. Enable maintenance mode
+vercel env rm MAINTENANCE_MODE preview --yes 2>/dev/null; echo "true" | vercel env add MAINTENANCE_MODE preview
+
+# 3. Run DB migrations against preview database (manual step)
 #    Pull the preview DATABASE_URL from Vercel, then apply pending migrations:
 vercel env pull /tmp/deploy-env --environment=preview
 DATABASE_URL=$(grep '^DATABASE_URL=' /tmp/deploy-env | cut -d= -f2- | tr -d '"') \
@@ -207,18 +210,21 @@ rm /tmp/deploy-env
 #    DATABASE_URL=$(grep '^DATABASE_URL=' apps/mockingbird/.env.preview | cut -d= -f2-) \
 #      nx run mockingbird:prisma-deploy
 
-# 3. Push to develop — Vercel auto-deploys
+# 4. Push to develop — Vercel auto-deploys
 git push origin develop
 
-# 4. Monitor Vercel build
+# 5. Monitor Vercel build
 vercel list                      # list recent deployments
 vercel logs <deployment-url>     # tail logs if needed
 
-# 5. Manual deploy (if auto-deploy didn't trigger or you need to deploy without pushing):
+# 6. Manual deploy (if auto-deploy didn't trigger or you need to deploy without pushing):
 vercel deploy                    # deploys current branch as preview
 
-# 6. Verify deployment at https://mockingbird.chrisstoy.com
-# 7. Run E2E tests against pre-prod
+# 7. Disable maintenance mode
+vercel env rm MAINTENANCE_MODE preview --yes; echo "false" | vercel env add MAINTENANCE_MODE preview
+
+# 8. Verify deployment at https://mockingbird.chrisstoy.com
+# 9. Run E2E tests against pre-prod
 PLAYWRIGHT_BASE_URL=https://mockingbird.chrisstoy.com nx run mockingbird-e2e:e2e
 ```
 
@@ -227,20 +233,29 @@ PLAYWRIGHT_BASE_URL=https://mockingbird.chrisstoy.com nx run mockingbird-e2e:e2e
 E2E tests on pre-prod must pass before promoting to production.
 
 ```bash
-# 1. Merge develop into main (via PR or direct merge after pre-prod sign-off)
+# 1. Enable maintenance mode
+vercel env rm MAINTENANCE_MODE production --yes 2>/dev/null; echo "true" | vercel env add MAINTENANCE_MODE production
+
+# 2. Run DB migrations against production database (manual step — do BEFORE push)
+vercel env pull /tmp/deploy-env --environment=production
+DATABASE_URL=$(grep '^DATABASE_URL=' /tmp/deploy-env | cut -d= -f2- | tr -d '"') \
+  npx prisma migrate deploy --schema=apps/mockingbird/prisma/schema.prisma
+rm /tmp/deploy-env
+
+# 3. Merge develop into main (via PR or direct merge after pre-prod sign-off)
 git checkout main
 git pull origin main
 git merge develop
 git push origin main
 
-# 2. Run DB migrations against production database (manual step — do BEFORE push if possible)
-DATABASE_URL=<prod-db-url> nx run mockingbird:prisma-deploy
-
-# 3. Vercel auto-deploys to production
-# 4. Monitor build and verify at https://mockingbird.club
+# 4. Vercel auto-deploys to production
+# 5. Monitor build and verify at https://mockingbird.club
 vercel logs <deployment-url>
 
-# 5. Post-deploy smoke test (see below)
+# 6. Disable maintenance mode
+vercel env rm MAINTENANCE_MODE production --yes; echo "false" | vercel env add MAINTENANCE_MODE production
+
+# 7. Post-deploy smoke test (see below)
 ```
 
 #### Manual Production Deploy (if needed)

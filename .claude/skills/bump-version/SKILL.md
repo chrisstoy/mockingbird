@@ -67,6 +67,11 @@ Bump the application version and update the CHANGELOG.md with Jira tickets that 
      - New CHANGELOG entries
    - Confirm all tickets from develop are included
 
+9. **Remind user to update Jira Release**
+   - Inform the user that they need to ensure the corresponding Release version `X.Y.Z` exists in Jira and that all tickets are associated with it
+   - List all ticket IDs that should be in the release (from step 6)
+   - Link to the Jira releases page: https://stoy.atlassian.net/projects/MOC/versions
+
 ## Example Commands
 
 ```bash

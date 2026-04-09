@@ -5,143 +5,166 @@ description: Deploy the app to Vercel following the project's SDLC process — r
 
 # Deploy App
 
-Deploy the Mockingbird app to Vercel following the SDLC process: run migrations, push the branch to trigger an auto-deploy, then monitor.
+> **Source of truth**: `SDLC.md` in the repo root. Follow it exactly. This skill is an executor — it parses the argument and runs the SDLC steps in order.
 
-## Arguments
+## Step 1 — Parse argument
 
-- `prod` — promote `develop → main` and deploy to **production** (`mockingbird.club`)
-- `preview` — deploy `develop` to **pre-production** (`mockingbird.chrisstoy.com`)
-
-## Instructions
-
-### 1. Parse the argument
-
-Read the argument passed by the user (`prod` or `preview`). If missing or invalid, stop:
+Accept `preview` or `prod` from the user. If missing or invalid, stop and print:
 > Usage: `/deploy-app prod` or `/deploy-app preview`
 
-| Argument  | Branch operation                  | Vercel environment | Target URL                       |
-|-----------|-----------------------------------|--------------------|----------------------------------|
-| `preview` | push `develop`                    | preview            | `mockingbird.chrisstoy.com`      |
-| `prod`    | merge `develop → main`, push `main` | production       | `mockingbird.club`               |
+| Argument  | Vercel environment | Target URL                       | Branch op                     |
+|-----------|--------------------|----------------------------------|-------------------------------|
+| `preview` | preview            | `mockingbird.chrisstoy.com`      | push `develop`                |
+| `prod`    | production         | `mockingbird.club`               | merge `develop → main`        |
 
-### 2. Verify branch and repo state
+## Step 2 — Verify repo state
 
 ```bash
 git branch --show-current
 git status --short
 ```
 
-- For `preview`: must be on `develop`. If not, stop and tell the user.
-- For `prod`: must be on `develop` (the merge to `main` happens in step 5). If not, stop.
-- If there are uncommitted changes, warn and ask whether to proceed.
+- Must be on `develop` for both targets. Stop if not.
+- If uncommitted changes exist, warn the user and ask whether to proceed.
+- Run lint and tests; stop if either fails:
+  ```bash
+  nx run mockingbird:lint
+  nx run mockingbird:test
+  ```
 
-### 3. Verify prerequisites
+## Step 3 — Verify Vercel auth
 
 ```bash
 vercel whoami
 ```
 
-If not authenticated, tell the user to run `vercel login`. The project must already be linked (`vercel link`).
+Stop if not authenticated; tell the user to run `vercel login`.
 
-### 4. Run database migrations
+## Step 4 — Bump version (`prod` only)
 
-Pull the `DATABASE_URL` for the target environment and apply pending migrations. Never use `migrate dev` outside of local development.
+First, pull the latest develop to ensure version bump is on current state:
+```bash
+git pull origin develop
+```
+
+Run the `bump-version` skill to update `version.json` and `CHANGELOG.md`:
+
+```
+/bump-version
+```
+
+After the skill completes, commit, tag, and push develop:
+```bash
+git add apps/mockingbird/version.json CHANGELOG.md
+git commit -m "chore: bump version to X.Y.Z"
+git tag vX.Y.Z
+git push origin develop
+git push origin vX.Y.Z
+```
+
+Skip this step for `preview` deploys.
+
+## Step 5 — Enable maintenance mode
 
 ```bash
-vercel env pull /tmp/deploy-env --environment=<environment>
+vercel env rm MAINTENANCE_MODE <preview|production> --yes 2>/dev/null
+echo "true" | vercel env add MAINTENANCE_MODE <preview|production>
+```
+
+## Step 6 — Run DB migrations
+
+Follow the **Database Migrations** section of `SDLC.md`. Pull the URL from Vercel and apply pending migrations using `prisma migrate deploy` (never `migrate dev`):
+
+```bash
+vercel env pull /tmp/deploy-env --environment=<preview|production>
 DATABASE_URL=$(grep '^DATABASE_URL=' /tmp/deploy-env | cut -d= -f2- | tr -d '"') \
   npx prisma migrate deploy --schema=apps/mockingbird/prisma/schema.prisma
 rm /tmp/deploy-env
 ```
 
-- Use `<environment>` = `preview` or `production` to match the argument.
-- If `P3005` error appears ("database schema is not empty"), the migrations table is missing. Baseline and retry:
-  ```bash
-  DATABASE_URL=<value> npx prisma migrate resolve --applied 0_init
-  # then re-run migrate deploy
-  ```
-- Report how many migrations were applied (or confirm "no pending migrations").
+Report how many migrations were applied, or confirm none were pending.
 
-> Migrations run against the live database — double-check `DATABASE_URL` before proceeding on `prod`.
+## Step 7 — Push branch (triggers auto-deploy)
 
-### 5. Push the branch (triggers auto-deploy)
+Follow the **Deployment** section of `SDLC.md`.
 
-Vercel auto-deploys when the mapped branch is pushed. This is the preferred deploy path.
-
-**For `preview`:**
+**preview:**
 ```bash
+git pull origin develop
 git push origin develop
 ```
 
-**For `prod`:**
+**prod:**
 ```bash
+git pull origin develop
 git checkout main
 git pull origin main
 git merge develop
 git push origin main
-git checkout develop   # return to develop
+git checkout develop
 ```
 
-### 6. Monitor the deployment
+If `git push` reports "Everything up-to-date" and no auto-deploy triggers, fall back to a manual deploy:
+```bash
+vercel deploy          # preview
+vercel deploy --prod   # prod
+```
+
+## Step 8 — Monitor
 
 ```bash
-vercel list            # find the deployment URL
+vercel list
 vercel logs <deployment-url> --follow
 ```
 
-Watch for build errors. The Vercel build runs `npx nx run mockingbird:build-vercel` internally (configured in `vercel.json`), which chains: `prisma-generate → update-build-date → build`.
+The Vercel build runs `nx run mockingbird:build-vercel` (chains: `prisma-generate → update-build-date → build`). Watch for errors and report them.
 
-If auto-deploy didn't trigger (e.g., no new commits), fall back to a manual deploy:
+## Step 9 — Report result
+
+On success report:
+- Deployment URL
+- Target environment URL
+- Migrations applied (count or "none pending")
+- Any non-fatal warnings
+
+On failure report the error and which step failed.
+
+## Step 10 — Disable maintenance mode
+
 ```bash
-# preview
-vercel deploy
-# prod
-vercel deploy --prod
+vercel env rm MAINTENANCE_MODE <preview|production> --yes
+echo "false" | vercel env add MAINTENANCE_MODE <preview|production>
 ```
 
-### 7. Report result
+## Step 11 — Post-deploy
 
-On success, output:
-- Deployment URL
-- Target environment URL (`mockingbird.chrisstoy.com` or `mockingbird.club`)
-- Number of migrations applied
-- Any non-fatal build warnings
-
-On failure, output the error and the step that failed.
-
-## Post-deploy verification
-
-After `prod`, remind the user to run the smoke test:
-- App loads at `mockingbird.club` without errors
-- Sign-in works (credentials + OAuth)
-- Feed loads and displays posts
-- Create a post (text + image upload)
-- Friend request flow works
-- Admin panel accessible at `/admin`
-- Check Vercel function logs for unexpected errors
-
-For `preview`, E2E tests should pass before promoting to production:
+**preview** — remind the user to run E2E tests before promoting to prod:
 ```bash
 PLAYWRIGHT_BASE_URL=https://mockingbird.chrisstoy.com nx run mockingbird-e2e:e2e
 ```
 
+**prod** — E2E tests against pre-prod must pass before this step is considered complete. If not already run, stop and run them now:
+```bash
+PLAYWRIGHT_BASE_URL=https://mockingbird.chrisstoy.com nx run mockingbird-e2e:e2e
+```
+Do not proceed past this point if E2E tests fail.
+
+Then remind the user to run the smoke test checklist from `SDLC.md`:
+- App loads at `mockingbird.club`
+- Sign-in (credentials + OAuth)
+- Feed loads and displays posts
+- Create a post (text + image upload)
+- Friend request flow
+- Admin panel at `/admin`
+- Check Vercel function logs for errors
+
 ## Rollback
 
-If a production deploy needs to be reverted:
-
+See the **Rollback** section of `SDLC.md`. Short version:
 ```bash
-# Option 1: Vercel rollback (fast, no code change)
-vercel rollback [deployment-id-or-url]
-
-# Option 2: Git revert (if code change is needed)
-git revert -m 1 <merge-commit-sha>
-git push origin main
+vercel rollback [deployment-id]          # fast, no code change
+git revert -m 1 <merge-sha> && git push origin main  # git-based
 ```
 
-> If a migration was applied with breaking schema changes, a DB rollback must be coordinated separately — Prisma does not auto-rollback migrations.
-
-## Notes
-
-- `vercel.json` must have `"outputDirectory": "apps/mockingbird/.next"` — if the build succeeds but Vercel errors with "output directory not found", restore this field.
-- Direct commits to `main` are not allowed except for hotfixes. The `prod` argument always merges from `develop`.
-- E2E tests on pre-prod must pass before promoting to production.
+> If maintenance mode is active during a rollback, disable it after the rollback completes.
+> Migration rollbacks must be handled separately — Prisma does not auto-rollback.

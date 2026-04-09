@@ -5,7 +5,15 @@
       "Skill(update-config)",
       "Skill(update-config:*)",
       "Edit(/.claude/skills/deploy-app/**)",
-      "Bash(npx nx:*)"
+      "Bash(npx nx:*)",
+      "Bash(git push:*)",
+      "mcp__atlassian__getTeamworkGraphObject",
+      "Read(//Users/cstoy/.claude/**)",
+      "Read(//Users/cstoy/**)",
+      "Bash(claude mcp:*)",
+      "mcp__atlassian__getJiraIssue",
+      "mcp__atlassian__getAccessibleAtlassianResources",
+      "Edit(/.claude/skills/bump-version/**)"
     ],
     "additionalDirectories": [
       "/private/tmp"

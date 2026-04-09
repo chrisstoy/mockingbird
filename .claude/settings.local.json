@@ -95,7 +95,8 @@
       "mcp__stitch__get_screen",
       "mcp__stitch__get_project",
       "mcp__stitch__list_screens",
-      "mcp__stitch__list_design_systems"
+      "mcp__stitch__list_design_systems",
+      "mcp__atlassian__getTeamworkGraphContext"
     ],
     "deny": [],
     "ask": []
