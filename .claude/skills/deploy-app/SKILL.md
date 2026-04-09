@@ -114,8 +114,10 @@ vercel deploy --prod   # prod
 
 ```bash
 vercel list
-vercel logs <deployment-url> --follow
+vercel logs <deployment-url> --follow 2>&1
 ```
+
+Note: `vercel list` does not support a `--limit` flag — use `| head -N` to truncate output.
 
 The Vercel build runs `nx run mockingbird:build-vercel` (chains: `prisma-generate → update-build-date → build`). Watch for errors and report them.
 
