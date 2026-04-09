@@ -13,7 +13,11 @@
       "Bash(claude mcp:*)",
       "mcp__atlassian__getJiraIssue",
       "mcp__atlassian__getAccessibleAtlassianResources",
-      "Edit(/.claude/skills/bump-version/**)"
+      "Edit(/.claude/skills/bump-version/**)",
+      "Bash(git pull:*)",
+      "Bash(git tag:*)",
+      "Bash(git checkout:*)",
+      "Bash(git merge:*)"
     ],
     "additionalDirectories": [
       "/private/tmp"
