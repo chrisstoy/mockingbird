@@ -1,3 +1,9 @@
+# Release notes - Mockingbird - 0.4.0
+
+### Task
+
+- [MOC-81](https://stoy.atlassian.net/browse/MOC-81) Refresh UI
+
 # Release notes - Mockingbird - 0.3.0
 
 ### Task
