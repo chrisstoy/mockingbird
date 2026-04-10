@@ -54,6 +54,23 @@ export async function acceptFriendRequest(userId: UserId, friendId: UserId) {
   }
 }
 
+export async function rejectFriendRequest(userId: UserId, friendId: UserId) {
+  try {
+    const response = await fetchFromServer(
+      `/users/${userId}/friends/${friendId}`,
+      {
+        method: 'POST',
+        body: JSON.stringify({ accepted: false }),
+      }
+    );
+    const rawData = await response.json();
+    return rawData;
+  } catch (error) {
+    console.error(error);
+    return undefined;
+  }
+}
+
 export async function removeFriend(userId: UserId, friendId: UserId) {
   try {
     const response = await fetchFromServer(
