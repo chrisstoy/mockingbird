@@ -1,6 +1,7 @@
 'use client';
 import {
   acceptFriendRequest,
+  rejectFriendRequest,
   removeFriend,
   requestFriend,
 } from '@/_apiServices/friends';
@@ -56,7 +57,7 @@ export function FriendCard({ friend, friendStatus, onFriendStatusChange }: Props
 
   const handleRejectFriendRequest = useCallback(async () => {
     if (!userId) return;
-    await removeFriend(userId, friendId);
+    await rejectFriendRequest(userId, friendId);
     onFriendStatusChange(friendId, 'none');
     router.refresh();
   }, [userId, friendId, onFriendStatusChange, router]);
