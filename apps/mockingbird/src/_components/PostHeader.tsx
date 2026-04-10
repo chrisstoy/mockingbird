@@ -1,6 +1,7 @@
 import { toLocalTime } from '@/_apiServices/toLocalTime';
-import { Audience, PostId } from '@/_types';
+import { Audience, FriendStatus, PostId, UserId } from '@/_types';
 import { toCapitalized } from '@/_utils/toCapitalized';
+import { FriendAffordance } from './FriendAffordance.client';
 import { PostMenu } from './PostMenu.client';
 
 type Props = {
@@ -9,6 +10,8 @@ type Props = {
   name: string;
   postId: PostId;
 
+  authorId?: UserId;
+  friendStatus?: FriendStatus;
   isComment?: boolean;
   showOptionsMenu?: boolean;
   small?: boolean;
@@ -25,6 +28,8 @@ export function PostHeader({
   name,
   postId,
   audience,
+  authorId,
+  friendStatus,
 
   isComment = false,
   showOptionsMenu = false,
@@ -37,8 +42,13 @@ export function PostHeader({
           <img src={image} alt={name} className="w-full h-full object-cover" />
         </div>
         <div className="flex flex-col min-w-0 justify-center">
-          <div className={`font-bold text-base-content truncate ${small ? 'text-sm' : 'text-sm'}`}>
-            {name}
+          <div className="flex items-center gap-2">
+            <span className={`font-bold text-base-content truncate ${small ? 'text-sm' : 'text-sm'}`}>
+              {name}
+            </span>
+            {authorId && friendStatus !== undefined && (
+              <FriendAffordance authorId={authorId} initialStatus={friendStatus} />
+            )}
           </div>
           <div className="flex items-center gap-1.5 text-xs text-base-content/40">
             <span>{nameToHandle(name)}</span>

@@ -1,6 +1,7 @@
 import { prisma } from '@/_server/db';
 import baseLogger from '@/_server/logger';
 import {
+  FriendStatus,
   SimpleUserInfo,
   SimpleUserInfoSchema,
   UserId,
@@ -35,7 +36,7 @@ export async function requestFriendshipBetweenUsers(
     }
 
     return tx.friends.create({
-      data: { userId, friendId, accepted: false },
+      data: { userId, friendId, status: 'PENDING' },
     });
   });
 }
@@ -48,18 +49,12 @@ export async function updateFriendshipBetweenUsers(
   const result = await prisma.friends.updateMany({
     where: {
       OR: [
-        {
-          userId,
-          friendId,
-        },
-        {
-          userId: friendId,
-          friendId: userId,
-        },
+        { userId, friendId },
+        { userId: friendId, friendId: userId },
       ],
     },
     data: {
-      accepted,
+      status: accepted ? 'ACCEPTED' : 'REJECTED',
     },
   });
   return result.count;
@@ -72,53 +67,40 @@ export async function deleteFriendshipBetweenUsers(
   const result = await prisma.friends.deleteMany({
     where: {
       OR: [
-        {
-          userId,
-          friendId,
-        },
-        {
-          userId: friendId,
-          friendId: userId,
-        },
+        { userId, friendId },
+        { userId: friendId, friendId: userId },
       ],
     },
   });
   return result.count;
 }
 
-const AcceptedFriendsSchema = z.array(
+const FriendRecordSchema = z.array(
   z.object({
     userId: UserIdSchema.readonly(),
     friendId: UserIdSchema.readonly(),
-    accepted: z.boolean().readonly(),
+    status: z.enum(['PENDING', 'ACCEPTED', 'REJECTED']).readonly(),
   })
 );
 
 export async function getAcceptedFriendsForUser(userId: UserId) {
   logger.info(`Getting accepted friends for userId: ${userId}`);
 
-  const allFriends = AcceptedFriendsSchema.parse(
+  const allFriends = FriendRecordSchema.parse(
     await prisma.friends.findMany({
       where: {
-        OR: [
-          {
-            userId,
-          },
-          {
-            friendId: userId,
-          },
-        ],
+        OR: [{ userId }, { friendId: userId }],
       },
       select: {
         userId: true,
         friendId: true,
-        accepted: true,
+        status: true,
       },
     })
   );
 
   const acceptedFriendIds = allFriends
-    .filter((friend) => friend.accepted)
+    .filter((friend) => friend.status === 'ACCEPTED')
     .map((friend) =>
       friend.userId === userId ? friend.friendId : friend.userId
     );
@@ -128,7 +110,6 @@ export async function getAcceptedFriendsForUser(userId: UserId) {
 
 /**
  * Return set of friends, pending requests, and friend requests for the given user
- * @param userId
  */
 export async function getFriendsForUser(userId: UserId) {
   logger.info(`Getting friends for userId: ${userId}`);
@@ -147,24 +128,24 @@ export async function getFriendsForUser(userId: UserId) {
     select: {
       userId: true,
       friendId: true,
-      accepted: true,
+      status: true,
     },
   });
 
-  const allFriends = AcceptedFriendsSchema.parse(rawData);
+  const allFriends = FriendRecordSchema.parse(rawData);
 
   const acceptedFriendIds = allFriends
-    .filter((friend) => friend.accepted)
+    .filter((friend) => friend.status === 'ACCEPTED')
     .map((friend) =>
       friend.userId === userId ? friend.friendId : friend.userId
     );
 
   const pendingFriendIds = allFriends
-    .filter((friend) => !friend.accepted && friend.userId === userId)
+    .filter((friend) => friend.status === 'PENDING' && friend.userId === userId)
     .map(({ friendId }) => friendId);
 
   const friendRequestIds = allFriends
-    .filter((friend) => !friend.accepted && friend.friendId === userId)
+    .filter((friend) => friend.status === 'PENDING' && friend.friendId === userId)
     .map(({ userId }) => userId);
 
   const [rawFriends, rawPendingFriends, rawFriendRequests] =
@@ -221,6 +202,40 @@ export async function getFriendsForUser(userId: UserId) {
 }
 
 /**
+ * Return the friend status between two users from currentUserId's perspective.
+ * Used server-side in post/comment headers to determine what affordance to show.
+ *
+ * Returns:
+ * - 'friend'    — accepted friendship (either direction)
+ * - 'pending'   — currentUser sent a request, awaiting response
+ * - 'requested' — authorId sent a request to currentUser
+ * - 'rejected'  — currentUser's request was rejected by authorId
+ * - 'none'      — no relationship, or currentUser rejected authorId (they can re-request)
+ */
+export async function getFriendStatusBetweenUsers(
+  currentUserId: UserId,
+  authorId: UserId
+): Promise<FriendStatus> {
+  const record = await prisma.friends.findFirst({
+    where: {
+      OR: [
+        { userId: currentUserId, friendId: authorId },
+        { userId: authorId, friendId: currentUserId },
+      ],
+    },
+    select: { userId: true, status: true },
+  });
+
+  if (!record) return 'none';
+  if (record.status === 'ACCEPTED') return 'friend';
+  if (record.status === 'REJECTED') {
+    return record.userId === currentUserId ? 'rejected' : 'none';
+  }
+  // PENDING
+  return record.userId === currentUserId ? 'pending' : 'requested';
+}
+
+/**
  * Return set of users that the given user has sent friend requests to
  * and who have requested the user to be their friend
  */
@@ -233,13 +248,8 @@ export async function getFriendRequestsForUser(userId: UserId) {
 
   const pendingFriendRequestIds = PendingFriendRequestIdsSchema.parse(
     await prisma.friends.findMany({
-      where: {
-        userId,
-        accepted: false,
-      },
-      select: {
-        friendId: true,
-      },
+      where: { userId, status: 'PENDING' },
+      select: { friendId: true },
     })
   );
 
@@ -250,11 +260,7 @@ export async function getFriendRequestsForUser(userId: UserId) {
           in: pendingFriendRequestIds.map(({ friendId }) => friendId),
         },
       },
-      select: {
-        id: true,
-        name: true,
-        image: true,
-      },
+      select: { id: true, name: true, image: true },
     })
   );
 
@@ -266,18 +272,9 @@ export async function getFriendRequestsForUser(userId: UserId) {
 
   const requestedToBeMyFriend = RequestedToBeMyFriendSchema.parse(
     await prisma.friends.findMany({
-      where: {
-        friendId: userId,
-        accepted: false,
-      },
+      where: { friendId: userId, status: 'PENDING' },
       select: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            image: true,
-          },
-        },
+        user: { select: { id: true, name: true, image: true } },
       },
     })
   );

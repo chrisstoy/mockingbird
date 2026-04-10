@@ -1,9 +1,10 @@
+import { getFriendStatusBetweenUsers } from '@/_server/friendsService';
 import {
   getCommentsForPost,
   getNumberOfCommentsForPost,
 } from '@/_server/postsService';
 import { getUserById } from '@/_server/usersService';
-import { Post } from '@/_types';
+import { Post, UserIdSchema } from '@/_types';
 import { auth } from '@/app/auth';
 import { GENERIC_USER_IMAGE_URL } from '@/constants';
 import { TextDisplay } from '@mockingbird/stoyponents';
@@ -32,7 +33,14 @@ export async function SummaryPost({
   const userName = poster?.name ?? 'Unknown';
   const imageSrc = poster?.image ?? GENERIC_USER_IMAGE_URL;
 
-  const showOptionsMenu = post.posterId === session?.user?.id;
+  const { data: currentUserId } = UserIdSchema.safeParse(session?.user?.id);
+  const isSelf = currentUserId === post.posterId;
+  const showOptionsMenu = isSelf;
+
+  const friendStatus =
+    currentUserId && !isSelf
+      ? await getFriendStatusBetweenUsers(currentUserId, post.posterId)
+      : undefined;
 
   const comments =
     (await getCommentsForPost(post.id, showFirstComment ? 1 : undefined)) ?? [];
@@ -49,11 +57,16 @@ export async function SummaryPost({
           postId={post.id}
           showOptionsMenu={showOptionsMenu}
           audience={post.audience}
+          authorId={isSelf ? undefined : post.posterId}
+          friendStatus={friendStatus}
         />
       </div>
 
       {linkToDetails ? (
-        <Link href={`/post/${post.id}`} className="block hover:bg-base-50 transition-colors">
+        <Link
+          href={`/post/${post.id}`}
+          className="block hover:bg-base-50 transition-colors"
+        >
           <div className="px-4 pb-3">
             <ImageDisplay imageId={post.imageId} />
             <TextDisplay data={post.content} />

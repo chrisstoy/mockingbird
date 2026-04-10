@@ -77,8 +77,10 @@ The API is a Next.js App Router API layer at `src/app/api/`. All business logic 
 
 ### Friends
 - `Friends.userId` = requester, `Friends.friendId` = target (asymmetric schema)
-- `accepted: false` = pending; `accepted: true` = established friendship
+- `Friends.status` is a `FriendRequestStatus` enum: `PENDING` / `ACCEPTED` / `REJECTED` (replaced old `accepted` boolean)
+- Rejected records persist in the DB (not deleted on rejection)
 - Always query bidirectionally: `OR [{ userId: A, friendId: B }, { userId: B, friendId: A }]`
+- `getFriendStatusBetweenUsers(currentUserId: UserId, authorId: UserId): Promise<FriendStatus | undefined>` — returns the friendship status from the current user's perspective, or `undefined` if no record exists. Defined in `src/_server/friendsService.ts`.
 
 ### User Lifecycle
 1. `POST /api/users` → status `PENDING_EMAIL_VERIFICATION`
