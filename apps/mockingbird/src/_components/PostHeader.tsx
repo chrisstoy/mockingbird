@@ -46,7 +46,7 @@ export function PostHeader({
             <span className={`font-bold text-base-content truncate ${small ? 'text-sm' : 'text-sm'}`}>
               {name}
             </span>
-            {authorId && friendStatus && (
+            {authorId && friendStatus !== undefined && (
               <FriendAffordance authorId={authorId} initialStatus={friendStatus} />
             )}
           </div>

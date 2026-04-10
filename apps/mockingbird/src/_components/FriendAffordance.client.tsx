@@ -25,13 +25,11 @@ export function FriendAffordance({ authorId, initialStatus }: Props) {
           if (!user?.id || loading) return;
           setLoading(true);
           setStatus('pending');
-          try {
-            await requestFriend(user.id, authorId);
-          } catch {
+          const result = await requestFriend(user.id, authorId);
+          if (result === undefined) {
             setStatus('none');
-          } finally {
-            setLoading(false);
           }
+          setLoading(false);
         }}
         className="text-xs text-primary hover:underline font-medium shrink-0 disabled:opacity-50"
       >

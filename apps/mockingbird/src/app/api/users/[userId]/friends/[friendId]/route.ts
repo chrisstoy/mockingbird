@@ -25,7 +25,7 @@ const ParamsSchema = z.object({
 });
 
 /**
- * Accept/paused a friend
+ * Accept or reject a friend request
  */
 export async function POST(req: NextRequest, context: RouteContext) {
   try {
