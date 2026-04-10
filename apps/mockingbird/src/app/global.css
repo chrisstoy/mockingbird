@@ -46,27 +46,44 @@
   name: "mockingbird-dark";
   color-scheme: dark;
 
-  /* Warm orange primary preserved — pops against cool dark surfaces */
-  --color-primary: #F49D37;
-  --color-primary-content: #1a0d00;
-  --color-secondary: #7c848d;
-  --color-secondary-content: #0f1113;
-  --color-accent: #37bdf1;
-  --color-accent-content: #001d2b;
-  --color-neutral: #d4d6da;
-  --color-neutral-content: #1a1d20;
-  --color-base-100: #0f1113;
-  --color-base-200: #1a1d20;
-  --color-base-300: #242729;
-  --color-base-content: #e8eaed;
-  --color-info: #37bdf1;
-  --color-info-content: #001d2b;
-  --color-success: #2fd479;
-  --color-success-content: #001a0d;
-  --color-warning: #f0a060;
-  --color-warning-content: #1a0800;
-  --color-error: #f47070;
-  --color-error-content: #1a0000;
+  /* Refined editorial darkness — warm charcoal surfaces, amber-lit details */
+
+  /* Primary: warm amber-orange — the brand flame */
+  --color-primary: #f5a23e;
+  --color-primary-content: #1c0900;
+
+  /* Secondary: warm slate — readable but receded */
+  --color-secondary: #8a9199;
+  --color-secondary-content: #0e1012;
+
+  /* Accent: sky blue — precise and cool against warm surfaces */
+  --color-accent: #4ec4f5;
+  --color-accent-content: #00222f;
+
+  /* Neutral: light warm gray for nav/header surfaces */
+  --color-neutral: #c8cdd3;
+  --color-neutral-content: #181b1e;
+
+  /* Surface hierarchy: meaningful separation between elevation levels */
+  /* base-100: deepest — page background, like warm charcoal paper */
+  --color-base-100: #141618;
+  /* base-200: elevated — cards, sidebars, panels */
+  --color-base-200: #1e2124;
+  /* base-300: raised — input backgrounds, hover states, borders */
+  --color-base-300: #2a2e32;
+
+  /* Content: high contrast primary text, clear secondary/muted tiers */
+  --color-base-content: #eceef1;
+
+  /* Semantic colors — vivid enough to pop on dark surfaces */
+  --color-info: #4ec4f5;
+  --color-info-content: #001e2e;
+  --color-success: #38d978;
+  --color-success-content: #001c0e;
+  --color-warning: #f5b554;
+  --color-warning-content: #1c0a00;
+  --color-error: #f07070;
+  --color-error-content: #1c0000;
 
   --radius-selector: 1.5rem;
   --radius-field: 0.25rem;
@@ -76,6 +93,142 @@
   --card-p: 1.25rem;
   --depth: 0;
 }
+
+/* ── Dark Mode Refinements ─────────────────────────────────────────────── */
+
+[data-theme="mockingbird-dark"] {
+  /* CSS custom properties for dark mode amber palette */
+  --dk-amber: #f5a23e;           /* primary amber */
+  --dk-surface-1: #141618;       /* page background */
+  --dk-surface-2: #1e2124;       /* cards, panels */
+  --dk-surface-3: #2a2e32;       /* inputs, hover */
+  --dk-surface-deep: #0e1012;    /* navbar, deepest */
+  --dk-content: #eceef1;         /* primary text */
+
+  /* Input borders: amber-tinted so fields pop off the dark page */
+  .input,
+  .textarea,
+  .select {
+    background-color: var(--dk-surface-3);
+    border-color: rgba(245, 162, 62, 0.22);
+    color: var(--dk-content);
+    box-shadow: inset 0 1px 0 rgba(245, 162, 62, 0.05);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+    &::placeholder {
+      color: rgba(236, 238, 241, 0.38);
+    }
+
+    &:hover {
+      border-color: rgba(245, 162, 62, 0.38);
+    }
+
+    &:focus,
+    &:focus-within {
+      border-color: rgba(245, 162, 62, 0.65);
+      box-shadow: 0 0 0 3px rgba(245, 162, 62, 0.12),
+                  inset 0 1px 0 rgba(245, 162, 62, 0.06);
+      outline: none;
+    }
+  }
+
+  /* Cards: visible border to define edges against page background */
+  .card {
+    border: 1px solid rgba(236, 238, 241, 0.08);
+  }
+
+  /* Dividers: subtle warm tint */
+  .divider::before,
+  .divider::after {
+    background-color: rgba(236, 238, 241, 0.1);
+  }
+
+  /* Dropdowns / menus: elevated with shadow */
+  .dropdown-content,
+  .menu {
+    background-color: var(--dk-surface-2);
+    border: 1px solid rgba(236, 238, 241, 0.1);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5),
+                0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Modal: elevated surface, deep shadow */
+  .modal-box {
+    background-color: var(--dk-surface-2);
+    border: 1px solid rgba(236, 238, 241, 0.1);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  }
+
+  /* Navbar: deepest layer — ground surface */
+  .navbar {
+    background-color: var(--dk-surface-deep) !important;
+    border-bottom: 1px solid rgba(236, 238, 241, 0.08);
+  }
+
+  /* Badges: subtle border for definition */
+  .badge {
+    border-color: rgba(236, 238, 241, 0.15);
+  }
+
+  /* Tables: readable alternating rows */
+  .table tr:nth-child(even) {
+    background-color: rgba(30, 33, 36, 0.5);
+  }
+
+  .table th {
+    background-color: var(--dk-surface-2);
+    border-bottom: 1px solid rgba(236, 238, 241, 0.1);
+    color: rgba(236, 238, 241, 0.6);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+  }
+
+  /* Skeleton loaders: warm shimmer */
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      #2a2e32 25%,
+      #33383d 50%,
+      #2a2e32 75%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.4s ease-in-out infinite;
+  }
+
+  /* Focus-visible: amber glow for keyboard navigation */
+  *:focus-visible {
+    outline: 2px solid rgba(245, 162, 62, 0.75);
+    outline-offset: 2px;
+  }
+
+  /* Scrollbar: slim, dark-appropriate styling */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--dk-surface-1);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(236, 238, 241, 0.18);
+    border-radius: 3px;
+
+    &:hover {
+      background: rgba(236, 238, 241, 0.28);
+    }
+  }
+}
+
+@keyframes skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Shared ────────────────────────────────────────────────────────────── */
 
 .btn:not(.btn-xs):not(.btn-sm):not(.btn-lg):not(.btn-xl) {
   --size: 3rem;
