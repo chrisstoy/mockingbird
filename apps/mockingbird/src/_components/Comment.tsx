@@ -1,4 +1,5 @@
 import { sessionUser } from '@/_hooks/sessionUser';
+import { getFriendStatusBetweenUsers } from '@/_server/friendsService';
 import { getUserById } from '@/_server/usersService';
 import { Post } from '@/_types';
 import { GENERIC_USER_IMAGE_URL } from '@/constants';
@@ -32,6 +33,12 @@ export async function Comment({
   const showOptionsMenu =
     comment.posterId === user.id || originalPost.posterId === user.id;
 
+  const isSelf = comment.posterId === user.id;
+
+  const friendStatus = !isSelf
+    ? await getFriendStatusBetweenUsers(user.id, comment.posterId)
+    : undefined;
+
   const renderContent = () => (
     <>
       <PostHeader
@@ -42,6 +49,8 @@ export async function Comment({
         small
         isComment
         showOptionsMenu={showOptionsMenu}
+        authorId={isSelf ? undefined : comment.posterId}
+        friendStatus={friendStatus}
       ></PostHeader>
       <div className="text-sm bg-transparent rounded-lg my-1">
         <ImageDisplay imageId={comment.imageId}></ImageDisplay>

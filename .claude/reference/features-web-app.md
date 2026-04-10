@@ -70,6 +70,7 @@ Key layout components in `src/_components/`:
 
 ## Key UI Patterns
 
+- **FriendAffordance** (`src/_components/FriendAffordance.client.tsx`) — inline client component rendered inside `PostHeader` when `authorId` and `friendStatus` props are provided. Shows "Add Friend" / "Pending" / "Friends" / "Rejected" state and lets the current user send or manage a friend request directly from the post/comment author header. Not shown on the current user's own posts or comments (`authorId` is omitted when `isSelf`).
 - Authenticated pages are protected by `middleware.ts` — unauthenticated users are redirected to `/auth/signin?callbackUrl=`
 - Suspended users are redirected to `/account/suspended` on every request
 - Users without accepted TOS are redirected to `/auth/tos` on every request

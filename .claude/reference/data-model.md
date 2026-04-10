@@ -52,9 +52,11 @@ Relations: `accounts Account[]`, `sessions Session[]`, `posts Post[]`, `friends 
 | `id` | String | No | `cuid()` | Primary key |
 | `userId` | String | No | — | FK → User.id (`onDelete: Cascade`); **the requester** |
 | `friendId` | String | No | — | The target user (no FK relation defined — raw string) |
-| `accepted` | Boolean | No | — | `false` = pending request; `true` = established friendship |
+| `status` | FriendRequestStatus | No | `PENDING` | Enum: `PENDING`, `ACCEPTED`, `REJECTED` |
 | `createdAt` | DateTime | No | `now()` | |
 | `updatedAt` | DateTime | No | `@updatedAt` | |
+
+**`FriendRequestStatus` enum**: `PENDING` = sent but not yet actioned; `ACCEPTED` = established friendship; `REJECTED` = declined. Rejected records **persist** in the DB (not deleted on rejection).
 
 **Key rule**: The `Friends` table is asymmetric — only the requester's `userId` has a Prisma relation. To find any friendship record between users A and B:
 ```ts
