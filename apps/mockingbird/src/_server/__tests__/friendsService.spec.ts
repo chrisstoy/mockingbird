@@ -4,6 +4,7 @@ jest.mock('@/_server/db', () => {
       friends: {
         create: jest.fn(),
         findFirst: jest.fn(),
+        findMany: jest.fn(),
       },
       $transaction: jest.fn((fn) =>
         fn({
@@ -33,13 +34,15 @@ const friendsCreateMock = jest.mocked(prisma.friends.create);
 const friendsFindFirstMock = jest.mocked(prisma.friends.findFirst);
 
 describe('requestFriendshipBetweenUsers', () => {
-  it('should return requested friendship', async () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  it('should return requested friendship with PENDING status', async () => {
     friendsFindFirstMock.mockResolvedValue(null);
     friendsCreateMock.mockResolvedValue({
       id: 'cm1750szo00001ocb5aog8ley',
       userId: 'cm1750szo00001ocb5aog8ley',
       friendId: 'cm1srlg8f000014ng4h8nudwi',
-      accepted: false,
+      status: 'PENDING',
     });
 
     const result = await requestFriendshipBetweenUsers(
@@ -51,7 +54,27 @@ describe('requestFriendshipBetweenUsers', () => {
       id: 'cm1750szo00001ocb5aog8ley',
       userId: 'cm1750szo00001ocb5aog8ley',
       friendId: 'cm1srlg8f000014ng4h8nudwi',
-      accepted: false,
+      status: 'PENDING',
     });
+    expect(friendsCreateMock).toHaveBeenCalledWith({
+      data: { userId: 'cm1750szo00001ocb5aog8ley', friendId: 'cm1srlg8f000014ng4h8nudwi', status: 'PENDING' },
+    });
+  });
+
+  it('should return null if friendship already exists', async () => {
+    friendsFindFirstMock.mockResolvedValue({
+      id: 'existing',
+      userId: 'cm1750szo00001ocb5aog8ley',
+      friendId: 'cm1srlg8f000014ng4h8nudwi',
+      status: 'PENDING',
+    });
+
+    const result = await requestFriendshipBetweenUsers(
+      'cm1750szo00001ocb5aog8ley',
+      'cm1srlg8f000014ng4h8nudwi'
+    );
+
+    expect(result).toBeNull();
+    expect(friendsCreateMock).not.toHaveBeenCalled();
   });
 });
