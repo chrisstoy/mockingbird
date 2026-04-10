@@ -28,7 +28,8 @@ jest.mock('@/_server/logger', () => {
 
 // @ts-expect-error - expect import error message
 import { prisma } from '@/_server/db';
-import { requestFriendshipBetweenUsers } from '../friendsService';
+import { requestFriendshipBetweenUsers, getFriendStatusBetweenUsers } from '../friendsService';
+import { UserId } from '@/_types';
 
 const friendsCreateMock = jest.mocked(prisma.friends.create);
 const friendsFindFirstMock = jest.mocked(prisma.friends.findFirst);
@@ -76,5 +77,42 @@ describe('requestFriendshipBetweenUsers', () => {
 
     expect(result).toBeNull();
     expect(friendsCreateMock).not.toHaveBeenCalled();
+  });
+});
+
+describe('getFriendStatusBetweenUsers', () => {
+  const ME = 'cm1750szo00001ocb5aog8ley' as UserId;
+  const THEM = 'cm1srlg8f000014ng4h8nudwi' as UserId;
+
+  beforeEach(() => jest.clearAllMocks());
+
+  it('returns none when no record exists', async () => {
+    friendsFindFirstMock.mockResolvedValue(null);
+    expect(await getFriendStatusBetweenUsers(ME, THEM)).toBe('none');
+  });
+
+  it('returns friend when ACCEPTED', async () => {
+    friendsFindFirstMock.mockResolvedValue({ userId: ME, friendId: THEM, status: 'ACCEPTED' });
+    expect(await getFriendStatusBetweenUsers(ME, THEM)).toBe('friend');
+  });
+
+  it('returns pending when I sent and status is PENDING', async () => {
+    friendsFindFirstMock.mockResolvedValue({ userId: ME, friendId: THEM, status: 'PENDING' });
+    expect(await getFriendStatusBetweenUsers(ME, THEM)).toBe('pending');
+  });
+
+  it('returns requested when they sent and status is PENDING', async () => {
+    friendsFindFirstMock.mockResolvedValue({ userId: THEM, friendId: ME, status: 'PENDING' });
+    expect(await getFriendStatusBetweenUsers(ME, THEM)).toBe('requested');
+  });
+
+  it('returns rejected when I sent and they rejected', async () => {
+    friendsFindFirstMock.mockResolvedValue({ userId: ME, friendId: THEM, status: 'REJECTED' });
+    expect(await getFriendStatusBetweenUsers(ME, THEM)).toBe('rejected');
+  });
+
+  it('returns none when they sent and I rejected (they can re-request)', async () => {
+    friendsFindFirstMock.mockResolvedValue({ userId: THEM, friendId: ME, status: 'REJECTED' });
+    expect(await getFriendStatusBetweenUsers(ME, THEM)).toBe('none');
   });
 });

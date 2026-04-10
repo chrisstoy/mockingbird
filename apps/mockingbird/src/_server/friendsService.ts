@@ -1,6 +1,7 @@
 import { prisma } from '@/_server/db';
 import baseLogger from '@/_server/logger';
 import {
+  FriendStatus,
   SimpleUserInfo,
   SimpleUserInfoSchema,
   UserId,
@@ -198,6 +199,40 @@ export async function getFriendsForUser(userId: UserId) {
     pendingFriends,
     friendRequests,
   };
+}
+
+/**
+ * Return the friend status between two users from currentUserId's perspective.
+ * Used server-side in post/comment headers to determine what affordance to show.
+ *
+ * Returns:
+ * - 'friend'    — accepted friendship (either direction)
+ * - 'pending'   — currentUser sent a request, awaiting response
+ * - 'requested' — authorId sent a request to currentUser
+ * - 'rejected'  — currentUser's request was rejected by authorId
+ * - 'none'      — no relationship, or currentUser rejected authorId (they can re-request)
+ */
+export async function getFriendStatusBetweenUsers(
+  currentUserId: UserId,
+  authorId: UserId
+): Promise<FriendStatus> {
+  const record = await prisma.friends.findFirst({
+    where: {
+      OR: [
+        { userId: currentUserId, friendId: authorId },
+        { userId: authorId, friendId: currentUserId },
+      ],
+    },
+    select: { userId: true, status: true },
+  });
+
+  if (!record) return 'none';
+  if (record.status === 'ACCEPTED') return 'friend';
+  if (record.status === 'REJECTED') {
+    return record.userId === currentUserId ? 'rejected' : 'none';
+  }
+  // PENDING
+  return record.userId === currentUserId ? 'pending' : 'requested';
 }
 
 /**
