@@ -39,7 +39,7 @@ export async function POST(req: NextRequest, context: RouteContext) {
     const data = await req.json();
     const { accepted } = AcceptFriendshipSchema.parse(data);
 
-    const recordsUpdated = await updateFriendshipBetweenUsers(userId, friendId);
+    const recordsUpdated = await updateFriendshipBetweenUsers(userId, friendId, accepted);
     if (recordsUpdated === 0) {
       throw new ResponseError(400, 'Friendship does not exist');
     }
