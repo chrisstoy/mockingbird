@@ -3,6 +3,7 @@ import { getNotificationCount } from '@/_server/notificationCount';
 import { GENERIC_USER_IMAGE_URL } from '@/constants';
 import Image from 'next/image';
 import Link from 'next/link';
+import { FeedbackButton } from './FeedbackButton.client';
 import { FeedSelector } from './FeedSelector.client';
 import { NotificationsAlert } from './NotificationsAlert.client';
 
@@ -27,6 +28,11 @@ export async function MobileHeader() {
           </span>
         </Link>
         <div className="flex items-center gap-0.5">
+          <FeedbackButton
+            userName={user?.name}
+            userEmail={user?.email}
+            userId={user?.id}
+          />
           <NotificationsAlert count={notificationCount} />
           {user && (
             <Link href="/profile" className="ml-1">
