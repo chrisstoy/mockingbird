@@ -14,16 +14,26 @@ export function FriendAffordance({ authorId, initialStatus }: Props) {
   const user = useSessionUser();
   const router = useRouter();
   const [status, setStatus] = useState<FriendStatus>(initialStatus);
+  const [loading, setLoading] = useState(false);
 
   if (status === 'none') {
     return (
       <button
+        type="button"
+        disabled={loading}
         onClick={async () => {
-          if (!user?.id) return;
-          await requestFriend(user.id, authorId);
+          if (!user?.id || loading) return;
+          setLoading(true);
           setStatus('pending');
+          try {
+            await requestFriend(user.id, authorId);
+          } catch {
+            setStatus('none');
+          } finally {
+            setLoading(false);
+          }
         }}
-        className="text-xs text-primary hover:underline font-medium shrink-0"
+        className="text-xs text-primary hover:underline font-medium shrink-0 disabled:opacity-50"
       >
         Add Friend
       </button>
@@ -33,6 +43,7 @@ export function FriendAffordance({ authorId, initialStatus }: Props) {
   if (status === 'pending') {
     return (
       <button
+        type="button"
         onClick={() => router.push('/friends')}
         className="text-xs text-base-content/40 hover:underline font-medium shrink-0"
       >
