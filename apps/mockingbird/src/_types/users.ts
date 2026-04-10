@@ -56,7 +56,7 @@ export const UserInfoSchema = SimpleUserInfoSchema.extend({
 });
 export type UserInfo = z.infer<typeof UserInfoSchema>;
 
-export type FriendStatus = 'friend' | 'pending' | 'requested' | 'none';
+export type FriendStatus = 'friend' | 'pending' | 'requested' | 'rejected' | 'none';
 
 export const FriendCollectionSchema = z.object({
   friends: z.array(SimpleUserInfoSchema),

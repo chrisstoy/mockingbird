@@ -1,6 +1,6 @@
 import { ZodError } from 'zod';
 import { UserIdSchema } from '../ids';
-import { EmailAddressSchema } from '../users';
+import { EmailAddressSchema, FriendStatus } from '../users';
 
 describe('UserIdSchema', () => {
   it('should parse a valid user id', () => {
@@ -128,5 +128,12 @@ describe('EmailAddressSchema', () => {
         },
       ])
     );
+  });
+});
+
+describe('FriendStatus', () => {
+  it('includes rejected as a valid status', () => {
+    const status: FriendStatus = 'rejected';
+    expect(status).toBe('rejected');
   });
 });
