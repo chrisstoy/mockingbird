@@ -3,6 +3,7 @@ import { getNotificationCount } from '@/_server/notificationCount';
 import { GENERIC_USER_IMAGE_URL } from '@/constants';
 import Image from 'next/image';
 import Link from 'next/link';
+import { FeedbackButton } from './FeedbackButton.client';
 import { FeedSelector } from './FeedSelector.client';
 import { NotificationsAlert } from './NotificationsAlert.client';
 
@@ -34,6 +35,11 @@ export async function AppHeader() {
       </div>
 
       <div className="ml-auto flex items-center gap-1">
+        <FeedbackButton
+          userName={user?.name}
+          userEmail={user?.email}
+          userId={user?.id}
+        />
         <NotificationsAlert count={notificationCount} />
         {user && (
           <Link

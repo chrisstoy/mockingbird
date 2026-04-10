@@ -11,7 +11,12 @@ export function NotificationsAlert({ count }: Props) {
     <Link
       href="/friends"
       className="relative p-2.5 rounded-full hover:bg-base-200 active:bg-base-300 transition-colors flex items-center justify-center"
-      aria-label={count > 0 ? `${count} notification${count !== 1 ? 's' : ''}` : 'Notifications'}
+      aria-label={
+        count > 0
+          ? `${count} notification${count !== 1 ? 's' : ''}`
+          : 'Notifications'
+      }
+      title="Notifications"
     >
       <BellIcon className="w-5.5 h-5.5 text-base-content/55" />
       {count > 0 && (
