@@ -12,3 +12,7 @@
 a .ql-container .ql-editor[contenteditable="false"]>* {
   cursor: pointer;
 }
+
+.ql-editor a {
+  pointer-events: all;
+}

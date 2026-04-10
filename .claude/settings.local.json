@@ -96,7 +96,13 @@
       "mcp__stitch__get_project",
       "mcp__stitch__list_screens",
       "mcp__stitch__list_design_systems",
-      "mcp__atlassian__getTeamworkGraphContext"
+      "mcp__atlassian__getTeamworkGraphContext",
+      "Bash(npx tsc:*)",
+      "Bash(git -C /Users/cstoy/dev/mockingbird add apps/mockingbird/src/_server/friendsService.ts apps/mockingbird/src/_server/__tests__/friendsService.spec.ts)",
+      "Bash(git -C /Users/cstoy/dev/mockingbird commit -m ':*)",
+      "Bash(git show:*)",
+      "Bash(gh pr:*)",
+      "Bash(npx gh:*)"
     ],
     "deny": [],
     "ask": []
