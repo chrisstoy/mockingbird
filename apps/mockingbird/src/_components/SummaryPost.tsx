@@ -2,6 +2,7 @@ import {
   getCommentsForPost,
   getNumberOfCommentsForPost,
 } from '@/_server/postsService';
+import { getFriendStatusBetweenUsers } from '@/_server/friendsService';
 import { getUserById } from '@/_server/usersService';
 import { Post } from '@/_types';
 import { auth } from '@/app/auth';
@@ -32,7 +33,14 @@ export async function SummaryPost({
   const userName = poster?.name ?? 'Unknown';
   const imageSrc = poster?.image ?? GENERIC_USER_IMAGE_URL;
 
-  const showOptionsMenu = post.posterId === session?.user?.id;
+  const currentUserId = session?.user?.id;
+  const isSelf = currentUserId === post.posterId;
+  const showOptionsMenu = isSelf;
+
+  const friendStatus =
+    currentUserId && !isSelf
+      ? await getFriendStatusBetweenUsers(currentUserId, post.posterId)
+      : undefined;
 
   const comments =
     (await getCommentsForPost(post.id, showFirstComment ? 1 : undefined)) ?? [];
@@ -49,6 +57,8 @@ export async function SummaryPost({
           postId={post.id}
           showOptionsMenu={showOptionsMenu}
           audience={post.audience}
+          authorId={isSelf ? undefined : post.posterId}
+          friendStatus={friendStatus}
         />
       </div>
 
