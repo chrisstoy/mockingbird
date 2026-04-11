@@ -180,7 +180,7 @@ FeedList (Server)              src/_components/FeedList.tsx
   └── SummaryPost (Server)     src/_components/SummaryPost.tsx
         ├── PostHeader (Server)               — avatar, name, date, audience badge, options menu
         ├── ImageDisplay (Client)             — lazy-loads post image by imageId
-        ├── Post content (HTML rendered via react-markdown or innerHTML)
+        ├── Post content (HTML rendered via react-markdown or innerHTML; URLs are auto-linked with target="_blank" via quill-magic-url + CustomLink blot)
         ├── PostActionsFooter                 — like/dislike/comment counts
         └── CommentList (Server)             src/_components/CommentList.tsx
               └── Comment (Server)           src/_components/Comment.tsx

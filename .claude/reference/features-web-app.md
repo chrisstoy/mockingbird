@@ -17,7 +17,7 @@ The main web app is the authenticated user-facing interface under `src/app/(rout
 | Expired password page | Complete | `/auth/expired-password` | Shown when login detects expired password; requires current + new password |
 | Home / feed | Complete | `/` (index) | Displays `NewPost` editor + `FeedList`; feed source controlled by `?feed=` query param |
 | Feed selector | Complete | `/` | Toggle between public and private feed |
-| Create post | Complete | `/` | `NewPost` component with Quill rich text editor, audience selector, image attachment |
+| Create post | Complete | `/` | `NewPost` component with Quill rich text editor, audience selector, image attachment; URLs auto-detected via `quill-magic-url` and rendered as `target="_blank"` links |
 | Post detail page | Complete | `/post/[postId]` | Full post view + all comments; links from feed click |
 | Profile page | Complete | `/profile` | Shows avatar, name, email; buttons for change picture, sign out, delete account, change password |
 | Change password page | Complete | `/profile/change-password` | Current + new password form; submits to `POST /api/users/[userId]/password` |
@@ -54,8 +54,10 @@ Wrapped by `(routes)/layout.tsx` — 3-column layout: `LeftSidebar` (fixed, desk
 Key layout components in `src/_components/`:
 - `LeftSidebar.client.tsx` — brand, nav (active state), Post button, user profile section
 - `RightSidebar.tsx` — search, trending, who to follow, footer
-- `MobileHeader.tsx` — top bar with logo + bell icon (mobile only)
+- `AppHeader.tsx` — fixed top bar (desktop): logo, feed selector, FeedbackButton, NotificationsAlert, user avatar
+- `MobileHeader.tsx` — top bar with logo, FeedbackButton, bell icon (mobile only)
 - `MobileBottomNav.client.tsx` — Home/Friends/Alerts/Me tabs (mobile only)
+- `FeedbackButton.client.tsx` — opens default email client pre-filled to admin@mockingbird.club with app version, user info, and browser diagnostics
 
 | Route | Component file |
 |---|---|
@@ -70,6 +72,7 @@ Key layout components in `src/_components/`:
 
 ## Key UI Patterns
 
+- **FeedbackButton** (`src/_components/FeedbackButton.client.tsx`) — opens default email client pre-filled to `admin@mockingbird.club`; body includes app version, build date, user info, and browser diagnostics. Rendered left of the notification bell in both `AppHeader` and `MobileHeader`.
 - **FriendAffordance** (`src/_components/FriendAffordance.client.tsx`) — inline client component rendered inside `PostHeader` when `authorId` and `friendStatus` props are provided. Shows "Add Friend" / "Pending" / "Friends" / "Rejected" state and lets the current user send or manage a friend request directly from the post/comment author header. Not shown on the current user's own posts or comments (`authorId` is omitted when `isSelf`).
 - Authenticated pages are protected by `middleware.ts` — unauthenticated users are redirected to `/auth/signin?callbackUrl=`
 - Suspended users are redirected to `/account/suspended` on every request
