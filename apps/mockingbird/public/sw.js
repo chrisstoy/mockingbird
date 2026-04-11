@@ -1,9 +1,13 @@
-const CACHE = 'offline-v1';
+const CACHE = 'offline-v2';
 const OFFLINE_URL = '/offline';
+const PRECACHE_URLS = [
+  OFFLINE_URL,
+  '/images/mockingbird-logo.png',
+];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE).then((cache) => cache.add(OFFLINE_URL))
+    caches.open(CACHE).then((cache) => cache.addAll(PRECACHE_URLS))
   );
   self.skipWaiting();
 });
