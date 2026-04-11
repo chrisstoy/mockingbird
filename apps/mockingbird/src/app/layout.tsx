@@ -1,4 +1,4 @@
-import { DialogManager } from '@/_components/DialogManager.client';
+import { DialogManagerWrapper } from '@/_components/DialogManagerWrapper.client';
 import { ServiceWorkerRegistration } from '@/_components/ServiceWorkerRegistration.client';
 import { ThemeProvider } from '@/_providers/ThemeProvider.client';
 import { auth } from '@/app/auth';
@@ -55,7 +55,7 @@ export default async function RootLayout({
                 ></Suspense>
                 {children}
               </div>
-              <DialogManager></DialogManager>
+              <DialogManagerWrapper />
             </ThemeProvider>
           </SessionProvider>
         </AppErrorBoundary>
