@@ -20,7 +20,8 @@
       "Bash(git merge:*)"
     ],
     "additionalDirectories": [
-      "/private/tmp"
+      "/private/tmp",
+      "/Users/cstoy/dev/mockingbird/docs/plans"
     ]
   },
   "enabledPlugins": {

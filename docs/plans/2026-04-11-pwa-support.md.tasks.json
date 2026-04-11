@@ -1,0 +1,13 @@
+{
+  "planPath": "docs/plans/2026-04-11-pwa-support.md",
+  "tasks": [
+    {"id": 0, "subject": "Task 1: Generate PWA Icons", "status": "pending"},
+    {"id": 1, "subject": "Task 2: Add Web App Manifest", "status": "pending", "blockedBy": [0]},
+    {"id": 2, "subject": "Task 3: Add Service Worker", "status": "pending"},
+    {"id": 3, "subject": "Task 4: Create Service Worker Registration Component", "status": "pending"},
+    {"id": 4, "subject": "Task 5: Update Root Layout with Metadata, Viewport, and SW Registration", "status": "pending", "blockedBy": [0, 1, 2, 3]},
+    {"id": 5, "subject": "Task 6: Create Offline Page", "status": "pending", "blockedBy": [2]},
+    {"id": 6, "subject": "Task 7: End-to-End Verification", "status": "pending", "blockedBy": [4, 5]}
+  ],
+  "lastUpdated": "2026-04-11T00:00:00Z"
+}
