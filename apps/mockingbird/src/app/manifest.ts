@@ -9,6 +9,24 @@ export default function manifest(): MetadataRoute.Manifest {
     display: 'standalone',
     background_color: '#ffffff',
     theme_color: '#F49D37',
+    screenshots: [
+      {
+        src: '/screenshots/desktop.png',
+        sizes: '2560x1440',
+        type: 'image/png',
+        // @ts-expect-error — form_factor is valid per spec but not yet in Next.js types
+        form_factor: 'wide',
+        label: 'Mockingbird home feed',
+      },
+      {
+        src: '/screenshots/mobile.png',
+        sizes: '780x1688',
+        type: 'image/png',
+        // @ts-expect-error — form_factor is valid per spec but not yet in Next.js types
+        form_factor: 'narrow',
+        label: 'Mockingbird home feed',
+      },
+    ],
     icons: [
       {
         src: '/icons/icon-192.png',
