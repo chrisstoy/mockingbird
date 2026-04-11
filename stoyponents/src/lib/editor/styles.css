@@ -15,4 +15,5 @@ a .ql-container .ql-editor[contenteditable="false"]>* {
 
 .ql-editor a {
   pointer-events: all;
+  color: var(--color-accent);
 }

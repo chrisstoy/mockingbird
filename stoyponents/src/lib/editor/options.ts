@@ -1,7 +1,7 @@
 import Quill, { QuillOptions } from 'quill';
 import MagicUrl from 'quill-magic-url';
-import './styles.css';
 import { CustomLink } from './customLink';
+import './styles.css';
 
 Quill.register('formats/link', CustomLink, true);
 Quill.register('modules/magicUrl', MagicUrl, true);
@@ -13,8 +13,8 @@ const modules = {
     // ['link', 'image'],
   ],
   magicUrl: {
-    urlRegularExpression: /https?:\/\/[\S]+/g,
-    globalRegularExpression: /https?:\/\/[\S]+/g,
+    // urlRegularExpression: /https?:\/\/[\S]+/g,
+    // globalRegularExpression: /https?:\/\/[\S]+/g,
   },
 };
 const formats = ['bold', 'italic', 'underline', 'code', 'link', 'image'];
