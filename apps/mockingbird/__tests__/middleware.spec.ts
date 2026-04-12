@@ -43,6 +43,19 @@ describe('middleware', () => {
     });
   });
 
+  describe("when MAINTENANCE_MODE='false'", () => {
+    beforeEach(() => {
+      process.env.MAINTENANCE_MODE = 'false';
+    });
+
+    it('passes all requests through', () => {
+      middleware(makeRequest('/feed') as any);
+      expect(mockNext).toHaveBeenCalledTimes(1);
+      expect(mockRedirect).not.toHaveBeenCalled();
+      expect(mockJson).not.toHaveBeenCalled();
+    });
+  });
+
   describe('when MAINTENANCE_MODE=true', () => {
     beforeEach(() => {
       process.env.MAINTENANCE_MODE = 'true';
