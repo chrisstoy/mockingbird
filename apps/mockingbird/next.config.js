@@ -8,6 +8,17 @@ const { composePlugins, withNx } = require('@nx/next');
 const nextConfig = {
   nx: {},
   serverExternalPackages: ['pg', '@prisma/adapter-pg'],
+  async headers() {
+    return [
+      {
+        source: '/sw.js',
+        headers: [
+          { key: 'Service-Worker-Allowed', value: '/' },
+          { key: 'Cache-Control', value: 'no-cache' },
+        ],
+      },
+    ];
+  },
   images: {
     localPatterns: [
       {

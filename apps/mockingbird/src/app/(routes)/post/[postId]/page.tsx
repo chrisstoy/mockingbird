@@ -1,4 +1,5 @@
 import { BackButton } from '@/_components/BackButton.client';
+import { PostNotFound } from '@/_components/PostNotFound';
 import { SkeletonSummaryPost } from '@/_components/SkeletonSummaryPost';
 import { SummaryPost } from '@/_components/SummaryPost';
 import { getPostWithId } from '@/_server/postsService';
@@ -20,7 +21,7 @@ export default async function PostDetailPage({ params }: Props) {
 
   const post = await getPostWithId(postId);
   if (!post) {
-    return <div>Post not found</div>;
+    return <PostNotFound />;
   }
 
   return (
