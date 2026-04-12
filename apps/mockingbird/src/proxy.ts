@@ -52,6 +52,6 @@ export default function middleware(request: NextRequest, event: NextFetchEvent) 
 
 export const config = {
   matcher: [
-    '/((?!auth|api/auth|_next/static|_next/image|images|favicon.ico|sw\\.js|manifest\\.webmanifest|offline|icons).*)',
+    '/((?!auth|api/auth|maintenance|_next/static|_next/image|images|favicon.ico|sw\\.js|manifest\\.webmanifest|offline|icons).*)',
   ],
 };
