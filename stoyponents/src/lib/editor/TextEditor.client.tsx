@@ -1,10 +1,16 @@
 'use client';
 import { PaperAirplaneIcon, TrashIcon } from '@heroicons/react/20/solid';
+import Quill from 'quill';
 import Delta from 'quill-delta';
+import MagicUrl from 'quill-magic-url';
 import { forwardRef, useCallback, useEffect, useImperativeHandle } from 'react';
 import { useQuill } from 'react-quilljs';
 import sanitizeHtml from 'sanitize-html';
+import { CustomLink } from './customLink';
 import options from './options';
+
+Quill.register('formats/link', CustomLink, true);
+Quill.register('modules/magicUrl', MagicUrl, true);
 
 export type EditorDelta = Delta;
 

@@ -1,10 +1,5 @@
-import Quill, { QuillOptions } from 'quill';
-import MagicUrl from 'quill-magic-url';
-import { CustomLink } from './customLink';
+import { QuillOptions } from 'quill';
 import './styles.css';
-
-Quill.register('formats/link', CustomLink, true);
-Quill.register('modules/magicUrl', MagicUrl, true);
 
 const theme = 'bubble';
 const modules = {

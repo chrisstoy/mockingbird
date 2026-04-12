@@ -9,9 +9,14 @@ import {
   DialogButton,
   DialogHeader,
   type EditorDelta,
-  TextEditor,
 } from '@mockingbird/stoyponents';
+import dynamic from 'next/dynamic';
 import { useCallback, useEffect, useRef, useState } from 'react';
+
+const TextEditor = dynamic(
+  () => import('@mockingbird/stoyponents').then((m) => ({ default: m.TextEditor })),
+  { ssr: false }
+);
 import { AudienceSelector } from '../AudienceSelector.client';
 import { ImageView } from '../ImageView.client';
 import { PostView } from '../PostView';
