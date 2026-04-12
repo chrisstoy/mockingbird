@@ -31,6 +31,12 @@
 - create PR in GitHub
   - squash-merge branch into `develop`
   - delete feature branch
+- run DB migration against the preview database after each preview deploy:
+  ```bash
+  vercel env pull --environment preview /tmp/preview.env
+  # copy DATABASE_URL value from /tmp/preview.env, then:
+  cd apps/mockingbird && DATABASE_URL=<preview-url> npx prisma migrate deploy
+  ```
 - mark Jira as Complete
 
 ### Releasing to Production
