@@ -1,3 +1,14 @@
+# Release notes - Mockingbird - 0.5.0
+
+### Task
+
+- [MOC-18](https://stoy.atlassian.net/browse/MOC-18) Support hyperlinks in a post
+- [MOC-83](https://stoy.atlassian.net/browse/MOC-83) Display maintenance screen while updating production
+- [MOC-84](https://stoy.atlassian.net/browse/MOC-84) Ability to make friend request to the author of a post
+- [MOC-85](https://stoy.atlassian.net/browse/MOC-85) Add feedback button to app and mobile headers
+- [MOC-86](https://stoy.atlassian.net/browse/MOC-86) Improve dark mode theme readability and contrast
+- [MOC-88](https://stoy.atlassian.net/browse/MOC-88) Support PWA installation
+
 # Release notes - Mockingbird - 0.4.0
 
 ### Task
