@@ -10,6 +10,7 @@ export const env = createEnv({
    */
   server: {
     NODE_ENV: z.enum(['development', 'test', 'production']).optional(),
+    MAINTENANCE_MODE: z.enum(['true', 'false']).optional(),
 
     LOG_LEVEL: z
       .enum(['error', 'warn', 'info', 'debug', 'trace'])
