@@ -18,7 +18,7 @@ export default function MaintenancePage() {
           Down for Maintenance
         </h1>
         <p className="text-sm text-base-content/60 mt-1">
-          We'll be back shortly
+          We&apos;ll be back shortly
         </p>
       </div>
 

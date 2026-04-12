@@ -18,7 +18,7 @@ jest.mock('next/server', () => ({
 import { NextResponse } from 'next/server';
 import { maintenanceResponse } from '../src/lib/maintenanceMode';
 
-const mockNext = NextResponse.next as jest.Mock;
+const _mockNext = NextResponse.next as jest.Mock;
 const mockRedirect = NextResponse.redirect as jest.Mock;
 const mockJson = NextResponse.json as jest.Mock;
 
@@ -29,6 +29,7 @@ function makeRequest(pathname: string) {
       toString: () => `http://localhost:3000${pathname}`,
     },
     url: `http://localhost:3000${pathname}`,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } as any;
 }
 
