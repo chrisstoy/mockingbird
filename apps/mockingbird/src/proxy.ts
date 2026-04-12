@@ -1,5 +1,5 @@
 import { env } from '@/../env';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextFetchEvent, NextMiddleware, NextRequest, NextResponse } from 'next/server';
 import { auth } from './app/auth';
 import { maintenanceResponse } from './lib/maintenanceMode';
 
@@ -46,8 +46,8 @@ const authMiddleware = auth(async (req) => {
   return response;
 });
 
-export default function middleware(request: NextRequest) {
-  return maintenanceResponse(request) ?? authMiddleware(request);
+export default function middleware(request: NextRequest, event: NextFetchEvent) {
+  return maintenanceResponse(request) ?? (authMiddleware as unknown as NextMiddleware)(request, event);
 }
 
 export const config = {
