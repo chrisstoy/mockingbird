@@ -7,7 +7,7 @@ import { maintenanceResponse } from './lib/maintenanceMode';
 const allowedOrigins = [
   'http://localhost:3000',
   `https://${env.VERCEL_URL}`,
-  `https:.//${env.VERCEL_PROJECT_PRODUCTION_URL}`,
+  `https://${env.VERCEL_PROJECT_PRODUCTION_URL}`,
 ];
 
 const authMiddleware = auth(async (req) => {
