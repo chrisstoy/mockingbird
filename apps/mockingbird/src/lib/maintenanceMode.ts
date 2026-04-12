@@ -1,4 +1,3 @@
-// apps/mockingbird/middleware.ts
 import { NextRequest, NextResponse } from 'next/server';
 
 const PASS_THROUGH_PREFIXES = [
@@ -10,15 +9,17 @@ const PASS_THROUGH_PREFIXES = [
   '/maintenance',
 ];
 
-export function middleware(request: NextRequest) {
-  if (process.env.MAINTENANCE_MODE !== 'true') {
-    return NextResponse.next();
-  }
+/**
+ * Returns a maintenance response if MAINTENANCE_MODE=true and the path
+ * is not in the pass-through list. Returns null to continue normal handling.
+ */
+export function maintenanceResponse(request: NextRequest): NextResponse | null {
+  if (process.env.MAINTENANCE_MODE !== 'true') return null;
 
   const { pathname } = request.nextUrl;
 
   if (PASS_THROUGH_PREFIXES.some((prefix) => pathname.startsWith(prefix))) {
-    return NextResponse.next();
+    return null;
   }
 
   if (pathname === '/api/health') {
@@ -34,7 +35,3 @@ export function middleware(request: NextRequest) {
 
   return NextResponse.redirect(new URL('/maintenance', request.url));
 }
-
-export const config = {
-  matcher: ['/((?!_next/static|_next/image).*)'],
-};

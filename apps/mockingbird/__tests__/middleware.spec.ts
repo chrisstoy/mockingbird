@@ -1,25 +1,28 @@
-// Mock next/server before importing middleware
 jest.mock('next/server', () => ({
   NextResponse: {
     next: jest.fn(() => ({ type: 'next' as const })),
-    redirect: jest.fn((url: URL) => ({ type: 'redirect' as const, url: url.toString() })),
-    json: jest.fn((body: unknown, init?: { status?: number }) => ({
-      type: 'json' as const,
-      body,
-      status: init?.status ?? 200,
+    redirect: jest.fn((url: URL) => ({
+      type: 'redirect' as const,
+      url: url.toString(),
     })),
+    json: jest.fn(
+      (body: unknown, init?: { status?: number }) => ({
+        type: 'json' as const,
+        body,
+        status: init?.status ?? 200,
+      })
+    ),
   },
 }));
 
-// Import after mock is set up
-import { middleware } from '../middleware';
 import { NextResponse } from 'next/server';
+import { maintenanceResponse } from '../src/lib/maintenanceMode';
 
 const mockNext = NextResponse.next as jest.Mock;
 const mockRedirect = NextResponse.redirect as jest.Mock;
 const mockJson = NextResponse.json as jest.Mock;
 
-function makeRequest(pathname: string): { nextUrl: { pathname: string; toString: () => string }; url: string } {
+function makeRequest(pathname: string) {
   return {
     nextUrl: {
       pathname,
@@ -29,18 +32,16 @@ function makeRequest(pathname: string): { nextUrl: { pathname: string; toString:
   } as any;
 }
 
-describe('middleware', () => {
+describe('maintenanceResponse', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     delete process.env.MAINTENANCE_MODE;
   });
 
   describe('when MAINTENANCE_MODE is not set', () => {
-    it('passes all requests through', () => {
-      middleware(makeRequest('/feed') as any);
-      expect(mockNext).toHaveBeenCalledTimes(1);
-      expect(mockRedirect).not.toHaveBeenCalled();
-      expect(mockJson).not.toHaveBeenCalled();
+    it('returns null (pass through)', () => {
+      const result = maintenanceResponse(makeRequest('/feed'));
+      expect(result).toBeNull();
     });
   });
 
@@ -49,11 +50,9 @@ describe('middleware', () => {
       process.env.MAINTENANCE_MODE = 'false';
     });
 
-    it('passes all requests through', () => {
-      middleware(makeRequest('/feed') as any);
-      expect(mockNext).toHaveBeenCalledTimes(1);
-      expect(mockRedirect).not.toHaveBeenCalled();
-      expect(mockJson).not.toHaveBeenCalled();
+    it('returns null (pass through)', () => {
+      const result = maintenanceResponse(makeRequest('/feed'));
+      expect(result).toBeNull();
     });
   });
 
@@ -62,68 +61,60 @@ describe('middleware', () => {
       process.env.MAINTENANCE_MODE = 'true';
     });
 
-    it('passes /_next/ requests through', () => {
-      middleware(makeRequest('/_next/static/chunk.js') as any);
-      expect(mockNext).toHaveBeenCalledTimes(1);
+    it('returns null for /_next/ paths', () => {
+      expect(maintenanceResponse(makeRequest('/_next/static/chunk.js'))).toBeNull();
     });
 
-    it('passes /icons/ requests through', () => {
-      middleware(makeRequest('/icons/icon-192.png') as any);
-      expect(mockNext).toHaveBeenCalledTimes(1);
+    it('returns null for /icons/ paths', () => {
+      expect(maintenanceResponse(makeRequest('/icons/icon-192.png'))).toBeNull();
     });
 
-    it('passes /images/ requests through', () => {
-      middleware(makeRequest('/images/mockingbird-logo.png') as any);
-      expect(mockNext).toHaveBeenCalledTimes(1);
+    it('returns null for /images/ paths', () => {
+      expect(maintenanceResponse(makeRequest('/images/mockingbird-logo.png'))).toBeNull();
     });
 
-    it('passes /manifest.webmanifest through', () => {
-      middleware(makeRequest('/manifest.webmanifest') as any);
-      expect(mockNext).toHaveBeenCalledTimes(1);
+    it('returns null for /manifest.webmanifest', () => {
+      expect(maintenanceResponse(makeRequest('/manifest.webmanifest'))).toBeNull();
     });
 
-    it('passes /favicon requests through', () => {
-      middleware(makeRequest('/favicon.ico') as any);
-      expect(mockNext).toHaveBeenCalledTimes(1);
+    it('returns null for /favicon paths', () => {
+      expect(maintenanceResponse(makeRequest('/favicon.ico'))).toBeNull();
     });
 
-    it('passes /maintenance through', () => {
-      middleware(makeRequest('/maintenance') as any);
-      expect(mockNext).toHaveBeenCalledTimes(1);
+    it('returns null for /maintenance', () => {
+      expect(maintenanceResponse(makeRequest('/maintenance'))).toBeNull();
     });
 
-    it('returns 200 with maintenance status for /api/health', () => {
-      middleware(makeRequest('/api/health') as any);
+    it('returns 200 JSON { status: maintenance } for /api/health', () => {
+      maintenanceResponse(makeRequest('/api/health'));
       expect(mockJson).toHaveBeenCalledWith(
         { status: 'maintenance' },
         { status: 200 }
       );
     });
 
-    it('returns 503 for other /api/ routes', () => {
-      middleware(makeRequest('/api/posts') as any);
+    it('returns 503 JSON for other /api/ routes', () => {
+      maintenanceResponse(makeRequest('/api/posts'));
       expect(mockJson).toHaveBeenCalledWith(
         { error: 'Service temporarily unavailable - maintenance in progress' },
         { status: 503 }
       );
     });
 
-    it('redirects /feed to /maintenance', () => {
-      middleware(makeRequest('/feed') as any);
+    it('returns redirect to /maintenance for /feed', () => {
+      maintenanceResponse(makeRequest('/feed'));
       expect(mockRedirect).toHaveBeenCalledTimes(1);
-      const redirectUrl = mockRedirect.mock.calls[0][0].toString();
-      expect(redirectUrl).toContain('/maintenance');
+      expect(mockRedirect.mock.calls[0][0].toString()).toContain('/maintenance');
     });
 
-    it('redirects /auth/signin to /maintenance', () => {
-      middleware(makeRequest('/auth/signin') as any);
+    it('returns redirect to /maintenance for /auth/signin', () => {
+      maintenanceResponse(makeRequest('/auth/signin'));
       expect(mockRedirect).toHaveBeenCalledTimes(1);
-      const redirectUrl = mockRedirect.mock.calls[0][0].toString();
-      expect(redirectUrl).toContain('/maintenance');
+      expect(mockRedirect.mock.calls[0][0].toString()).toContain('/maintenance');
     });
 
-    it('redirects / to /maintenance', () => {
-      middleware(makeRequest('/') as any);
+    it('returns redirect to /maintenance for /', () => {
+      maintenanceResponse(makeRequest('/'));
       expect(mockRedirect).toHaveBeenCalledTimes(1);
     });
   });
