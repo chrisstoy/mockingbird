@@ -3,13 +3,13 @@ import Image from 'next/image';
 
 export default function MaintenancePage() {
   return (
-    <div className="flex flex-col gap-6 items-center">
+    <div className="flex flex-col gap-6">
       <Image
         src="/images/mockingbird-logo.png"
         alt="Mockingbird"
         width={96}
         height={96}
-        className="object-contain"
+        className="object-contain self-center"
         priority
       />
 
