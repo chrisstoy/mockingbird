@@ -7,6 +7,7 @@ const PASS_THROUGH_PREFIXES = [
   '/manifest.webmanifest',
   '/favicon',
   '/maintenance',
+  '/offline',
 ];
 
 /**

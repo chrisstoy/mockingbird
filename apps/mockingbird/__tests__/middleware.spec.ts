@@ -118,4 +118,15 @@ describe('maintenanceResponse', () => {
       expect(mockRedirect).toHaveBeenCalledTimes(1);
     });
   });
+
+  describe("when MAINTENANCE_MODE='1' (non-'true' value)", () => {
+    beforeEach(() => {
+      process.env.MAINTENANCE_MODE = '1';
+    });
+
+    it('returns null (pass through)', () => {
+      const result = maintenanceResponse(makeRequest('/feed'));
+      expect(result).toBeNull();
+    });
+  });
 });
