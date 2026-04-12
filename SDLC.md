@@ -223,7 +223,12 @@ vercel deploy                    # deploys current branch as preview
 # 7. Disable maintenance mode
 vercel env rm MAINTENANCE_MODE preview --yes; echo "false" | vercel env add MAINTENANCE_MODE preview
 
-# 8. Verify deployment at https://mockingbird.chrisstoy.com
+# 8. Verify version deployed — check footer on sign-in page
+#    Navigate to https://mockingbird.chrisstoy.com/auth/signin
+#    The footer displays the app version (e.g. "v0.4.0").
+#    Confirm it matches the version in apps/mockingbird/version.json.
+cat apps/mockingbird/version.json   # shows expected version
+
 # 9. Run E2E tests against pre-prod
 PLAYWRIGHT_BASE_URL=https://mockingbird.chrisstoy.com nx run mockingbird-e2e:e2e
 ```
@@ -255,7 +260,13 @@ vercel logs <deployment-url>
 # 6. Disable maintenance mode
 vercel env rm MAINTENANCE_MODE production --yes; echo "false" | vercel env add MAINTENANCE_MODE production
 
-# 7. Post-deploy smoke test (see below)
+# 7. Verify version deployed — check footer on sign-in page
+#    Navigate to https://mockingbird.club/auth/signin
+#    The footer displays the app version (e.g. "v0.4.0").
+#    Confirm it matches the version in apps/mockingbird/version.json.
+cat apps/mockingbird/version.json   # shows expected version
+
+# 8. Post-deploy smoke test (see below)
 ```
 
 #### Manual Production Deploy (if needed)
@@ -273,6 +284,7 @@ vercel deploy --prod
 Suggested manual smoke test after each production deploy:
 
 - [ ] App loads at production URL without errors
+- [ ] Version in footer of sign-in page matches `apps/mockingbird/version.json`
 - [ ] Sign-in works (credentials + OAuth)
 - [ ] Feed loads and displays posts
 - [ ] Create a post (text + image upload)
