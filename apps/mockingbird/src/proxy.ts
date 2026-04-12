@@ -1,6 +1,7 @@
 import { env } from '@/../env';
-import { NextResponse } from 'next/server';
+import { NextFetchEvent, NextMiddleware, NextRequest, NextResponse } from 'next/server';
 import { auth } from './app/auth';
+import { maintenanceResponse } from './lib/maintenanceMode';
 
 // the list of all allowed origins
 const allowedOrigins = [
@@ -9,7 +10,7 @@ const allowedOrigins = [
   `https:.//${env.VERCEL_PROJECT_PRODUCTION_URL}`,
 ];
 
-export default auth(async (req) => {
+const authMiddleware = auth(async (req) => {
   if (!req.nextUrl.pathname.startsWith('/api') && !req.auth) {
     // not an API call and not authorized, so require signin before proceeding
     return NextResponse.redirect(
@@ -45,8 +46,12 @@ export default auth(async (req) => {
   return response;
 });
 
+export default function middleware(request: NextRequest, event: NextFetchEvent) {
+  return maintenanceResponse(request) ?? (authMiddleware as unknown as NextMiddleware)(request, event);
+}
+
 export const config = {
   matcher: [
-    '/((?!auth|api/auth|_next/static|_next/image|images|favicon.ico|sw\\.js|manifest\\.webmanifest|offline|icons).*)',
-  ]
+    '/((?!auth|api/auth|maintenance|_next/static|_next/image|images|favicon.ico|sw\\.js|manifest\\.webmanifest|offline|icons).*)',
+  ],
 };
