@@ -1,22 +1,23 @@
 // Mock next/server before importing middleware
-const mockNext = jest.fn(() => ({ type: 'next' as const }));
-const mockRedirect = jest.fn((url: URL) => ({ type: 'redirect' as const, url: url.toString() }));
-const mockJson = jest.fn((body: unknown, init?: { status?: number }) => ({
-  type: 'json' as const,
-  body,
-  status: init?.status ?? 200,
-}));
-
 jest.mock('next/server', () => ({
   NextResponse: {
-    next: mockNext,
-    redirect: mockRedirect,
-    json: mockJson,
+    next: jest.fn(() => ({ type: 'next' as const })),
+    redirect: jest.fn((url: URL) => ({ type: 'redirect' as const, url: url.toString() })),
+    json: jest.fn((body: unknown, init?: { status?: number }) => ({
+      type: 'json' as const,
+      body,
+      status: init?.status ?? 200,
+    })),
   },
 }));
 
 // Import after mock is set up
 import { middleware } from '../middleware';
+import { NextResponse } from 'next/server';
+
+const mockNext = NextResponse.next as jest.Mock;
+const mockRedirect = NextResponse.redirect as jest.Mock;
+const mockJson = NextResponse.json as jest.Mock;
 
 function makeRequest(pathname: string): { nextUrl: { pathname: string; toString: () => string }; url: string } {
   return {
