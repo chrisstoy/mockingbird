@@ -7,6 +7,15 @@ description: Bump version in version.json and update CHANGELOG with completed Ji
 
 Bump the application version and update the CHANGELOG.md with Jira tickets that have been completed and merged into develop since the last version.
 
+## Context
+
+`develop` always carries the **next** version — the version being actively built. `main` holds the last released version. This skill is run **after** a production deploy to advance `develop` to the next cycle, or manually when starting a new release cycle.
+
+## Invocation modes
+
+- **`/bump-version`** — interactive: prompts the user for the next version number
+- **`/bump-version --auto-minor`** — automatic: increments the MINOR component without prompting (e.g. `0.6.0 → 0.7.0`). Used by the `deploy-app` skill post-prod-deploy.
+
 ## Process
 
 1. **Find the last version tag**
@@ -16,15 +25,13 @@ Bump the application version and update the CHANGELOG.md with Jira tickets that 
 
 2. **Read current version from version.json**
    - Read `apps/mockingbird/version.json` to see current version
-   - This should match the last git tag (without the 'v' prefix)
 
 3. **Determine next version number**
-   - Ask the user what the next version number should be (e.g., 0.2.7)
-   - Follow semantic versioning: MAJOR.MINOR.PATCH
-   - Explain options:
-     - PATCH (0.2.6 → 0.2.7): Bug fixes, small changes
-     - MINOR (0.2.6 → 0.3.0): New features, backward compatible
-     - MAJOR (0.2.6 → 1.0.0): Breaking changes
+   - **`--auto-minor` mode**: increment MINOR, reset PATCH to 0 (e.g. `0.6.0 → 0.7.0`). No prompt.
+   - **Interactive mode**: ask the user what the next version should be. Explain options:
+     - PATCH (`0.6.0 → 0.6.1`): Bug fixes, small changes
+     - MINOR (`0.6.0 → 0.7.0`): New features, backward compatible
+     - MAJOR (`0.6.0 → 1.0.0`): Breaking changes
 
 4. **Update version.json**
    - Update `apps/mockingbird/version.json` with the new version number
@@ -47,7 +54,8 @@ Bump the application version and update the CHANGELOG.md with Jira tickets that 
    - Command: `git log vX.Y.Z..develop --online | grep -Eo 'MOC-[0-9]+' | sort -u`
 
 7. **Update CHANGELOG.md**
-   - Insert new release section at the TOP of the file
+   - If a placeholder section for this version already exists at the top (e.g. `# Release notes - Mockingbird - 0.6.0` with a "no tickets yet" note), **replace it** with the real entries — do not insert a duplicate header.
+   - If no section exists yet, insert a new release section at the TOP of the file.
    - Use this format:
      ```markdown
      # Release notes - Mockingbird - X.Y.Z
@@ -98,7 +106,8 @@ git log v0.2.6..develop --oneline | grep 'MOC-31'
 - The Jira URL pattern is: `https://stoy.atlassian.net/browse/MOC-##`
 - Keep descriptions concise - use the commit message or PR title as the description
 - The buildDate should use ISO 8601 format with timezone
-- After running this skill, the user typically should:
-  1. Commit the changes (version.json + CHANGELOG.md)
+- **Interactive mode** — after running this skill, the user should:
+  1. Commit the changes (`git add apps/mockingbird/version.json CHANGELOG.md && git commit -m "chore: bump version to X.Y.Z"`)
   2. Create a git tag for the new version (`git tag vX.Y.Z`)
-  3. Push the tag to remote (`git push origin vX.Y.Z`)
+  3. Push (`git push origin develop && git push origin vX.Y.Z`)
+- **`--auto-minor` mode (called from deploy-app)** — the caller (deploy-app Step 13) handles all committing, tagging, and pushing. Do NOT follow the interactive steps above. The tag created is for the version that shipped on `main` (captured before this skill ran), not the new version in `version.json`.

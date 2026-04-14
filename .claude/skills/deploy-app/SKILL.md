@@ -40,27 +40,16 @@ vercel whoami
 
 Stop if not authenticated; tell the user to run `vercel login`.
 
-## Step 4 — Bump version (`prod` only)
+## Step 4 — Verify version (`prod` only)
 
-First, pull the latest develop to ensure version bump is on current state:
+The version in `develop` is already set to the version being released — no bump needed here.
+
+Confirm the version in `version.json` is correct before proceeding:
 ```bash
-git pull origin develop
+cat apps/mockingbird/version.json
 ```
 
-Run the `bump-version` skill to update `version.json` and `CHANGELOG.md`:
-
-```
-/bump-version
-```
-
-After the skill completes, commit, tag, and push develop:
-```bash
-git add apps/mockingbird/version.json CHANGELOG.md
-git commit -m "chore: bump version to X.Y.Z"
-git tag vX.Y.Z
-git push origin develop
-git push origin vX.Y.Z
-```
+Ask the user to confirm this is the intended release version. If it is wrong, stop and resolve it manually before continuing.
 
 Skip this step for `preview` deploys.
 
@@ -73,12 +62,12 @@ echo "true" | vercel env add MAINTENANCE_MODE <preview|production>
 
 ## Step 6 — Run DB migrations
 
-Follow the **Database Migrations** section of `SDLC.md`. Pull the URL from Vercel and apply pending migrations using `prisma migrate deploy` (never `migrate dev`):
+Follow the **Database Migrations** section of `SDLC.md`. Pull the URL from Vercel and apply pending migrations using `prisma-deploy` (never `migrate dev`):
 
 ```bash
 vercel env pull /tmp/deploy-env --environment=<preview|production>
 DATABASE_URL=$(grep '^DATABASE_URL=' /tmp/deploy-env | cut -d= -f2- | tr -d '"') \
-  npx prisma migrate deploy --schema=apps/mockingbird/prisma/schema.prisma
+  nx run mockingbird:prisma-deploy
 rm /tmp/deploy-env
 ```
 
@@ -138,7 +127,19 @@ vercel env rm MAINTENANCE_MODE <preview|production> --yes
 echo "false" | vercel env add MAINTENANCE_MODE <preview|production>
 ```
 
-## Step 11 — Post-deploy
+## Step 11 — Verify version deployed
+
+Check the sign-in page footer to confirm the correct version is live:
+
+- **preview**: navigate to `https://mockingbird.chrisstoy.com/auth/signin`
+- **prod**: navigate to `https://mockingbird.club/auth/signin`
+
+The footer displays the app version (e.g. `v0.5.0`). Confirm it matches:
+```bash
+cat apps/mockingbird/version.json
+```
+
+## Step 12 — Post-deploy
 
 **preview** — remind the user to run E2E tests before promoting to prod:
 ```bash
@@ -159,6 +160,37 @@ Then remind the user to run the smoke test checklist from `SDLC.md`:
 - Friend request flow
 - Admin panel at `/admin`
 - Check Vercel function logs for errors
+
+## Step 13 — Bump develop to next version (`prod` only)
+
+Now that the released version is on `main`, advance `develop` to the next MINOR version so preview always shows what's being built next.
+
+**IMPORTANT: capture the shipping version BEFORE running bump-version**, because the skill will overwrite `version.json` with the next version:
+
+```bash
+# Capture BEFORE bump — this is what just shipped on main
+SHIPPING_VERSION=$(node -p "require('./apps/mockingbird/version.json').version")
+echo "Shipped: $SHIPPING_VERSION"
+```
+
+Run the `bump-version` skill in auto-minor mode — it will increment the MINOR component automatically without prompting:
+```
+/bump-version --auto-minor
+```
+
+After the skill completes, tag the shipped release and commit + push develop:
+```bash
+# Tag the version that shipped on main (captured before bump)
+git tag v$SHIPPING_VERSION
+
+# Commit the next-version bump on develop
+git add apps/mockingbird/version.json CHANGELOG.md
+git commit -m "chore: bump version to $(node -p "require('./apps/mockingbird/version.json').version")"
+git push origin develop
+git push origin v$SHIPPING_VERSION   # push the tag for the version that shipped
+```
+
+Remind the user to ensure the Jira release `$SHIPPING_VERSION` exists and all tickets are associated with it: https://stoy.atlassian.net/projects/MOC/versions
 
 ## Rollback
 

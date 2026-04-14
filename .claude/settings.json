@@ -22,7 +22,8 @@
     ],
     "additionalDirectories": [
       "/private/tmp",
-      "/Users/cstoy/dev/mockingbird/docs/plans"
+      "/Users/cstoy/dev/mockingbird/docs/plans",
+      "/Users/cstoy/dev/mockingbird/.claude/skills/deploy-app"
     ]
   },
   "enabledPlugins": {

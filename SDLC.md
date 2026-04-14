@@ -30,6 +30,38 @@ main          ← production-only; merge from develop after pre-prod validation
 
 ---
 
+## Versioning
+
+Versions follow `MAJOR.MINOR.PATCH` (semantic versioning).
+
+**`develop` always carries the next version.** `main` holds the last released version.
+
+| Branch    | Version example | Meaning                        |
+|-----------|-----------------|-------------------------------|
+| `main`    | `0.5.0`         | What is live in production     |
+| `develop` | `0.6.0`         | What is being built/previewed  |
+
+### Version lifecycle
+
+1. After a production release of `0.5.0`, `develop` is immediately bumped to `0.6.0`
+2. All feature work merges to `develop` — preview always shows the next version
+3. When ready to ship, `develop` (`0.6.0`) merges to `main` → production shows `0.6.0`
+4. `develop` is immediately bumped to `0.7.0` to start the next cycle
+
+The version bump happens **after** each production deploy, not before. This is handled by the `bump-version` skill (auto-minor mode) as the final step of `/deploy-app prod`.
+
+### Manual version bump
+
+If you need to bump mid-cycle (e.g. changing MINOR to MAJOR):
+```bash
+# Edit version.json directly, then commit
+git add apps/mockingbird/version.json
+git commit -m "chore: bump version to X.Y.Z"
+git push origin develop
+```
+
+---
+
 ## Local Development
 
 ### Prerequisites
@@ -262,11 +294,20 @@ vercel env rm MAINTENANCE_MODE production --yes; echo "false" | vercel env add M
 
 # 7. Verify version deployed — check footer on sign-in page
 #    Navigate to https://mockingbird.club/auth/signin
-#    The footer displays the app version (e.g. "v0.4.0").
+#    The footer displays the app version (e.g. "v0.6.0").
 #    Confirm it matches the version in apps/mockingbird/version.json.
 cat apps/mockingbird/version.json   # shows expected version
 
 # 8. Post-deploy smoke test (see below)
+
+# 9. Bump develop to the next MINOR version
+#    develop must always carry the NEXT version after a release.
+#    Capture the shipped version BEFORE bumping (bump-version overwrites version.json):
+SHIPPING_VERSION=$(node -p "require('./apps/mockingbird/version.json').version")
+#    Run bump-version (auto-minor: e.g. 0.6.0 → 0.7.0), then tag + push:
+#    See the deploy-app skill (Step 13) for the full command sequence.
+git tag v$SHIPPING_VERSION
+#    ... commit version.json + CHANGELOG.md, push develop, push tag
 ```
 
 #### Manual Production Deploy (if needed)
@@ -379,6 +420,17 @@ git push origin fix/hotfix-description
 git checkout develop
 git merge main
 git push origin develop
+
+# 8. Version handling for hotfixes
+#    Hotfixes use a PATCH bump (e.g. 0.5.0 → 0.5.1) applied to main's version,
+#    NOT the next version already on develop.
+#    After the hotfix is verified:
+#    a. Tag main at the hotfix version: git tag v0.5.1
+#    b. Update develop's version.json to reflect the new baseline if needed
+#       (e.g. if develop was at 0.6.0, it stays at 0.6.0 — no change needed
+#        since 0.6.0 > 0.5.1 and will supersede it on next release)
+#    c. Add a CHANGELOG entry for the hotfix version on develop
+git push origin vX.Y.Z  # hotfix patch tag
 ```
 
 ---
@@ -390,3 +442,16 @@ git push origin develop
   nx run mockingbird:<target> --skip-nx-cache
   ```
 - Nx remote caching (Nx Cloud) is not currently configured.
+
+---
+
+## Docker
+
+> For local Docker builds only. Production runs on Vercel.
+
+- Set `output: 'standalone'` in `next.config.js`
+- After `next build`, copy additional assets into the standalone output:
+  ```bash
+  cp -r .next/static standalone/apps/mockingbird/.next/static
+  cp -r public standalone/apps/mockingbird/public
+  ```
