@@ -1,3 +1,11 @@
+# Release notes - Mockingbird - 0.6.0
+
+### Task
+
+_(no tickets yet — will be populated as features merge to develop)_
+
+---
+
 # Release notes - Mockingbird - 0.5.0
 
 ### Task
