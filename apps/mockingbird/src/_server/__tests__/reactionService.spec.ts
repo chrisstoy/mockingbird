@@ -1,5 +1,18 @@
 import { PrismaClient } from '../../../prisma/generated/client.js';
 
+jest.mock('../../../prisma/generated/client.js', () => ({
+  PrismaClient: jest.fn(),
+  Prisma: {
+    PrismaClientKnownRequestError: class PrismaClientKnownRequestError extends Error {
+      code: string;
+      constructor(message: string, { code }: { code: string }) {
+        super(message);
+        this.code = code;
+      }
+    },
+  },
+}));
+
 jest.mock('@/_server/db', () => ({
   prisma: {
     postReaction: {

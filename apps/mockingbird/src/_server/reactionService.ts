@@ -2,6 +2,7 @@ import { prisma } from '@/_server/db';
 import baseLogger from '@/_server/logger';
 import { PostReactionSummary, PostId, ReactionType, UserId } from '@/_types';
 import { errorToString } from '@/_utils/errorToString';
+import { Prisma } from '../../prisma/generated/client.js';
 
 const logger = baseLogger.child({ service: 'reactions:service' });
 
@@ -61,8 +62,8 @@ export async function removeReaction(
       where: { postId_userId: { postId, userId } },
     });
   } catch (error) {
-    if (error instanceof Error && 'code' in error) {
-      throw error; // Let PrismaClientKnownRequestError (e.g. P2025) propagate to the caller
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      throw error; // Let P2025 propagate to the caller (API route handles it)
     }
     logger.error(errorToString(error));
     throw new Error(`removeReaction: ${errorToString(error)}`);

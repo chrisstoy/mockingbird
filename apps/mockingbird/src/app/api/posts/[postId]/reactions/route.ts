@@ -7,6 +7,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createErrorResponse, respondWithError, ResponseError } from '../../../errors';
 import { validateAuthentication } from '../../../validateAuthentication';
+import { Prisma } from '../../../../../prisma/generated/client.js';
 
 const logger = baseLogger.child({ service: 'api:posts:reactions' });
 
@@ -52,9 +53,8 @@ export async function DELETE(_req: NextRequest, context: RouteContext) {
     return new Response(null, { status: 204 });
   } catch (error) {
     if (
-      error instanceof Error &&
-      'code' in error &&
-      (error as { code: string }).code === 'P2025'
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === 'P2025'
     ) {
       return createErrorResponse(404, 'Reaction not found');
     }

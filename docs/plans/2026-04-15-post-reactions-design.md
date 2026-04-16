@@ -60,7 +60,7 @@ model PostReaction {
   post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([postId, userId])
+  @@id([postId, userId])
   @@index([postId])
 }
 ```
@@ -83,7 +83,7 @@ Add relations:
 #### `PUT /api/posts/[postId]/reactions`
 - **Auth:** `validateAuthentication()`
 - **Body:** `{ reaction: ReactionType }`
-- **Behavior:** Upsert on `@@unique([postId, userId])` — creates or replaces the user's existing reaction
+- **Behavior:** Upsert on `@@id([postId, userId])` (composite primary key) — creates or replaces the user's existing reaction
 - **Response 200:** Updated reactions summary for the post
 
 #### `DELETE /api/posts/[postId]/reactions`
