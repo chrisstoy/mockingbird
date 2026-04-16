@@ -103,7 +103,13 @@
       "Bash(git show:*)",
       "Bash(gh pr:*)",
       "Bash(npx gh:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(script -q /dev/null sh -c 'DATABASE_URL=\"postgresql://chrisstoy:fLCeRMT2tnwKxLn4nXyQNg@legal-roarer-11700.7tt.aws-us-east-1.cockroachlabs.cloud:26257/mockingbird-dev?sslmode=verify-full\" npx prisma migrate dev --name add-post-reactions')",
+      "Bash(script -q /dev/null sh -c 'echo y | DATABASE_URL=\"postgresql://chrisstoy:fLCeRMT2tnwKxLn4nXyQNg@legal-roarer-11700.7tt.aws-us-east-1.cockroachlabs.cloud:26257/mockingbird-dev?sslmode=verify-full\" npx prisma migrate dev --name add-post-reactions')",
+      "Bash(git -C /Users/cstoy/dev/mockingbird add apps/mockingbird/src/_server/__tests__/postsService.spec.ts)",
+      "Bash(git -C /Users/cstoy/dev/mockingbird commit -m ' *)",
+      "Bash(nx run-many *)",
+      "Bash(git *)"
     ],
     "deny": [],
     "ask": []

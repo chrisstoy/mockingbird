@@ -1,13 +1,21 @@
 import baseLogger from '@/_server/logger';
-import { removeReaction, setReaction, getReactionsForPost } from '@/_server/reactionService';
 import { doesPostExist } from '@/_server/postsService';
+import {
+  getReactionsForPost,
+  removeReaction,
+  setReaction,
+} from '@/_server/reactionService';
 import { PostIdSchema, SetReactionSchema } from '@/_types';
 import { RouteContext } from '@/app/types';
+import { Prisma } from '../../../../../../prisma/generated/client.js';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { createErrorResponse, respondWithError, ResponseError } from '../../../errors';
+import {
+  createErrorResponse,
+  respondWithError,
+  ResponseError,
+} from '../../../errors';
 import { validateAuthentication } from '../../../validateAuthentication';
-import { Prisma } from '../../../../../prisma/generated/client.js';
 
 const logger = baseLogger.child({ service: 'api:posts:reactions' });
 
