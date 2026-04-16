@@ -34,8 +34,6 @@ describe('createPost', () => {
         id: 'cm5t7b2da0001nkm167ecyq58',
         createdAt: '2025-01-12T05:55:14.481Z',
         updatedAt: '2025-01-12T05:55:14.481Z',
-        likeCount: 0,
-        dislikeCount: 0,
 
         posterId: data.posterId,
         audience: data.audience,
