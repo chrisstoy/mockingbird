@@ -91,7 +91,7 @@ All errors return JSON:
 
 #### `GET /api/posts/[postId]` — Get post
 - **Auth**: `validateAuthentication()`
-- **Response 200**: `Post` object
+- **Response 200**: `Post` object (includes `reactions?: PostReactionSummary[]`; `likeCount`/`dislikeCount` fields removed)
 - **Errors**: 404 if not found
 
 #### `DELETE /api/posts/[postId]` — Delete post
@@ -104,6 +104,20 @@ All errors return JSON:
 - **Auth**: `validateAuthentication()`
 - **Query params**: `limit` (optional, integer 1–100)
 - **Response 200**: `Post[]`
+
+#### `PUT /api/posts/[postId]/reactions` — Set or replace reaction
+- **Auth**: `validateAuthentication()`
+- **Request body**: `{ reaction: ReactionType }` — one of: `THUMBS_UP`, `THUMBS_DOWN`, `CHEER`, `ANGER`, `LAUGH`, `HUGS`
+- **Behavior**: Upserts — auto-replaces any existing reaction for this user
+- **Response 200**: `PostReactionSummary[]`
+  ```ts
+  { type: ReactionType; count: number; users: { id: UserId; name: string; image: string | null }[] }[]
+  ```
+
+#### `DELETE /api/posts/[postId]/reactions` — Remove reaction
+- **Auth**: `validateAuthentication()`
+- **Response 204**: No content
+- **Errors**: 404 if user had no reaction on this post
 
 #### `POST /api/posts/[postId]/comments` — Add comment
 - **Auth**: `validateAuthentication()`
@@ -216,7 +230,7 @@ All errors return JSON:
 - **Auth**: `validateAuthentication()`
 - **Path params**: `feed` (query param, not path) — `FeedSource`: `'public'` | `'private'` | cuid2
 - **Query params**: `feed` (default `'public'`), `cursor` (optional, PostId for pagination)
-- **Response 200**: `{ posts: Post[], cursor?: PostId }`
+- **Response 200**: `{ posts: Post[], cursor?: PostId }` (each `Post` includes `reactions?: PostReactionSummary[]`)
 - **Notes**: Only `public` and `private` are implemented; other values throw
 
 ---

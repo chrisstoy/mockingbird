@@ -26,7 +26,7 @@ The API is a Next.js App Router API layer at `src/app/api/`. All business logic 
 | Delete post | Complete | `DELETE /api/posts/[postId]` | Owner OR `posts:delete` permission; cascades to comments |
 | List comments | Complete | `GET /api/posts/[postId]/comments` | Optional `limit` param |
 | Add comment | Complete | `POST /api/posts/[postId]/comments` | `posterId` must equal session user; inherits parent audience |
-| Like / dislike | Stub | N/A | `Post.likeCount` / `Post.dislikeCount` fields exist; no endpoints |
+| Post reactions | Complete | `PUT /api/posts/[postId]/reactions`, `DELETE /api/posts/[postId]/reactions` | Six types (THUMBS_UP, THUMBS_DOWN, CHEER, ANGER, LAUGH, HUGS); one reaction per user; upsert replaces existing; users can see reactor names |
 | Search users | Complete | `GET /api/users?q=` | Name + email partial match, case-insensitive |
 | Get user profile | Complete | `GET /api/users/[userId]` | |
 | Update profile image | Complete | `PATCH /api/users/[userId]` | Self only; updates `User.image` URL |
@@ -107,6 +107,5 @@ All consequential admin actions MUST call `logAdminAction()` in `_server/adminSe
 
 | Feature | Detail |
 |---|---|
-| Like/dislike endpoints | Fields `Post.likeCount` / `Post.dislikeCount` exist; no increment/decrement API |
 | Custom feed sources | `FeedSourceSchema` accepts cuid2; `getFeed()` throws on anything other than `public`/`private` |
 | Hashtag search | No implementation in routes or services |
