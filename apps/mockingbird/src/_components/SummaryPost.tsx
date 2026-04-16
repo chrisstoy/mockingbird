@@ -79,7 +79,11 @@ export async function SummaryPost({
         </div>
       )}
 
-      <PostActionsFooter post={post} numberOfComments={numberOfComments} />
+      <PostActionsFooter
+          post={post}
+          numberOfComments={numberOfComments}
+          currentUserId={currentUserId}
+        />
 
       <Suspense
         fallback={
