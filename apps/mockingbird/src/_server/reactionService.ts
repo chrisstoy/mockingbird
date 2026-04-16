@@ -61,6 +61,9 @@ export async function removeReaction(
       where: { postId_userId: { postId, userId } },
     });
   } catch (error) {
+    if (error instanceof Error && 'code' in error) {
+      throw error; // Let PrismaClientKnownRequestError (e.g. P2025) propagate to the caller
+    }
     logger.error(errorToString(error));
     throw new Error(`removeReaction: ${errorToString(error)}`);
   }
