@@ -1,9 +1,24 @@
 import { prisma } from '@/_server/db';
+import { groupPostReactions } from '@/_server/reactionService';
 import { FeedSource, PostSchema, UserId } from '@/_types';
-import { z } from 'zod';
 import { getAcceptedFriendsForUser } from './friendsService';
 
 const PUBLIC_FEED_PAGE_SIZE = 50;
+
+type RawPostWithReactions = {
+  reactions: Array<{ userId: string; reaction: string; user: { id: string; name: string; image: string | null } }>;
+  [key: string]: unknown;
+};
+
+function parsePostsWithReactions(rawData: RawPostWithReactions[]) {
+  return rawData.map((raw) => {
+    const { reactions: rawReactions, ...postData } = raw;
+    return PostSchema.parse({
+      ...postData,
+      reactions: groupPostReactions(rawReactions),
+    });
+  });
+}
 
 export interface FeedOptions {
   userId: UserId;
@@ -36,12 +51,17 @@ async function getPrivateFeedForUser(userId: UserId) {
       posterId: { in: userIdsForFeed as unknown as string[] },
       responseToPostId: null,
     },
-    orderBy: {
-      createdAt: 'desc',
+    orderBy: { createdAt: 'desc' },
+    include: {
+      reactions: {
+        include: {
+          user: { select: { id: true, name: true, image: true } },
+        },
+      },
     },
   });
 
-  const posts = z.array(PostSchema).parse(rawData);
+  const posts = parsePostsWithReactions(rawData);
   return posts;
 }
 
@@ -55,13 +75,18 @@ async function getPublicFeed(cursor?: string) {
       audience: 'PUBLIC',
       responseToPostId: null,
     },
-    orderBy: {
-      createdAt: 'desc',
-    },
+    orderBy: { createdAt: 'desc' },
     take: PUBLIC_FEED_PAGE_SIZE,
     ...(cursor ? { skip: 1, cursor: { id: cursor } } : {}),
+    include: {
+      reactions: {
+        include: {
+          user: { select: { id: true, name: true, image: true } },
+        },
+      },
+    },
   });
 
-  const posts = z.array(PostSchema).parse(rawData);
+  const posts = parsePostsWithReactions(rawData);
   return posts;
 }
