@@ -1,6 +1,7 @@
-import { getAllUsers } from '@/_server/adminService';
+import { countExpiredPendingAccounts, getAllUsers } from '@/_server/adminService';
 import Link from 'next/link';
 import { RouteParams } from '@/app/types';
+import { CleanupPendingButton } from './_components/CleanupPendingButton.client';
 
 const ROLE_BADGE: Record<string, string> = {
   SUPER_ADMIN: 'badge-error',
@@ -14,7 +15,10 @@ export default async function AdminUsersPage({ searchParams }: RouteParams) {
   const page = Number(sp['page'] ?? '1');
   const q = String(sp['q'] ?? '');
 
-  const { users, total, limit } = await getAllUsers(page, 20, q || undefined);
+  const [{ users, total, limit }, expiredCount] = await Promise.all([
+    getAllUsers(page, 20, q || undefined),
+    countExpiredPendingAccounts(),
+  ]);
   const totalPages = Math.ceil(total / limit);
 
   return (
@@ -26,9 +30,12 @@ export default async function AdminUsersPage({ searchParams }: RouteParams) {
           </p>
           <h1 className="text-2xl font-bold tracking-tight">Users</h1>
         </div>
-        <span className="text-sm text-base-content/50">
-          {total} user{total !== 1 ? 's' : ''}
-        </span>
+        <div className="text-right flex flex-col gap-1 items-end">
+          <span className="text-sm text-base-content/50">
+            {total} user{total !== 1 ? 's' : ''}
+          </span>
+          <CleanupPendingButton expiredCount={expiredCount} />
+        </div>
       </div>
 
       <form className="mb-5 flex gap-2">

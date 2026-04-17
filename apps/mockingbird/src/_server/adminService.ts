@@ -112,6 +112,39 @@ export async function setUserPermissionOverrides(
   await logAdminAction(actorId, 'SET_PERMISSIONS', userId, { overrides });
 }
 
+export async function countExpiredPendingAccounts(): Promise<number> {
+  return prisma.user.count({
+    where: {
+      status: 'PENDING_EMAIL_VERIFICATION',
+      emailVerificationTokens: {
+        none: { usedAt: null, expiresAt: { gt: new Date() } },
+      },
+    },
+  });
+}
+
+export async function deleteExpiredPendingAccounts(actorId: string): Promise<{
+  deleted: number;
+}> {
+  logger.info(`deleteExpiredPendingAccounts actorId=${actorId}`);
+
+  const expiredUsers = await prisma.user.findMany({
+    where: {
+      status: 'PENDING_EMAIL_VERIFICATION',
+      emailVerificationTokens: {
+        none: { usedAt: null, expiresAt: { gt: new Date() } },
+      },
+    },
+    select: { id: true },
+  });
+
+  for (const user of expiredUsers) {
+    await adminDeleteUser(user.id as UserId, actorId);
+  }
+
+  return { deleted: expiredUsers.length };
+}
+
 export async function adminDeleteUser(userId: UserId, actorId: string) {
   logger.info(`adminDeleteUser userId=${userId} actorId=${actorId}`);
 

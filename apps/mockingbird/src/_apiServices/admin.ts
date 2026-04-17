@@ -19,6 +19,11 @@ export async function adminGetUsers(params?: {
   return res.json();
 }
 
+export async function adminCleanupPendingAccounts(): Promise<{ deleted: number }> {
+  const res = await fetchFromServer('/admin/users/cleanup-pending', { method: 'DELETE' });
+  return res.json();
+}
+
 export async function adminGetUser(userId: string) {
   const res = await fetchFromServer(`/admin/users/${userId}`);
   return res.json();
