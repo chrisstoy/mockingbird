@@ -20,10 +20,16 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  await prisma.user.update({
+  const updatedUser = await prisma.user.update({
     where: { id: userId },
     data: { emailVerified: new Date(), status: 'ACTIVE' },
+    select: { email: true },
   });
 
-  return NextResponse.redirect(new URL('/', request.nextUrl));
+  const welcomeUrl = new URL('/auth/welcome', request.nextUrl);
+  if (updatedUser.email) {
+    welcomeUrl.searchParams.set('email', updatedUser.email);
+  }
+
+  return NextResponse.redirect(welcomeUrl);
 }
