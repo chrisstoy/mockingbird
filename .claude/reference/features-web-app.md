@@ -30,6 +30,7 @@ The main web app is the authenticated user-facing interface under `src/app/(rout
 | Reject friend request | Complete | `/friends` | From received requests list; calls `POST` with `{ accepted: false }` |
 | Remove friend | Complete | `/friends` | From current friends list; calls `DELETE /api/users/[userId]/friends/[friendId]` |
 | Account suspended page | Complete | `/account/suspended` | Shown when middleware detects `status = SUSPENDED`; displays suspension reason |
+| Post reactions | Complete | Feed, post detail, comments | `ReactionsBar.client.tsx` — 6 emoji buttons (👍👎🎉😠😂🤗) below post content; one reaction per user; click to set/toggle off; auto-replaces previous reaction; shows reactor names in tooltip; optimistic UI |
 
 ---
 
@@ -88,7 +89,6 @@ Key layout components in `src/_components/`:
 
 | Feature | Detail |
 |---|---|
-| Like / dislike UI | `Post.likeCount` / `Post.dislikeCount` fields exist and are displayed; no button to increment |
 | Hashtag search | Requirements mention hashtag search; no UI or search page exists |
 | Post deep-linking | Requirements mention linking to an existing post; no dedicated UI beyond direct `/post/[postId]` links |
 | Image albums UI | Albums exist in the data model; the image upload UI accepts `albumId` but there is no album management page |

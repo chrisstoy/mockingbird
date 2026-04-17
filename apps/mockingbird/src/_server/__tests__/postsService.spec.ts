@@ -1,5 +1,18 @@
 import { PrismaClient } from '../../../prisma/generated/client.js';
 
+jest.mock('../../../prisma/generated/client.js', () => ({
+  PrismaClient: jest.fn(),
+  Prisma: {
+    PrismaClientKnownRequestError: class PrismaClientKnownRequestError extends Error {
+      code: string;
+      constructor(message: string, { code }: { code: string }) {
+        super(message);
+        this.code = code;
+      }
+    },
+  },
+}));
+
 jest.mock('@/_server/db', () => {
   return {
     prisma: {
@@ -34,8 +47,6 @@ describe('createPost', () => {
         id: 'cm5t7b2da0001nkm167ecyq58',
         createdAt: '2025-01-12T05:55:14.481Z',
         updatedAt: '2025-01-12T05:55:14.481Z',
-        likeCount: 0,
-        dislikeCount: 0,
 
         posterId: data.posterId,
         audience: data.audience,

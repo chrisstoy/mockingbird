@@ -1,5 +1,6 @@
 import { prisma } from '@/_server/db';
 import baseLogger from '@/_server/logger';
+import { groupPostReactions } from '@/_server/reactionService';
 import { Audience, ImageId, PostId, PostSchema, UserId } from '@/_types';
 import { errorToString } from '@/_utils/errorToString';
 import { z } from 'zod';
@@ -39,8 +40,13 @@ export async function createPost(
 export async function getPostWithId(postId: PostId) {
   try {
     const rawData = await prisma.post.findUnique({
-      where: {
-        id: postId,
+      where: { id: postId },
+      include: {
+        reactions: {
+          include: {
+            user: { select: { id: true, name: true, image: true } },
+          },
+        },
       },
     });
 
@@ -48,7 +54,11 @@ export async function getPostWithId(postId: PostId) {
       return undefined;
     }
 
-    const post = PostSchema.parse(rawData);
+    const { reactions: rawReactions, ...postData } = rawData;
+    const post = PostSchema.parse({
+      ...postData,
+      reactions: groupPostReactions(rawReactions),
+    });
     return post;
   } catch (error) {
     logger.error(errorToString(error));
@@ -73,16 +83,25 @@ export async function doesPostExist(postId: PostId) {
 export async function getCommentsForPost(postId: PostId, limit?: number) {
   try {
     const rawData = await prisma.post.findMany({
-      where: {
-        responseToPostId: postId,
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
+      where: { responseToPostId: postId },
+      orderBy: { createdAt: 'desc' },
       take: limit,
+      include: {
+        reactions: {
+          include: {
+            user: { select: { id: true, name: true, image: true } },
+          },
+        },
+      },
     });
 
-    const comments = z.array(PostSchema).parse(rawData);
+    const comments = rawData.map((raw) => {
+      const { reactions: rawReactions, ...postData } = raw;
+      return PostSchema.parse({
+        ...postData,
+        reactions: groupPostReactions(rawReactions),
+      });
+    });
     return comments;
   } catch (error) {
     logger.error(errorToString(error));

@@ -14,3 +14,4 @@ export const PostIdSchema = createDatabaseIdSchema<PostId>();
 
 export type UserId = string & { __brand: 'UserId' };
 export const UserIdSchema = createDatabaseIdSchema<UserId>();
+

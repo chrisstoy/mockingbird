@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { AudienceSchema } from './audience';
 import { ImageIdSchema, PostIdSchema, UserIdSchema } from './ids';
+import { PostReactionSummarySchema } from './reactions';
 
 export const CreatePostDataSchema = z.object({
   posterId: UserIdSchema,
@@ -16,7 +17,6 @@ export const PostSchema = CreatePostDataSchema.extend({
   updatedAt: z.coerce.date(),
 
   imageId: ImageIdSchema.nullish(),
-  likeCount: z.number(),
-  dislikeCount: z.number(),
+  reactions: z.array(PostReactionSummarySchema).optional(),
 });
 export type Post = z.infer<typeof PostSchema>;

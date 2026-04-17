@@ -44,6 +44,7 @@ model User {
   posts               Post[]
   friends             Friends[]
   permissionOverrides UserPermission[]
+  reactions           PostReaction[]
   passwordResetTokens        PasswordResetToken[]
   emailVerificationTokens    EmailVerificationToken[]
 }
@@ -174,8 +175,6 @@ model Post {
   responseToPostId String?
   audience         Audience @default(PUBLIC)
   content          String
-  likeCount        Int      @default(0)
-  dislikeCount     Int      @default(0)
   imageId          String?
 
   createdAt DateTime @default(now())
@@ -187,6 +186,31 @@ model Post {
   responses  Post[] @relation("Responses")
 
   image Image? @relation(fields: [imageId], references: [id], onDelete: SetNull)
+
+  reactions PostReaction[]
+}
+
+enum ReactionType {
+  THUMBS_UP
+  THUMBS_DOWN
+  CHEER
+  ANGER
+  LAUGH
+  HUGS
+}
+
+model PostReaction {
+  postId    String
+  userId    String
+  reaction  ReactionType
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([postId, userId])
+  @@index([postId])
 }
 
 enum FriendRequestStatus {

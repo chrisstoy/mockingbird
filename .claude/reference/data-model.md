@@ -35,13 +35,33 @@ Relations: `accounts Account[]`, `sessions Session[]`, `posts Post[]`, `friends 
 | `responseToPostId` | String | Yes | — | FK → Post.id (`onDelete: Cascade`); **null = top-level post, non-null = comment** |
 | `audience` | Audience | No | `PUBLIC` | Enum: `PUBLIC`, `PRIVATE` |
 | `content` | String | No | — | Text content; required even on image-only posts |
-| `likeCount` | Int | No | `0` | **No increment endpoint exists — stub** |
-| `dislikeCount` | Int | No | `0` | **No increment endpoint exists — stub** |
 | `imageId` | String | Yes | — | FK → Image.id (`onDelete: SetNull`) |
 | `createdAt` | DateTime | No | `now()` | |
 | `updatedAt` | DateTime | No | `@updatedAt` | |
 
+Relations: `poster User`, `image Image?`, `responses Post[]` (comments), `reactions PostReaction[]`
+
 **Key rule**: Always filter `responseToPostId: null` when querying for feed posts. Comments are fetched via the `responses` relation or by filtering `responseToPostId: <parentId>`.
+
+---
+
+### PostReaction
+
+| Field | Type | Nullable | Default | Notes |
+|---|---|---|---|---|
+| `postId` | String | No | — | Part of composite PK; FK → Post.id (`onDelete: Cascade`) |
+| `userId` | String | No | — | Part of composite PK; FK → User.id (`onDelete: Cascade`) |
+| `reaction` | ReactionType | No | — | Enum value (see below) |
+| `createdAt` | DateTime | No | `now()` | |
+| `updatedAt` | DateTime | No | `@updatedAt` | |
+
+**Composite PK**: `@@id([postId, userId])` — enforces one reaction per user per post. Upserting replaces the existing reaction.
+
+**Index**: `@@index([postId])` — efficient lookup of all reactions on a post.
+
+Relations: `post Post`, `user User`
+
+**`ReactionType` enum**: `THUMBS_UP`, `THUMBS_DOWN`, `CHEER`, `ANGER`, `LAUGH`, `HUGS`
 
 ---
 
@@ -179,8 +199,8 @@ Standard NextAuth/Prisma adapter tables. `Account` and `Session` both cascade-de
 
 | Action | What gets deleted automatically |
 |---|---|
-| Delete User | Account, Session, Post (→ their comments), Friends (where userId=user), UserPermission, PasswordResetToken, EmailVerificationToken |
-| Delete Post | All `responses` (comments) on that post |
+| Delete User | Account, Session, Post (→ their comments), Friends (where userId=user), UserPermission, PasswordResetToken, EmailVerificationToken, PostReaction rows for that user |
+| Delete Post | All `responses` (comments) on that post; all `PostReaction` rows for that post |
 | Delete Image | Sets `Post.imageId = null` on all posts referencing it; sets `Image.albumId = null` when album deleted |
 | Delete Album | Sets `Image.albumId = null` |
 | **Delete User** | **Does NOT delete Passwords row** — must be deleted manually first |
