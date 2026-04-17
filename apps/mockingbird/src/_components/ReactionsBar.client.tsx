@@ -77,14 +77,14 @@ export function ReactionsBar({
               onClick={() => handleReaction(type)}
               disabled={!currentUserId}
               aria-label={REACTION_LABEL[type]}
-              className={`btn btn-xs gap-1 ${
+              className={`btn btn-sm gap-1 ${
                 isActive
                   ? 'btn-primary'
                   : 'btn-ghost text-base-content/50 hover:text-base-content'
               }`}
             >
-              <span>{REACTION_EMOJI[type]}</span>
-              {count > 0 && <span className="text-xs">{count}</span>}
+              <span className="text-base">{REACTION_EMOJI[type]}</span>
+              {count > 0 && <span className="text-sm">{count}</span>}
             </button>
           </div>
         );
