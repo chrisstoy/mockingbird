@@ -35,6 +35,7 @@ export default function SignInPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') || '/';
+  const defaultEmail = searchParams.get('email') ?? undefined;
 
   const [error, setError] = useState<string | null>(null);
 
@@ -161,7 +162,7 @@ export default function SignInPage() {
       {/* Credentials form */}
       {includeCredentialProvider && (
         <div className="flex flex-col gap-3">
-          <SignInEmailPassword onSignIn={handleSignInWithEmailAndPassword} />
+          <SignInEmailPassword onSignIn={handleSignInWithEmailAndPassword} defaultEmail={defaultEmail} />
           <div className="text-right">
             <Link
               className="text-sm text-primary hover:underline"
