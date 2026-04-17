@@ -1,0 +1,13 @@
+{
+  "planPath": "docs/plans/2026-04-17-email-verification-welcome-screen.md",
+  "tasks": [
+    {"id": 7, "subject": "Task 1: Add /auth/welcome to middleware public-routes allowlist", "status": "pending"},
+    {"id": 8, "subject": "Task 2: Update verify-email API route to redirect to welcome page", "status": "pending", "blockedBy": [7]},
+    {"id": 9, "subject": "Task 3: Create welcome page layout", "status": "pending", "blockedBy": [7]},
+    {"id": 10, "subject": "Task 4: Create welcome page", "status": "pending", "blockedBy": [9]},
+    {"id": 11, "subject": "Task 5: Add defaultEmail prop to SignInEmailPassword", "status": "pending", "blockedBy": [7]},
+    {"id": 12, "subject": "Task 6: Wire email pre-fill into SignInPage", "status": "pending", "blockedBy": [11]},
+    {"id": 13, "subject": "Task 7: Smoke test the full flow", "status": "pending", "blockedBy": [8, 10, 12]}
+  ],
+  "lastUpdated": "2026-04-17T00:00:00Z"
+}
