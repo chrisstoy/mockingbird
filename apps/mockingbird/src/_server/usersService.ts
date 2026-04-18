@@ -1,4 +1,5 @@
 import { sendEmailVerificationEmail } from '@/_server/emailService';
+import { deleteAllImagesForUser } from '@/_server/imagesService';
 import { prisma } from '@/_server/db';
 import baseLogger from '@/_server/logger';
 import { DocumentId, UserId, UserInfoSchema } from '@/_types';
@@ -114,6 +115,8 @@ export async function createUser(
 
 export async function deleteUser(userId: UserId) {
   try {
+    await deleteAllImagesForUser(userId);
+
     const [
       commentsDeleted,
       postsDeleted,
