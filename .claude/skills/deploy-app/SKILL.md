@@ -70,12 +70,16 @@ curl -s -X PATCH "https://api.vercel.com/v1/edge-config/ecfg_v1w34seioecngzlhghv
 
 ## Step 6 — Run DB migrations
 
-Follow the **Database Migrations** section of `SDLC.md`. Pull the URL from Vercel and apply pending migrations using `prisma-deploy` (never `migrate dev`):
+Follow the **Database Migrations** section of `SDLC.md`. Pull the URL from Vercel and apply pending migrations using `prisma migrate deploy` directly (never `migrate dev`, never `nx run mockingbird:prisma-deploy` — the nx target does not inherit the exported DATABASE_URL):
 
 ```bash
-vercel env pull /tmp/deploy-env --environment=<preview|production>
+# preview — must include --git-branch=develop to get the correct DATABASE_URL
+vercel env pull /tmp/deploy-env --environment=preview --git-branch=develop
+# production
+vercel env pull /tmp/deploy-env --environment=production
+
 DATABASE_URL=$(grep '^DATABASE_URL=' /tmp/deploy-env | cut -d= -f2- | tr -d '"') \
-  nx run mockingbird:prisma-deploy
+  npx prisma migrate deploy --schema=apps/mockingbird/prisma/schema.prisma
 rm /tmp/deploy-env
 ```
 

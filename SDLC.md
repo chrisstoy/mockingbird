@@ -184,16 +184,14 @@ Migrations must be run **manually before deploying** to each environment. They a
 
 ### Pre-production (preview database)
 
-```bash
-# Ensure .env.preview has the preview DATABASE_URL
-DATABASE_URL=$(grep '^DATABASE_URL=' apps/mockingbird/.env.preview | cut -d= -f2-) \
-  nx run mockingbird:prisma-migrate
-```
-
-Or using the Prisma deploy executor (applies pending migrations without prompts — safe for CI):
+`--git-branch=develop` is required — without it `vercel env pull` returns the dev DATABASE_URL, not the preview one.
+Do NOT use `nx run mockingbird:prisma-deploy` — the nx target does not inherit the exported DATABASE_URL.
 
 ```bash
-DATABASE_URL=<preview-db-url> nx run mockingbird:prisma-deploy
+vercel env pull /tmp/deploy-env --environment=preview --git-branch=develop
+DATABASE_URL=$(grep '^DATABASE_URL=' /tmp/deploy-env | cut -d= -f2- | tr -d '"') \
+  npx prisma migrate deploy --schema=apps/mockingbird/prisma/schema.prisma
+rm /tmp/deploy-env
 ```
 
 ### Production
@@ -203,9 +201,6 @@ vercel env pull /tmp/deploy-env --environment=production
 DATABASE_URL=$(grep '^DATABASE_URL=' /tmp/deploy-env | cut -d= -f2- | tr -d '"') \
   npx prisma migrate deploy --schema=apps/mockingbird/prisma/schema.prisma
 rm /tmp/deploy-env
-# Or if apps/mockingbird/.env.prod is up to date:
-# DATABASE_URL=$(grep '^DATABASE_URL=' apps/mockingbird/.env.prod | cut -d= -f2-) \
-#   nx run mockingbird:prisma-deploy
 ```
 
 > Use `prisma-deploy` (not `prisma-migrate`) in non-local environments — it applies pending migrations without creating new ones and never prompts interactively.
@@ -236,14 +231,12 @@ curl -s -X PATCH "https://api.vercel.com/v1/edge-config/ecfg_v1w34seioecngzlhghv
   -d '{"items":[{"operation":"upsert","key":"previewMaintenanceMode","value":true}]}'
 
 # 3. Run DB migrations against preview database (manual step)
-#    Pull the preview DATABASE_URL from Vercel, then apply pending migrations:
-vercel env pull /tmp/deploy-env --environment=preview
+#    --git-branch=develop is required to get the preview DATABASE_URL (not the dev one)
+#    Do NOT use `nx run mockingbird:prisma-deploy` — the nx target does not inherit the exported DATABASE_URL
+vercel env pull /tmp/deploy-env --environment=preview --git-branch=develop
 DATABASE_URL=$(grep '^DATABASE_URL=' /tmp/deploy-env | cut -d= -f2- | tr -d '"') \
   npx prisma migrate deploy --schema=apps/mockingbird/prisma/schema.prisma
 rm /tmp/deploy-env
-#    Or if apps/mockingbird/.env.preview is up to date (see Env Var Management):
-#    DATABASE_URL=$(grep '^DATABASE_URL=' apps/mockingbird/.env.preview | cut -d= -f2-) \
-#      nx run mockingbird:prisma-deploy
 
 # 4. Push to develop — Vercel auto-deploys
 git push origin develop
