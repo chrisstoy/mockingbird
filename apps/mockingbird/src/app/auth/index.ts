@@ -127,6 +127,7 @@ const nextAuth = NextAuth({
         request.nextUrl.pathname === '/auth/forgot-password' ||
         request.nextUrl.pathname === '/auth/reset-password' ||
         request.nextUrl.pathname === '/auth/expired-password' ||
+        request.nextUrl.pathname === '/auth/welcome' ||
         request.nextUrl.pathname.startsWith('/images') ||
         request.nextUrl.pathname.startsWith('/api')
       ) {

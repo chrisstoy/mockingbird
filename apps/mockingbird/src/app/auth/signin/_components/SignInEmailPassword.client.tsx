@@ -14,15 +14,17 @@ type LoginEmailPassword = z.infer<typeof LoginEmailPasswordSchema>;
 
 interface Props {
   onSignIn: (email: string, password: string) => void;
+  defaultEmail?: string;
 }
 
-export function SignInEmailPassword({ onSignIn }: Props) {
+export function SignInEmailPassword({ onSignIn, defaultEmail }: Props) {
   const {
     register,
     formState: { errors },
     handleSubmit,
   } = useForm<LoginEmailPassword>({
     resolver: zodResolver(LoginEmailPasswordSchema),
+    defaultValues: { email: defaultEmail ?? '' },
   });
 
   async function handleSignIn({ email, password }: LoginEmailPassword) {
