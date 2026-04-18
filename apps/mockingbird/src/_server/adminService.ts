@@ -1,3 +1,4 @@
+import { deleteAllImagesForUser } from '@/_server/imagesService';
 import { prisma } from '@/_server/db';
 import baseLogger from '@/_server/logger';
 import { UserRole } from '@/_types';
@@ -147,6 +148,8 @@ export async function deleteExpiredPendingAccounts(actorId: string): Promise<{
 
 export async function adminDeleteUser(userId: UserId, actorId: string) {
   logger.info(`adminDeleteUser userId=${userId} actorId=${actorId}`);
+
+  await deleteAllImagesForUser(userId);
 
   await prisma.$transaction([
     prisma.post.deleteMany({

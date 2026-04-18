@@ -18,7 +18,8 @@
       "Bash(git tag:*)",
       "Bash(git checkout:*)",
       "Bash(git merge:*)",
-      "Bash(DATABASE_URL=\"postgresql://chrisstoy:fLCeRMT2tnwKxLn4nXyQNg@legal-roarer-11700.7tt.aws-us-east-1.cockroachlabs.cloud:26257/mockingbird-preview?sslmode=verify-full\" npx prisma migrate deploy)"
+      "Bash(DATABASE_URL=\"postgresql://chrisstoy:fLCeRMT2tnwKxLn4nXyQNg@legal-roarer-11700.7tt.aws-us-east-1.cockroachlabs.cloud:26257/mockingbird-preview?sslmode=verify-full\" npx prisma migrate deploy)",
+      "Bash(echo \"exit: $?\")"
     ],
     "additionalDirectories": [
       "/private/tmp",

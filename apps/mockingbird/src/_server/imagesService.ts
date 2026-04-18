@@ -330,6 +330,57 @@ export async function getOrCreateAlbumByName(userId: UserId, name: string) {
   });
 }
 
+/**
+ * Deletes all images for a user — R2 objects (where hosted by us) and all DB Image/Album records.
+ */
+export async function deleteAllImagesForUser(userId: UserId) {
+  const images = await prisma.image.findMany({ where: { ownerId: userId } });
+
+  const r2Deletions = images.flatMap((image) => {
+    const urls = [image.imageUrl, image.thumbnailUrl];
+    return urls
+      .filter((url) => url.startsWith(env.IMAGES_BASE_URL))
+      .map((url) => {
+        const key = url.replace(`${env.IMAGES_BASE_URL}/`, '');
+        const command = new DeleteObjectCommand({ Bucket: bucketName, Key: key });
+        return s3Client.send(command).then((result) => {
+          if (result.$metadata.httpStatusCode !== 204) {
+            logger.warn(`Failed to delete R2 object: ${key}`, result.$metadata);
+          }
+        });
+      });
+  });
+
+  await Promise.all(r2Deletions);
+
+  await prisma.image.deleteMany({ where: { ownerId: userId } });
+  await prisma.album.deleteMany({ where: { ownerId: userId } });
+
+  // Delete any orphaned R2 objects not tracked in the database
+  let continuationToken: string | undefined;
+  do {
+    const params: ListObjectsV2CommandInput = {
+      Bucket: bucketName,
+      Prefix: `${userId}/`,
+      ContinuationToken: continuationToken,
+    };
+    const listResult = await s3Client.send(new ListObjectsV2Command(params));
+    const keys = listResult.Contents?.map((obj) => obj.Key).filter(Boolean) ?? [];
+    await Promise.all(
+      keys.map((key) =>
+        s3Client.send(new DeleteObjectCommand({ Bucket: bucketName, Key: key })).then((result) => {
+          if (result.$metadata.httpStatusCode !== 204) {
+            logger.warn(`Failed to delete orphaned R2 object: ${key}`, result.$metadata);
+          }
+        })
+      )
+    );
+    continuationToken = listResult.IsTruncated ? listResult.NextContinuationToken : undefined;
+  } while (continuationToken);
+
+  logger.info(`Deleted all images and albums for user: ${userId}`);
+}
+
 export async function listImagesForUser(userId: UserId) {
   try {
     const rawData = await prisma.image.findMany({
