@@ -46,8 +46,8 @@ const authMiddleware = auth(async (req) => {
   return response;
 });
 
-export default function middleware(request: NextRequest, event: NextFetchEvent) {
-  return maintenanceResponse(request) ?? (authMiddleware as unknown as NextMiddleware)(request, event);
+export default async function middleware(request: NextRequest, event: NextFetchEvent) {
+  return (await maintenanceResponse(request)) ?? (authMiddleware as unknown as NextMiddleware)(request, event);
 }
 
 export const config = {

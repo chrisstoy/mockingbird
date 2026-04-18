@@ -55,9 +55,17 @@ Skip this step for `preview` deploys.
 
 ## Step 5 — Enable maintenance mode
 
+Maintenance mode is controlled via Edge Config — no redeploy needed. Use the environment-specific key:
+- `preview` → key `previewMaintenanceMode`
+- `production` → key `productionMaintenanceMode`
+
 ```bash
-vercel env rm MAINTENANCE_MODE <preview|production> --yes 2>/dev/null
-echo "true" | vercel env add MAINTENANCE_MODE <preview|production>
+VERCEL_TOKEN=$(python3 -c "import json; print(json.load(open('/Users/cstoy/Library/Application Support/com.vercel.cli/auth.json'))['token'])")
+EC_KEY=<previewMaintenanceMode|productionMaintenanceMode>
+curl -s -X PATCH "https://api.vercel.com/v1/edge-config/ecfg_v1w34seioecngzlhghvx3mupyzoo/items?teamId=team_OrZdpS2ROzUOdrEUR54NHWGK" \
+  -H "Authorization: Bearer $VERCEL_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d "{\"items\":[{\"operation\":\"upsert\",\"key\":\"$EC_KEY\",\"value\":true}]}"
 ```
 
 ## Step 6 — Run DB migrations
@@ -123,8 +131,12 @@ On failure report the error and which step failed.
 ## Step 10 — Disable maintenance mode
 
 ```bash
-vercel env rm MAINTENANCE_MODE <preview|production> --yes
-echo "false" | vercel env add MAINTENANCE_MODE <preview|production>
+VERCEL_TOKEN=$(python3 -c "import json; print(json.load(open('/Users/cstoy/Library/Application Support/com.vercel.cli/auth.json'))['token'])")
+EC_KEY=<previewMaintenanceMode|productionMaintenanceMode>
+curl -s -X PATCH "https://api.vercel.com/v1/edge-config/ecfg_v1w34seioecngzlhghvx3mupyzoo/items?teamId=team_OrZdpS2ROzUOdrEUR54NHWGK" \
+  -H "Authorization: Bearer $VERCEL_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d "{\"items\":[{\"operation\":\"upsert\",\"key\":\"$EC_KEY\",\"value\":false}]}"
 ```
 
 ## Step 11 — Verify version deployed

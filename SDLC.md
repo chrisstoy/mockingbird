@@ -229,8 +229,11 @@ This is configured in `apps/mockingbird/project.json` (`build-vercel` target) an
 git checkout develop
 git pull origin develop
 
-# 2. Enable maintenance mode
-vercel env rm MAINTENANCE_MODE preview --yes 2>/dev/null; echo "true" | vercel env add MAINTENANCE_MODE preview
+# 2. Enable maintenance mode (Edge Config — no redeploy needed)
+curl -s -X PATCH "https://api.vercel.com/v1/edge-config/ecfg_v1w34seioecngzlhghvx3mupyzoo/items?teamId=team_OrZdpS2ROzUOdrEUR54NHWGK" \
+  -H "Authorization: Bearer $(cat ~/Library/Application\ Support/com.vercel.cli/auth.json | python3 -c 'import sys,json; print(json.load(sys.stdin)[\"token\"])')" \
+  -H "Content-Type: application/json" \
+  -d '{"items":[{"operation":"upsert","key":"previewMaintenanceMode","value":true}]}'
 
 # 3. Run DB migrations against preview database (manual step)
 #    Pull the preview DATABASE_URL from Vercel, then apply pending migrations:
@@ -252,8 +255,11 @@ vercel logs <deployment-url>     # tail logs if needed
 # 6. Manual deploy (if auto-deploy didn't trigger or you need to deploy without pushing):
 vercel deploy                    # deploys current branch as preview
 
-# 7. Disable maintenance mode
-vercel env rm MAINTENANCE_MODE preview --yes; echo "false" | vercel env add MAINTENANCE_MODE preview
+# 7. Disable maintenance mode (Edge Config — no redeploy needed)
+curl -s -X PATCH "https://api.vercel.com/v1/edge-config/ecfg_v1w34seioecngzlhghvx3mupyzoo/items?teamId=team_OrZdpS2ROzUOdrEUR54NHWGK" \
+  -H "Authorization: Bearer $(cat ~/Library/Application\ Support/com.vercel.cli/auth.json | python3 -c 'import sys,json; print(json.load(sys.stdin)[\"token\"])')" \
+  -H "Content-Type: application/json" \
+  -d '{"items":[{"operation":"upsert","key":"previewMaintenanceMode","value":false}]}'
 
 # 8. Verify version deployed — check footer on sign-in page
 #    Navigate to https://mockingbird.chrisstoy.com/auth/signin
@@ -270,8 +276,11 @@ PLAYWRIGHT_BASE_URL=https://mockingbird.chrisstoy.com nx run mockingbird-e2e:e2e
 E2E tests on pre-prod must pass before promoting to production.
 
 ```bash
-# 1. Enable maintenance mode
-vercel env rm MAINTENANCE_MODE production --yes 2>/dev/null; echo "true" | vercel env add MAINTENANCE_MODE production
+# 1. Enable maintenance mode (Edge Config — no redeploy needed)
+curl -s -X PATCH "https://api.vercel.com/v1/edge-config/ecfg_v1w34seioecngzlhghvx3mupyzoo/items?teamId=team_OrZdpS2ROzUOdrEUR54NHWGK" \
+  -H "Authorization: Bearer $(cat ~/Library/Application\ Support/com.vercel.cli/auth.json | python3 -c 'import sys,json; print(json.load(sys.stdin)[\"token\"])')" \
+  -H "Content-Type: application/json" \
+  -d '{"items":[{"operation":"upsert","key":"productionMaintenanceMode","value":true}]}'
 
 # 2. Run DB migrations against production database (manual step — do BEFORE push)
 vercel env pull /tmp/deploy-env --environment=production
@@ -289,8 +298,11 @@ git push origin main
 # 5. Monitor build and verify at https://mockingbird.club
 vercel logs <deployment-url>
 
-# 6. Disable maintenance mode
-vercel env rm MAINTENANCE_MODE production --yes; echo "false" | vercel env add MAINTENANCE_MODE production
+# 6. Disable maintenance mode (Edge Config — no redeploy needed)
+curl -s -X PATCH "https://api.vercel.com/v1/edge-config/ecfg_v1w34seioecngzlhghvx3mupyzoo/items?teamId=team_OrZdpS2ROzUOdrEUR54NHWGK" \
+  -H "Authorization: Bearer $(cat ~/Library/Application\ Support/com.vercel.cli/auth.json | python3 -c 'import sys,json; print(json.load(sys.stdin)[\"token\"])')" \
+  -H "Content-Type: application/json" \
+  -d '{"items":[{"operation":"upsert","key":"productionMaintenanceMode","value":false}]}'
 
 # 7. Verify version deployed — check footer on sign-in page
 #    Navigate to https://mockingbird.club/auth/signin
