@@ -1,8 +1,18 @@
-# Release notes - Mockingbird - 0.6.0
+# Release notes - Mockingbird - 0.7.0
 
 ### Task
 
 _(no tickets yet — will be populated as features merge to develop)_
+
+---
+
+# Release notes - Mockingbird - 0.6.1
+
+### Task
+
+- [MOC-7](https://stoy.atlassian.net/browse/MOC-7) Application supports user reacting to a post
+- [MOC-72](https://stoy.atlassian.net/browse/MOC-72) Clean up user images on account deletion
+- [MOC-89](https://stoy.atlassian.net/browse/MOC-89) Add welcome page after email verification
 
 ---
 
