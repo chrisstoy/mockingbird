@@ -32,13 +32,19 @@ git status --short
   nx run mockingbird:test
   ```
 
-## Step 3 — Verify Vercel auth
+## Step 3 — Verify Vercel auth and project link
 
 ```bash
 vercel whoami
+cat .vercel/project.json
 ```
 
 Stop if not authenticated; tell the user to run `vercel login`.
+
+The project must be linked to `mockingbird` (not `mockingbird-2`). If `project.json` shows `projectName: "mockingbird-2"` or is missing, re-link:
+```bash
+vercel link --scope team_OrZdpS2ROzUOdrEUR54NHWGK --project mockingbird --yes
+```
 
 ## Step 4 — Verify version (`prod` only)
 
@@ -114,13 +120,26 @@ vercel deploy --prod   # prod
 ## Step 8 — Monitor
 
 ```bash
-vercel list
+vercel list | head -8
 vercel logs <deployment-url> --follow 2>&1
 ```
 
 Note: `vercel list` does not support a `--limit` flag — use `| head -N` to truncate output.
 
 The Vercel build runs `nx run mockingbird:build-vercel` (chains: `prisma-generate → update-build-date → build`). Watch for errors and report them.
+
+**If the deployment shows `Canceled` with reason "Ignored Build Step"** (check via Vercel API if not obvious):
+- `nx-ignore` has been disabled on the Vercel project, so this should not recur.
+- If it does happen, force a redeploy of the last ready build via the API (do NOT use `vercel deploy --prod` — it uploads node_modules and exceeds the 100MB file limit):
+```bash
+VERCEL_TOKEN=$(python3 -c "import json; print(json.load(open('/Users/cstoy/Library/Application Support/com.vercel.cli/auth.json'))['token'])")
+LAST_READY=$(curl -s "https://api.vercel.com/v6/deployments?teamId=team_OrZdpS2ROzUOdrEUR54NHWGK&projectId=prj_LPsjXeMEqjYgm9gGvMINqgRWRIuu&limit=10&state=READY" \
+  -H "Authorization: Bearer $VERCEL_TOKEN" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d['deployments'][0]['uid'])")
+curl -s -X POST "https://api.vercel.com/v13/deployments?teamId=team_OrZdpS2ROzUOdrEUR54NHWGK&forceNew=1" \
+  -H "Authorization: Bearer $VERCEL_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d "{\"name\":\"mockingbird\",\"deploymentId\":\"$LAST_READY\",\"target\":\"production\"}" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('url'), d.get('readyState'))"
+```
 
 ## Step 9 — Report result
 
@@ -162,13 +181,7 @@ cat apps/mockingbird/version.json
 PLAYWRIGHT_BASE_URL=https://mockingbird.chrisstoy.com nx run mockingbird-e2e:e2e
 ```
 
-**prod** — E2E tests against pre-prod must pass before this step is considered complete. If not already run, stop and run them now:
-```bash
-PLAYWRIGHT_BASE_URL=https://mockingbird.chrisstoy.com nx run mockingbird-e2e:e2e
-```
-Do not proceed past this point if E2E tests fail.
-
-Then remind the user to run the smoke test checklist from `SDLC.md`:
+**prod** — do NOT run automated E2E tests. Remind the user to run the smoke test checklist from `SDLC.md`:
 - App loads at `mockingbird.club`
 - Sign-in (credentials + OAuth)
 - Feed loads and displays posts

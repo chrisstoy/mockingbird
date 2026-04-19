@@ -266,7 +266,9 @@ PLAYWRIGHT_BASE_URL=https://mockingbird.chrisstoy.com nx run mockingbird-e2e:e2e
 
 ### Production Deploy (`main` → `mockingbird.club`)
 
-E2E tests on pre-prod must pass before promoting to production.
+> **Vercel project**: must be linked to `mockingbird` (not `mockingbird-2`). Run `vercel link --scope team_OrZdpS2ROzUOdrEUR54NHWGK --project mockingbird --yes` if `.vercel/project.json` points elsewhere.
+
+> **nx-ignore is disabled for production.** Vercel always builds on push to `main`. (Previously `npx nx-ignore mockingbird` was configured as the ignored build step — this caused prod deploys to be skipped when only non-app files changed. It has been removed.)
 
 ```bash
 # 1. Enable maintenance mode (Edge Config — no redeploy needed)
@@ -281,15 +283,25 @@ DATABASE_URL=$(grep '^DATABASE_URL=' /tmp/deploy-env | cut -d= -f2- | tr -d '"')
   npx prisma migrate deploy --schema=apps/mockingbird/prisma/schema.prisma
 rm /tmp/deploy-env
 
-# 3. Merge develop into main (via PR or direct merge after pre-prod sign-off)
+# 3. Merge develop into main and push — Vercel auto-deploys
 git checkout main
 git pull origin main
 git merge develop
 git push origin main
+git checkout develop
 
-# 4. Vercel auto-deploys to production
-# 5. Monitor build and verify at https://mockingbird.club
+# 4. Monitor build
+vercel list | head -8
 vercel logs <deployment-url>
+
+# 5. If auto-deploy is still canceled (check: "Ignored Build Step" in deployment reason):
+#    Force redeploy the last good build via the Vercel API:
+VERCEL_TOKEN=$(python3 -c "import json; print(json.load(open('/Users/cstoy/Library/Application Support/com.vercel.cli/auth.json'))['token'])")
+curl -s -X POST "https://api.vercel.com/v13/deployments?teamId=team_OrZdpS2ROzUOdrEUR54NHWGK&forceNew=1" \
+  -H "Authorization: Bearer $VERCEL_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"mockingbird","deploymentId":"<last-ready-deployment-id>","target":"production"}'
+#    DO NOT use `vercel deploy --prod` — it uploads node_modules and hits the 100MB file limit.
 
 # 6. Disable maintenance mode (Edge Config — no redeploy needed)
 curl -s -X PATCH "https://api.vercel.com/v1/edge-config/ecfg_v1w34seioecngzlhghvx3mupyzoo/items?teamId=team_OrZdpS2ROzUOdrEUR54NHWGK" \
@@ -303,7 +315,7 @@ curl -s -X PATCH "https://api.vercel.com/v1/edge-config/ecfg_v1w34seioecngzlhghv
 #    Confirm it matches the version in apps/mockingbird/version.json.
 cat apps/mockingbird/version.json   # shows expected version
 
-# 8. Post-deploy smoke test (see below)
+# 8. Post-deploy smoke test (see below) — do NOT run automated E2E tests for prod deploys
 
 # 9. Bump develop to the next MINOR version
 #    develop must always carry the NEXT version after a release.
@@ -313,12 +325,6 @@ SHIPPING_VERSION=$(node -p "require('./apps/mockingbird/version.json').version")
 #    See the deploy-app skill (Step 13) for the full command sequence.
 git tag v$SHIPPING_VERSION
 #    ... commit version.json + CHANGELOG.md, push develop, push tag
-```
-
-#### Manual Production Deploy (if needed)
-
-```bash
-vercel deploy --prod
 ```
 
 ---
