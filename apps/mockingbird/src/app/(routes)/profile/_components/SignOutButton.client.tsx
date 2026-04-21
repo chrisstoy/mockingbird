@@ -3,7 +3,7 @@
 import {
   ConfirmationDialogResult,
   ConfirmSignOutDialog,
-} from '@mockingbird/stoyponents';
+} from '@/_components/dialog';
 import { signOut } from 'next-auth/react';
 import { useState } from 'react';
 

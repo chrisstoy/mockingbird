@@ -7,7 +7,7 @@ import { getUserById } from '@/_server/usersService';
 import { Post, UserIdSchema } from '@/_types';
 import { auth } from '@/app/auth';
 import { GENERIC_USER_IMAGE_URL } from '@/constants';
-import { TextDisplay } from '@mockingbird/stoyponents';
+import { TextDisplay } from '@/_components/editor';
 import Link from 'next/link';
 import { Suspense } from 'react';
 import { CommentList } from './CommentList';

@@ -4,7 +4,7 @@ import {
   PhotoIcon,
   SquaresPlusIcon,
 } from '@heroicons/react/24/outline';
-import { FileSelectButton } from '@mockingbird/stoyponents';
+import { FileSelectButton } from '@/_components/editor';
 
 interface Props {
   disableImageSelection?: boolean;

@@ -1,5 +1,5 @@
 import { Post } from '@/_types';
-import { TextDisplay } from '@mockingbird/stoyponents';
+import { TextDisplay } from '@/_components/editor';
 import Image from 'next/image';
 import { ImageDisplay } from './ImageDisplay.client';
 import { LocalTime } from './LocalTime.client';

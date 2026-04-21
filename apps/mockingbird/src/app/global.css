@@ -1,6 +1,6 @@
 @import "tailwindcss";
-@source "../../../../stoyponents/src";
 @plugin "@tailwindcss/typography";
+
 @plugin "daisyui" {
   themes: mockingbird, mockingbird-dark;
 }
@@ -98,12 +98,18 @@
 
 [data-theme="mockingbird-dark"] {
   /* CSS custom properties for dark mode amber palette */
-  --dk-amber: #f5a23e;           /* primary amber */
-  --dk-surface-1: #141618;       /* page background */
-  --dk-surface-2: #1e2124;       /* cards, panels */
-  --dk-surface-3: #2a2e32;       /* inputs, hover */
-  --dk-surface-deep: #0e1012;    /* navbar, deepest */
-  --dk-content: #eceef1;         /* primary text */
+  --dk-amber: #f5a23e;
+  /* primary amber */
+  --dk-surface-1: #141618;
+  /* page background */
+  --dk-surface-2: #1e2124;
+  /* cards, panels */
+  --dk-surface-3: #2a2e32;
+  /* inputs, hover */
+  --dk-surface-deep: #0e1012;
+  /* navbar, deepest */
+  --dk-content: #eceef1;
+  /* primary text */
 
   /* Input borders: amber-tinted so fields pop off the dark page */
   .input,
@@ -127,7 +133,7 @@
     &:focus-within {
       border-color: rgba(245, 162, 62, 0.65);
       box-shadow: 0 0 0 3px rgba(245, 162, 62, 0.12),
-                  inset 0 1px 0 rgba(245, 162, 62, 0.06);
+        inset 0 1px 0 rgba(245, 162, 62, 0.06);
       outline: none;
     }
   }
@@ -149,7 +155,7 @@
     background-color: var(--dk-surface-2);
     border: 1px solid rgba(236, 238, 241, 0.1);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5),
-                0 2px 8px rgba(0, 0, 0, 0.3);
+      0 2px 8px rgba(0, 0, 0, 0.3);
   }
 
   /* Modal: elevated surface, deep shadow */
@@ -187,12 +193,10 @@
 
   /* Skeleton loaders: warm shimmer */
   .skeleton {
-    background: linear-gradient(
-      90deg,
-      #2a2e32 25%,
-      #33383d 50%,
-      #2a2e32 75%
-    );
+    background: linear-gradient(90deg,
+        #2a2e32 25%,
+        #33383d 50%,
+        #2a2e32 75%);
     background-size: 200% 100%;
     animation: skeleton-shimmer 1.4s ease-in-out infinite;
   }
@@ -224,8 +228,13 @@
 }
 
 @keyframes skeleton-shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 /* ── Shared ────────────────────────────────────────────────────────────── */

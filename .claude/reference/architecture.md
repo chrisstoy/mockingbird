@@ -23,7 +23,6 @@ mockingbird/
 ├── apps/
 │   ├── mockingbird/              # Main Next.js application
 │   └── mockingbird-e2e/          # Playwright end-to-end tests
-├── stoyponents/                  # Shared UI component library
 ├── tools/
 │   └── stoy-plugin/              # Custom Nx plugin
 ├── nx.json                        # Nx configuration
@@ -33,7 +32,6 @@ mockingbird/
 
 ### Path Aliases (tsconfig.base.json)
 
-- `@mockingbird/stoyponents`: Shared component library
 - `@mockingbird/stoy-plugin`: Custom build tools
 
 ## Directory Structure: apps/mockingbird

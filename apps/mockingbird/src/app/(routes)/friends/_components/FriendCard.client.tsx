@@ -17,7 +17,7 @@ import {
 import {
   ConfirmationDialog,
   ConfirmationDialogResult,
-} from '@mockingbird/stoyponents';
+} from '@/_components/dialog';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 

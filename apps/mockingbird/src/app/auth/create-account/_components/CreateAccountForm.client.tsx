@@ -3,7 +3,7 @@ import { fetchFromServer } from '@/_apiServices/fetchFromServer';
 import { CreateUser, CreateUserSchema } from '@/_types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Turnstile } from '@marsidev/react-turnstile';
-import { FormTextInput } from '@mockingbird/stoyponents';
+import { FormTextInput } from '@/_components/form';
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';

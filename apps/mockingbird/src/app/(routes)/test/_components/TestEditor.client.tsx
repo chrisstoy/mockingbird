@@ -8,7 +8,7 @@ import {
   FileSelectButton,
   TextDisplay,
   TextEditor,
-} from '@mockingbird/stoyponents';
+} from '@/_components/editor';
 import { useCallback, useRef, useState } from 'react';
 
 const originalContent =
