@@ -4,7 +4,7 @@ import { GENERIC_USER_IMAGE_URL } from '@/constants';
 import {
   ConfirmationDialogResult,
   ConfirmSignOutDialog,
-} from '@mockingbird/stoyponents';
+} from '@/_components/dialog';
 import { signIn, signOut } from 'next-auth/react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';

@@ -1,5 +1,5 @@
 'use client';
-import { FormDialog } from '@mockingbird/stoyponents';
+import { FormDialog } from '@/_components/dialog';
 import { useEffect, useRef, useState } from 'react';
 
 interface SuspensionDialogResult {

@@ -6,7 +6,7 @@ import {
   DialogBody,
   DialogButton,
   DialogHeader,
-} from '@mockingbird/stoyponents';
+} from '@/_components/dialog';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 type Props = {

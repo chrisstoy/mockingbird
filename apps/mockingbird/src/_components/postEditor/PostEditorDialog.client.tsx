@@ -8,9 +8,8 @@ import {
   DialogBody,
   DialogButton,
   DialogHeader,
-  type EditorDelta,
-  TextEditor,
-} from '@mockingbird/stoyponents';
+} from '@/_components/dialog';
+import { type EditorDelta, TextEditor } from '@/_components/editor';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AudienceSelector } from '../AudienceSelector.client';
 import { ImageView } from '../ImageView.client';

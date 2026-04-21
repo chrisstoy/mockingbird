@@ -17,9 +17,6 @@
       }
     ],
     "paths": {
-      "@mockingbird/stoyponents": [
-        "stoyponents/src/index.ts"
-      ],
       "@/*": [
         "./apps/mockingbird/src/*"
       ]

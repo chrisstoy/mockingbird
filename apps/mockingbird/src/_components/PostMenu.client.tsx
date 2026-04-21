@@ -5,7 +5,7 @@ import { EllipsisHorizontalIcon } from '@heroicons/react/24/solid';
 import {
   ConfirmationDialog,
   ConfirmationDialogResult,
-} from '@mockingbird/stoyponents';
+} from '@/_components/dialog';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 

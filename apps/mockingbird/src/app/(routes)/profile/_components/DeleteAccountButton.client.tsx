@@ -5,7 +5,7 @@ import { useSessionUser } from '@/_hooks/useSessionUser';
 import {
   ConfirmationDialog,
   ConfirmationDialogResult,
-} from '@mockingbird/stoyponents';
+} from '@/_components/dialog';
 import { signOut } from 'next-auth/react';
 import { useCallback, useState } from 'react';
 import {

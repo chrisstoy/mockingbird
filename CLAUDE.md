@@ -15,6 +15,7 @@ ALWAYS use npm for package management
 
 ## Gotchas
 
+- ALWAYS ask before commiting changes unless specifically told not to.
 - **Prisma**: Run `nx run mockingbird:prisma-generate` after any `schema.prisma` change
 - **Client components**: Must use `.client.tsx` suffix AND `"use client"` directive
 - **Server components default**: `.tsx` files without suffix are Server Components

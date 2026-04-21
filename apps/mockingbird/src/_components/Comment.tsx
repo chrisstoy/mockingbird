@@ -3,7 +3,7 @@ import { getFriendStatusBetweenUsers } from '@/_server/friendsService';
 import { getUserById } from '@/_server/usersService';
 import { Post } from '@/_types';
 import { GENERIC_USER_IMAGE_URL } from '@/constants';
-import { TextDisplay } from '@mockingbird/stoyponents';
+import { TextDisplay } from '@/_components/editor';
 import Link from 'next/link';
 import { CommentReplyContainer } from './CommentReplyContainer.client';
 import { ImageDisplay } from './ImageDisplay.client';

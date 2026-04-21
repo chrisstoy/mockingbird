@@ -4,7 +4,7 @@ import { useSessionUser } from '@/_hooks/useSessionUser';
 import {
   ConfirmationDialog,
   ConfirmationDialogResult,
-} from '@mockingbird/stoyponents';
+} from '@/_components/dialog';
 import { useState } from 'react';
 
 interface Props {
