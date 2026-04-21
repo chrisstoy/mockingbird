@@ -203,7 +203,7 @@ const form = useForm<CreatePost>({
 });
 ```
 
-Form UI components from `@mockingbird/stoyponents`:
+Form UI components from `@/_components/form`:
 - `FormTextInput` — labeled input with error display
 - `FormError` — standalone error message
 
@@ -211,11 +211,11 @@ Form UI components from `@mockingbird/stoyponents`:
 
 ## Dialogs
 
-Use `DialogBase` from `@mockingbird/stoyponents`. The app has a global `DialogManager` (rendered in root layout) that manages dialog state via Zustand.
+Use `DialogBase` from `@/_components/dialog`. The app has a global `DialogManager` (rendered in root layout) that manages dialog state via Zustand.
 
 ```tsx
-import { DialogBase } from '@mockingbird/stoyponents';
-import { ConfirmationDialog } from '@mockingbird/stoyponents';
+import { DialogBase } from '@/_components/dialog';
+import { ConfirmationDialog } from '@/_components/dialog';
 ```
 
 ---
@@ -264,4 +264,7 @@ Admin client components live in `_components/` subdirectories under each admin s
 | `@/_hooks` | `src/_hooks/` |
 | `@/_utils` | `src/_utils/` |
 | `@/app` | `src/app/` |
-| `@mockingbird/stoyponents` | Shared UI component library (`stoyponents/`) |
+| `@/_components/dialog` | Dialog components (ConfirmationDialog, DialogBase, FormDialog, ConfirmSignOutDialog) |
+| `@/_components/editor` | Rich text components (TextEditor, TextDisplay, FileSelectButton, EditorDelta type) |
+| `@/_components/form` | Form primitives (FormTextInput, FormError) |
+| `@/_components/menu` | Menu components (MenuButton, MenuItem) |

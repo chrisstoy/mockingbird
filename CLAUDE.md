@@ -21,6 +21,7 @@ ALWAYS use npm for package management
 - **Server components default**: `.tsx` files without suffix are Server Components
 - **Env vars**: `DATABASE_URL`, `AUTH_SECRET`, `CLOUDFLARE_*` required to run locally
 - **Nx caching**: If stale output, use `--skip-nx-cache` flag
+- **Next.js version**: Root `package.json` drives the actual installed version (currently 16.2.4); `apps/mockingbird/package.json` may show a different value — root wins
 
 ## Reference
 
