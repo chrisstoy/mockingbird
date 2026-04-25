@@ -46,6 +46,7 @@ export function CommentButton({ post, numberOfComments = 0 }: Props) {
   return (
     <button
       onClick={handleShowEditor}
+      aria-label="Comment"
       className="flex items-center gap-1.5 text-base-content/50 hover:text-primary transition-colors text-sm font-medium py-1 px-2 rounded-lg hover:bg-primary/5"
     >
       <ChatBubbleLeftIcon className="w-4 h-4" />

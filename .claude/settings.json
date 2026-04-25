@@ -20,13 +20,7 @@
       "Bash(git merge:*)",
       "Bash(DATABASE_URL=\"postgresql://chrisstoy:fLCeRMT2tnwKxLn4nXyQNg@legal-roarer-11700.7tt.aws-us-east-1.cockroachlabs.cloud:26257/mockingbird-preview?sslmode=verify-full\" npx prisma migrate deploy)",
       "Bash(echo \"exit: $?\")",
-      "Bash(npm exec *)",
-      "Bash(cp -r /Users/cstoy/dev/mockingbird/stoyponents/src/lib/dialog /Users/cstoy/dev/mockingbird/apps/mockingbird/src/_components/dialog)",
-      "Bash(cp -r /Users/cstoy/dev/mockingbird/stoyponents/src/lib/editor /Users/cstoy/dev/mockingbird/apps/mockingbird/src/_components/editor)",
-      "Bash(cp -r /Users/cstoy/dev/mockingbird/stoyponents/src/lib/form /Users/cstoy/dev/mockingbird/apps/mockingbird/src/_components/form)",
-      "Bash(cp -r /Users/cstoy/dev/mockingbird/stoyponents/src/lib/menu /Users/cstoy/dev/mockingbird/apps/mockingbird/src/_components/menu)",
-      "Skill(claude-md-management:revise-claude-md)",
-      "Skill(claude-md-management:revise-claude-md:*)"
+      "Bash(echo \"PID: $!\")"
     ],
     "additionalDirectories": [
       "/private/tmp",

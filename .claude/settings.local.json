@@ -109,7 +109,13 @@
       "Bash(git -C /Users/cstoy/dev/mockingbird add apps/mockingbird/src/_server/__tests__/postsService.spec.ts)",
       "Bash(git -C /Users/cstoy/dev/mockingbird commit -m ' *)",
       "Bash(nx run-many *)",
-      "Bash(git *)"
+      "Bash(git *)",
+      "Bash(npm exec *)",
+      "Bash(kill %1)",
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(kill 62558 63784 64301)",
+      "Bash(kill 56229)",
+      "Bash(xargs kill *)"
     ],
     "deny": [],
     "ask": []

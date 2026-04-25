@@ -20,6 +20,7 @@ ALWAYS use npm for package management
 - **Client components**: Must use `.client.tsx` suffix AND `"use client"` directive
 - **Server components default**: `.tsx` files without suffix are Server Components
 - **Env vars**: `DATABASE_URL`, `AUTH_SECRET`, `CLOUDFLARE_*` required to run locally
+- **Testing**: Do NOT send real emails during tests — use test API routes or mock the email service
 - **Nx caching**: If stale output, use `--skip-nx-cache` flag
 - **Next.js version**: Root `package.json` drives the actual installed version (currently 16.2.4); `apps/mockingbird/package.json` may show a different value — root wins
 
