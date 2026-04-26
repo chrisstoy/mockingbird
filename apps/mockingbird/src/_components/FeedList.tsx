@@ -22,7 +22,9 @@ export async function FeedList({ userId, feedSource }: Props) {
     <div className="flex flex-col gap-4">
       {feed.length > 0 ? (
         feed.map((post) => (
-          <SummaryPost key={post.id} post={post} linkToDetails showFirstComment />
+          <div key={post.id} data-testid="feed-post">
+            <SummaryPost post={post} linkToDetails showFirstComment />
+          </div>
         ))
       ) : (
         <NoPostsInFeed />

@@ -22,35 +22,25 @@ export async function pauseFor(milliseconds: number) {
 }
 
 export async function performCreateTestUser(page: Page) {
-  await page.getByRole('link', { name: 'Create new account' }).click();
+  await page.getByRole('link', { name: 'Create one' }).click();
 
-  await page.getByPlaceholder('Full Name').fill(testUserName);
-  await page.getByPlaceholder('user@example.com').fill(testUserEmail);
-  await page
-    .getByPlaceholder('Password', { exact: true })
-    .fill(testUserPassword);
-  await page
-    .getByPlaceholder('Confirm Password', { exact: true })
-    .fill(testUserPassword);
+  await page.getByPlaceholder('Full name').fill(testUserName);
+  await page.getByPlaceholder('Email address').fill(testUserEmail);
+  await page.getByPlaceholder('Password', { exact: true }).fill(testUserPassword);
+  await page.getByPlaceholder('Confirm password', { exact: true }).fill(testUserPassword);
   await page.getByRole('button', { name: 'Create Account' }).click();
-
-  await page
-    .getByRole('button', { name: 'Accept Terms' })
-    .scrollIntoViewIfNeeded();
-
-  await page.getByRole('button', { name: 'Accept Terms' }).click();
 }
 
 export async function performSignInTestUser(page: Page) {
-  await page.getByPlaceholder('user@example.com').fill(testUserEmail);
+  await page.getByPlaceholder('Email address').fill(testUserEmail);
   await page.getByPlaceholder('Password').fill(testUserPassword);
   await page.getByRole('button', { name: 'Sign In' }).click();
 }
 
 export async function performSignOut(page: Page) {
-  await page.getByRole('img', { name: 'User Profile' }).click();
-  await page.getByText('Sign Out').click();
+  await page.goto(`${BASE_URL}/profile`);
   await page.getByRole('button', { name: 'Sign Out' }).click();
+  await page.getByRole('button', { name: 'Sign Out' }).last().click();
 }
 
 export async function performDeleteTestUser(page: Page) {
@@ -69,7 +59,8 @@ export async function performDeleteTestUser(page: Page) {
     .click();
 }
 
-const BASE_URL = 'http://localhost:3000';
+export const BASE_URL =
+  process.env['PLAYWRIGHT_BASE_URL'] || 'http://localhost:3000';
 
 export async function forceDeleteTestUser(userEmailToDelete?: string) {
   const ctx = await request.newContext();
@@ -106,4 +97,24 @@ export async function expireTestUserPassword(email: string): Promise<void> {
   });
   await ctx.dispose();
   if (!res.ok()) throw new Error(`expireTestUserPassword failed`);
+}
+
+export async function forceVerifyTestUser(
+  userEmailToVerify?: string
+): Promise<void> {
+  const ctx = await request.newContext();
+  const res = await ctx.post(`${BASE_URL}/api/test/verify-email`, {
+    data: { email: userEmailToVerify || testUserEmail },
+  });
+  await ctx.dispose();
+  if (!res.ok()) throw new Error(`forceVerifyTestUser failed: ${res.status()}`);
+}
+
+export async function forceAcceptTOS(userEmailToAccept?: string): Promise<void> {
+  const ctx = await request.newContext();
+  const res = await ctx.post(`${BASE_URL}/api/test/accept-tos`, {
+    data: { email: userEmailToAccept || testUserEmail },
+  });
+  await ctx.dispose();
+  if (!res.ok()) throw new Error(`forceAcceptTOS failed: ${res.status()}`);
 }
