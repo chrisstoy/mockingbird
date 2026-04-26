@@ -3,8 +3,9 @@ import {
   requestFriendshipBetweenUsers,
   updateFriendshipBetweenUsers,
 } from '@/_server/friendsService';
+import { createNotification } from '@/_server/notificationService';
 import baseLogger from '@/_server/logger';
-import { UserIdSchema } from '@/_types';
+import { NotificationType, UserIdSchema } from '@/_types';
 import { respondWithError, ResponseError } from '@/app/api/errors';
 import { validateAuthentication } from '@/app/api/validateAuthentication';
 import { RouteContext } from '@/app/types';
@@ -44,6 +45,15 @@ export async function POST(req: NextRequest, context: RouteContext) {
       throw new ResponseError(400, 'Friendship does not exist');
     }
 
+    if (accepted) {
+      // userId accepted the request; friendId was the original requester
+      await createNotification({
+        userId: friendId,
+        type: NotificationType.FRIEND_REQUEST_ACCEPTED,
+        actorId: userId,
+      });
+    }
+
     logger.info(
       `User ${userId} ${
         accepted ? 'accepted' : 'paused'
@@ -77,6 +87,13 @@ export async function PUT(_req: NextRequest, context: RouteContext) {
         { status: 200 }
       );
     }
+
+    await createNotification({
+      userId: friendId,
+      type: NotificationType.FRIEND_REQUEST,
+      actorId: userId,
+      entityId: friendRequest.id,
+    });
 
     logger.info(
       `User ${userId} requested to add friend ${friendId}. Friend request id: ${friendRequest.id}`
