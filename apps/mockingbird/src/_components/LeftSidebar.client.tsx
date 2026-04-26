@@ -1,6 +1,6 @@
 'use client';
 import { BellIcon, HomeIcon, UserGroupIcon, UserIcon } from '@heroicons/react/24/outline';
-import { BellIcon as BellIconSolid, HomeIcon as HomeIconSolid } from '@heroicons/react/24/solid';
+import { BellIcon as BellIconSolid, HomeIcon as HomeIconSolid, UserGroupIcon as UserGroupIconSolid } from '@heroicons/react/24/solid';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -9,6 +9,7 @@ export function LeftSidebar() {
 
   const isHome = pathname === '/';
   const isFriends = pathname.startsWith('/friends');
+  const isGroups = pathname.startsWith('/groups');
   const isProfile = pathname.startsWith('/profile');
   const isNotifications = pathname.startsWith('/notifications');
 
@@ -45,6 +46,22 @@ export function LeftSidebar() {
             <BellIcon className="w-6 h-6" />
           )}
           <span>Notifications</span>
+        </Link>
+
+        <Link
+          href="/groups"
+          className={`flex items-center gap-4 px-4 py-3 rounded-xl transition-colors font-semibold text-lg ${
+            isGroups
+              ? 'text-base-content bg-base-200'
+              : 'text-base-content/60 hover:text-base-content hover:bg-base-200/60'
+          }`}
+        >
+          {isGroups ? (
+            <UserGroupIconSolid className="w-6 h-6" />
+          ) : (
+            <UserGroupIcon className="w-6 h-6" />
+          )}
+          <span>Flocks</span>
         </Link>
 
         <Link
