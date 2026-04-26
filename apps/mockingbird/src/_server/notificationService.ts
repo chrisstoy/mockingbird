@@ -34,6 +34,33 @@ export async function getNotificationsForUser(userId: UserId) {
   });
 }
 
+export type NotificationWithActor = Awaited<ReturnType<typeof getNotificationsForUser>>[number] & {
+  actor: { id: string; name: string; image: string | null } | null;
+};
+
+export async function getNotificationsWithActorsForUser(userId: UserId): Promise<NotificationWithActor[]> {
+  const notifications = await prisma.notification.findMany({
+    where: { userId },
+    orderBy: { createdAt: 'desc' },
+    take: 50,
+  });
+
+  const actorIds = [...new Set(notifications.flatMap((n) => (n.actorId ? [n.actorId] : [])))];
+  const actors = actorIds.length > 0
+    ? await prisma.user.findMany({
+        where: { id: { in: actorIds } },
+        select: { id: true, name: true, image: true },
+      })
+    : [];
+
+  const actorMap = new Map(actors.map((a) => [a.id, a]));
+
+  return notifications.map((n) => ({
+    ...n,
+    actor: n.actorId ? (actorMap.get(n.actorId) ?? null) : null,
+  }));
+}
+
 export async function getUnreadNotificationCount(userId: UserId): Promise<number> {
   return prisma.notification.count({
     where: { userId, read: false },
