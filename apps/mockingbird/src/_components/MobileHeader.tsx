@@ -1,15 +1,30 @@
 import { sessionUser } from '@/_hooks/sessionUser';
+import { getGroupMembershipsForUser } from '@/_server/groupService';
 import { getNotificationCount } from '@/_server/notificationCount';
+import { UserIdSchema } from '@/_types';
 import { GENERIC_USER_IMAGE_URL } from '@/constants';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FeedbackButton } from './FeedbackButton.client';
-import { FeedSelector } from './FeedSelector.client';
+import { FeedItem, FeedSelector } from './FeedSelector.client';
 import { NotificationsAlert } from './NotificationsAlert.client';
+
+const DEFAULT_FEEDS: FeedItem[] = [
+  { key: 'public', label: 'Public' },
+  { key: 'private', label: 'Friends' },
+];
 
 export async function MobileHeader() {
   const user = await sessionUser();
   const notificationCount = user ? await getNotificationCount(user.id) : 0;
+
+  const groupFeeds: FeedItem[] = user
+    ? (await getGroupMembershipsForUser(UserIdSchema.parse(user.id))).map((m) => ({
+        key: m.groupId,
+        label: `🐦 ${m.group.name}`,
+      }))
+    : [];
+  const feeds = [...DEFAULT_FEEDS, ...groupFeeds];
 
   return (
     <header className="fixed top-0 left-0 w-full z-40 lg:hidden bg-base-100/95 backdrop-blur-xl border-b border-base-200">
@@ -48,7 +63,7 @@ export async function MobileHeader() {
 
       {/* Feed selector row */}
       <div className="px-5 pt-1 pb-3">
-        <FeedSelector />
+        <FeedSelector feeds={feeds} />
       </div>
     </header>
   );

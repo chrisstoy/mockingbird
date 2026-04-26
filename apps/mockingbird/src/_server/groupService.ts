@@ -198,6 +198,14 @@ export async function getPendingInvitesForGroup(groupId: GroupId) {
   });
 }
 
+export async function getGroupMembershipsForUser(userId: UserId) {
+  return prisma.groupMember.findMany({
+    where: { userId },
+    include: { group: { select: { id: true, name: true } } },
+    orderBy: { joinedAt: 'desc' },
+  });
+}
+
 export async function getGroupAuditLog(groupId: GroupId, cursor?: string) {
   return prisma.groupAuditLog.findMany({
     where: { groupId },
