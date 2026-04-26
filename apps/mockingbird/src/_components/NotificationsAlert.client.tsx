@@ -9,7 +9,7 @@ interface Props {
 export function NotificationsAlert({ count }: Props) {
   return (
     <Link
-      href="/friends"
+      href="/notifications"
       className="relative p-2.5 rounded-full hover:bg-base-200 active:bg-base-300 transition-colors flex items-center justify-center"
       aria-label={
         count > 0

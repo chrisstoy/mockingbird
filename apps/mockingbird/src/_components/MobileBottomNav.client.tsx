@@ -1,6 +1,7 @@
 'use client';
-import { HomeIcon, UserGroupIcon, UserIcon } from '@heroicons/react/24/outline';
+import { BellIcon, HomeIcon, UserGroupIcon, UserIcon } from '@heroicons/react/24/outline';
 import {
+  BellIcon as BellIconSolid,
   HomeIcon as HomeIconSolid,
   UserGroupIcon as UserGroupIconSolid,
   UserIcon as UserIconSolid,
@@ -53,6 +54,13 @@ export function MobileBottomNav() {
         icon={HomeIcon}
         activeIcon={HomeIconSolid}
         active={pathname === '/'}
+      />
+      <NavItem
+        href="/notifications"
+        label="Alerts"
+        icon={BellIcon}
+        activeIcon={BellIconSolid}
+        active={pathname.startsWith('/notifications')}
       />
       <NavItem
         href="/friends"
