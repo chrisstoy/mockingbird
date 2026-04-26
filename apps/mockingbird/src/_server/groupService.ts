@@ -146,3 +146,63 @@ export async function exportGroupPosts(groupId: GroupId) {
     },
   });
 }
+
+export async function createGroupInvite(
+  groupId: GroupId,
+  invitedByUserId: UserId,
+  invitedUserId: UserId
+) {
+  return prisma.groupInvite.create({
+    data: { groupId, invitedByUserId, invitedUserId, status: 'PENDING' },
+  });
+}
+
+export async function updateGroupInviteStatus(inviteId: string, status: 'ACCEPTED' | 'DECLINED') {
+  return prisma.groupInvite.update({ where: { id: inviteId }, data: { status } });
+}
+
+export async function getGroupInvite(inviteId: string) {
+  return prisma.groupInvite.findUnique({ where: { id: inviteId } });
+}
+
+export async function createGroupJoinRequest(groupId: GroupId, userId: UserId) {
+  return prisma.groupJoinRequest.create({
+    data: { groupId, userId, status: 'PENDING' },
+  });
+}
+
+export async function updateGroupJoinRequestStatus(
+  requestId: string,
+  status: 'ACCEPTED' | 'DECLINED'
+) {
+  return prisma.groupJoinRequest.update({ where: { id: requestId }, data: { status } });
+}
+
+export async function getGroupJoinRequest(requestId: string) {
+  return prisma.groupJoinRequest.findUnique({ where: { id: requestId } });
+}
+
+export async function getPendingJoinRequests(groupId: GroupId) {
+  return prisma.groupJoinRequest.findMany({
+    where: { groupId, status: 'PENDING' },
+    include: { user: { select: { id: true, name: true, image: true } } },
+    orderBy: { createdAt: 'asc' },
+  });
+}
+
+export async function getPendingInvitesForGroup(groupId: GroupId) {
+  return prisma.groupInvite.findMany({
+    where: { groupId, status: 'PENDING' },
+    include: { invitedUser: { select: { id: true, name: true, image: true } } },
+    orderBy: { createdAt: 'asc' },
+  });
+}
+
+export async function getGroupAuditLog(groupId: GroupId, cursor?: string) {
+  return prisma.groupAuditLog.findMany({
+    where: { groupId },
+    orderBy: { createdAt: 'desc' },
+    take: 50,
+    ...(cursor ? { skip: 1, cursor: { id: cursor } } : {}),
+  });
+}
