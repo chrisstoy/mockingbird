@@ -1,0 +1,17 @@
+{
+  "planPath": "docs/plans/2026-04-26-flocks-groups-implementation.md",
+  "tasks": [
+    {"id": 1, "subject": "Phase 1: Generalize Notification System", "status": "completed"},
+    {"id": 2, "subject": "Phase 2: Group Schema & Types", "status": "pending", "blockedBy": [1]},
+    {"id": 3, "subject": "Phase 3: Core Group API (CRUD + Search + Export)", "status": "pending", "blockedBy": [2]},
+    {"id": 4, "subject": "Phase 4: Membership API", "status": "pending", "blockedBy": [3]},
+    {"id": 5, "subject": "Phase 5: Invites & Join Requests API", "status": "pending", "blockedBy": [4]},
+    {"id": 6, "subject": "Phase 6: Audit Log API", "status": "pending", "blockedBy": [3]},
+    {"id": 7, "subject": "Phase 7: Group Posts & Feed", "status": "pending", "blockedBy": [3]},
+    {"id": 8, "subject": "Phase 8: UI — Flock Discovery & Create", "status": "pending", "blockedBy": [3]},
+    {"id": 9, "subject": "Phase 9: UI — Flock Home & Members", "status": "pending", "blockedBy": [8]},
+    {"id": 10, "subject": "Phase 10: UI — Group Feed & Post Composer", "status": "pending", "blockedBy": [7, 9]},
+    {"id": 11, "subject": "Phase 11: UI — Admin Features", "status": "pending", "blockedBy": [5, 6, 10]}
+  ],
+  "lastUpdated": "2026-04-26T15:30:00.000Z"
+}
