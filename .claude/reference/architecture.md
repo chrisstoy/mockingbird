@@ -24,7 +24,7 @@ mockingbird/
 │   ├── mockingbird/              # Main Next.js application
 │   └── mockingbird-e2e/          # Playwright end-to-end tests
 ├── tools/
-│   └── stoy-plugin/              # Custom Nx plugin
+│   └── stoy-plugin/              # Custom Nx plugin (build automation)
 ├── nx.json                        # Nx configuration
 ├── package.json                   # Root workspace dependencies
 └── tsconfig.base.json            # Base TypeScript configuration
@@ -53,12 +53,19 @@ Next.js uses the App Router pattern (not Pages Router):
 ```
 src/app/
 ├── (routes)/                     # Route group for authenticated pages
-│   ├── profile/
-│   ├── friends/
-│   ├── feed/
-│   └── test/
+│   ├── page.tsx                  # Home / feed
+│   ├── post/[postId]/            # Post detail
+│   ├── profile/                  # User profile + change password
+│   ├── friends/                  # Friends management
+│   ├── privacy/                  # Privacy/TOS doc links (+ /policy, /tos sub-routes)
+│   └── test/                     # Debug pages
+├── (account)/                    # Route group for account state pages (no main layout)
+│   └── account/suspended/        # Shown when user status = SUSPENDED
+├── (admin)/                      # Route group for admin panel (sidebar layout)
+│   └── admin/                    # All admin pages
 ├── api/                          # RESTful API endpoints
 │   ├── auth/[...nextauth]/       # NextAuth route handler
+│   ├── health/                   # Health check: GET /api/health
 │   ├── posts/                    # Posts CRUD operations
 │   ├── users/                    # User management
 │   ├── images/                   # Image operations
@@ -72,6 +79,9 @@ src/app/
 │   ├── auth.config.ts            # NextAuth provider configuration
 │   ├── localCredentials.ts       # Local email/password provider
 │   └── requireAcceptToS.ts       # TOS middleware
+├── maintenance/                  # Maintenance mode page
+├── offline/                      # Offline / PWA fallback page
+├── manifest.ts                   # PWA web app manifest
 ├── layout.tsx                    # Root layout
 ├── not-found.tsx                 # 404 page
 └── global.css                    # Global styles
@@ -109,6 +119,10 @@ _server/
 ├── usersService.ts               # User management
 ├── documentsService.ts           # Legal document management
 ├── turnstileService.ts           # Cloudflare Turnstile CAPTCHA validation
+├── emailService.ts               # Email sending (verification, password reset, etc.)
+├── reactionService.ts            # Post reaction upsert/delete logic
+├── notificationCount.ts          # Notification badge count (friend requests, future sources)
+├── adminService.ts               # Admin actions + audit log helper
 └── __tests__/                    # Service unit tests
 ```
 
@@ -162,27 +176,35 @@ User
   ├── posts: Post[]
   ├── friends: Friends[]
   ├── accounts: Account[]  (OAuth providers)
-  └── sessions: Session[]  (NextAuth sessions)
+  ├── sessions: Session[]  (NextAuth sessions)
+  └── permissionOverrides: UserPermission[]
 
 Post
   ├── poster: User
   ├── responseTo: Post? (for replies/comments)
   ├── responses: Post[] (comments on this post)
   ├── image: Image? (optional image attachment)
-  └── audience: Audience (PUBLIC | PRIVATE)
+  ├── audience: Audience (PUBLIC | PRIVATE)
+  └── reactions: PostReaction[]
+
+PostReaction
+  ├── post: Post
+  ├── user: User
+  └── reaction: ReactionType (THUMBS_UP | THUMBS_DOWN | CHEER | ANGER | LAUGH | HUGS)
+  (composite PK: postId + userId — one reaction per user per post)
 
 Image
-  ├── owner: User
+  ├── owner: User (raw ownerId string — no Prisma FK relation)
   ├── album: Album? (optional grouping)
   └── posts: Post[] (referenced by posts)
 
 Album
-  ├── owner: User
+  ├── owner: User (raw ownerId string)
   └── images: Image[]
 
 Friends
-  ├── user: User (requester)
-  └── accepted: Boolean (status of friendship)
+  ├── user: User (requester; userId has Prisma relation)
+  └── status: FriendRequestStatus (PENDING | ACCEPTED | REJECTED)
 
 Document
   ├── type: DocumentType (TOC | PRIVACY)
@@ -208,7 +230,7 @@ NextAuth Tables
 - **Posts double as comments**: `Post.responseToPostId = null` means a top-level post; non-null means it's a comment on that parent post. Always filter `responseToPostId: null` when querying for feed posts (not comments).
 - **Friends is asymmetric**: `userId` = requester, `friendId` = target. To find any friendship record for a user, always query with `OR: [{ userId }, { friendId }]` — never just one direction.
 - **Document type for ToS is `TOC`** (not `TOS`). The `DocumentType` enum values are `TOC` and `PRIVACY`.
-- **`Post.likeCount` / `Post.dislikeCount`** fields exist in the schema but there are currently no API endpoints to increment/decrement them — this is a known stub.
+- **Reactions replace likeCount/dislikeCount**: `Post` has no `likeCount`/`dislikeCount` fields. Reactions are in the `PostReaction` table (composite PK: postId + userId). Six `ReactionType` values: `THUMBS_UP`, `THUMBS_DOWN`, `CHEER`, `ANGER`, `LAUGH`, `HUGS`.
 - **`Passwords` table has no cascade delete** — when deleting a user, the `Passwords` row must be deleted manually before the user row.
 - **`AdminAuditLog.metadata`** is `Json?` — use `Prisma.JsonNull` for null values and cast objects to `Prisma.InputJsonValue` for writes.
 - **`User.acceptedToS`** stores a `DocumentId` string (the ID of the accepted ToS document), not a boolean.
@@ -293,28 +315,38 @@ Bucket: {CLOUDFLARE_R2_BUCKET_NAME}
 
 ### RESTful Endpoints
 
+#### Health
+- `GET /api/health` - Health check (no auth)
+
 #### Posts
 - `POST /api/posts` - Create new post
 - `GET /api/posts/[postId]` - Get post details
 - `DELETE /api/posts/[postId]` - Delete post
 - `GET /api/posts/[postId]/comments` - List comments
 - `POST /api/posts/[postId]/comments` - Add comment
+- `PUT /api/posts/[postId]/reactions` - Set/replace reaction
+- `DELETE /api/posts/[postId]/reactions` - Remove reaction
 
 #### Users
-- `GET /api/users` - Get all users
+- `GET /api/users` - Search users (`?q=`)
+- `POST /api/users` - Create account (no auth)
 - `GET /api/users/[userId]` - Get user profile
-- `PUT /api/users/[userId]` - Update user profile
+- `PATCH /api/users/[userId]` - Update profile image
+- `DELETE /api/users/[userId]` - Delete account
 - `GET /api/users/[userId]/images` - List user's images
 - `POST /api/users/[userId]/images` - Upload image
+- `GET /api/users/[userId]/albums` - List albums (partial)
 - `GET /api/users/[userId]/feed` - Get personalized feed
 - `GET /api/users/[userId]/friends` - List friends
-- `POST /api/users/[userId]/friends` - Send friend request
-- `PUT /api/users/[userId]/friends/[friendId]` - Accept/reject request
+- `PUT /api/users/[userId]/friends/[friendId]` - Send friend request
+- `POST /api/users/[userId]/friends/[friendId]` - Accept/reject request
 - `DELETE /api/users/[userId]/friends/[friendId]` - Remove friend
+- `POST /api/users/[userId]/password` - Change password
+- `PUT /api/users/[userId]/tos/[tosId]` - Accept ToS
 
 #### Images & Documents
 - `DELETE /api/images/[imageId]` - Delete specific image
-- `GET /api/documents/[docType]/latest` - Get latest legal document
+- `GET /api/documents/[docType]/latest` - Get latest legal document (no auth)
 - `GET /api/documents/[docType]/[version]` - Get specific version
 - `POST /api/documents/[docType]` - Create new document
 
@@ -325,18 +357,19 @@ Bucket: {CLOUDFLARE_R2_BUCKET_NAME}
 - **Status Codes**: 400 (validation), 401 (auth), 403 (forbidden), 404 (not found), 500 (server)
 - `validateAuthentication()`: Checks NextAuth session, returns session with user ID
 
-## Shared Libraries
+## Shared Component Subdirectories
 
-### stoyponents Library
+All shared UI components live in `src/_components/`. Subdirectories group related primitives:
 
-1. **Dialog** (`dialog/`): `DialogBase.tsx`, `ConfirmationDialog.client.tsx`, `ConfirmSignOutDialog.client.tsx`
-2. **Form** (`form/`): `FormTextInput.tsx`, `FormError.tsx`
-3. **Menu** (`menu/`): `MenuButton.tsx`, `MenuItem.tsx`
-4. **Editor** (`editor/`): Quill-based rich text editor components
+- `dialog/`: `DialogBase.tsx`, `ConfirmationDialog.client.tsx`, `ConfirmSignOutDialog.client.tsx`, `FormDialog.client.tsx`
+- `form/`: `FormTextInput.tsx`, `FormError.tsx`
+- `menu/`: `MenuButton.tsx`, `MenuItem.tsx`
+- `editor/`: Quill-based rich text editor components (`TextEditor`, `TextDisplay`, `FileSelectButton`)
+- `postEditor/`: Post composition components
 
-### stoy-plugin
+## Custom Nx Plugin
 
-Custom Nx plugin for tooling and build automation
+`tools/stoy-plugin/` — custom Nx plugin for build tooling and automation
 
 ## Key Dependencies
 

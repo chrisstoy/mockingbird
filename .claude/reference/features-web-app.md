@@ -29,7 +29,10 @@ The main web app is the authenticated user-facing interface under `src/app/(rout
 | Accept friend request | Complete | `/friends` | From received requests list; calls `POST` with `{ accepted: true }` |
 | Reject friend request | Complete | `/friends` | From received requests list; calls `POST` with `{ accepted: false }` |
 | Remove friend | Complete | `/friends` | From current friends list; calls `DELETE /api/users/[userId]/friends/[friendId]` |
-| Account suspended page | Complete | `/account/suspended` | Shown when middleware detects `status = SUSPENDED`; displays suspension reason |
+| Account suspended page | Complete | `/account/suspended` | In `(account)` route group (no main app layout); shown when middleware detects `status = SUSPENDED`; displays suspension reason |
+| Privacy / docs hub | Complete | `/privacy` | Links to `/privacy/policy` and `/privacy/tos` |
+| Privacy policy viewer | Complete | `/privacy/policy` | Renders latest PRIVACY document |
+| Terms of Service viewer | Complete | `/privacy/tos` | Renders latest TOC document |
 | Post reactions | Complete | Feed, post detail, comments | `ReactionsBar.client.tsx` — 6 emoji buttons (👍👎🎉😠😂🤗) below post content; one reaction per user; click to set/toggle off; auto-replaces previous reaction; shows reactor names in tooltip; optimistic UI |
 
 ---
@@ -67,7 +70,16 @@ Key layout components in `src/_components/`:
 | `/profile` | `(routes)/profile/page.tsx` |
 | `/profile/change-password` | `(routes)/profile/change-password/page.tsx` |
 | `/friends` | `(routes)/friends/page.tsx` |
-| `/account/suspended` | `(routes)/account/suspended/page.tsx` |
+| `/privacy` | `(routes)/privacy/page.tsx` |
+| `/privacy/policy` | `(routes)/privacy/policy/page.tsx` |
+| `/privacy/tos` | `(routes)/privacy/tos/page.tsx` |
+
+### Account State Pages (`src/app/(account)/`)
+No main app layout — used for account-state gates that replace the full UI.
+
+| Route | Component file |
+|---|---|
+| `/account/suspended` | `(account)/account/suspended/page.tsx` |
 
 ---
 

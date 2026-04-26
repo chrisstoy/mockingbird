@@ -8,6 +8,7 @@ nx run mockingbird:lint              # ESLint
 nx run mockingbird:prisma-generate   # Regenerate Prisma client after schema changes
 nx run mockingbird:prisma-migrate    # Run DB migrations
 nx run mockingbird:prisma-studio     # Open Prisma Studio GUI
+nx run mockingbird:prisma-seed       # Seed DB (set SEED_ADMIN_EMAIL=<email> first)
 nx run-many -t test                  # Run all tests across workspace
 ```
 
