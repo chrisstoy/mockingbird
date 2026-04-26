@@ -68,12 +68,13 @@ function NotificationItem({
 
   return (
     <div
+      onClick={isUnread ? () => onMarkRead(notification.id) : undefined}
       className={`
         group relative flex items-start gap-3.5 px-5 py-4
-        transition-all duration-300 cursor-default
+        transition-all duration-300
         ${isUnread
-          ? 'bg-primary/[0.04] border-l-2 border-primary/60'
-          : 'border-l-2 border-transparent hover:bg-base-200/40'
+          ? 'bg-primary/[0.04] border-l-2 border-primary/60 cursor-pointer hover:bg-primary/[0.07]'
+          : 'border-l-2 border-transparent hover:bg-base-200/40 cursor-default'
         }
       `}
       style={{ animationFillMode: 'both' }}
@@ -92,7 +93,7 @@ function NotificationItem({
           <>
             <div className="w-2 h-2 rounded-full bg-primary flex-shrink-0 group-hover:hidden" />
             <button
-              onClick={() => onMarkRead(notification.id)}
+              onClick={(e) => { e.stopPropagation(); onMarkRead(notification.id); }}
               className="hidden group-hover:flex items-center justify-center w-6 h-6 rounded-full hover:bg-primary/10 transition-colors text-primary"
               title="Mark as read"
               aria-label="Mark as read"
@@ -125,7 +126,8 @@ export function NotificationsList({
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ read: true }),
     });
-  }, []);
+    router.refresh();
+  }, [router]);
 
   const markAllRead = useCallback(async () => {
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
