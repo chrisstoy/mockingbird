@@ -14,6 +14,7 @@ export default defineConfig({
   ...nxE2EPreset(__filename, { testDir: './src' }),
   workers: 1,
   reporter: [['list'], ['html', { open: 'never' }]],
+  globalTeardown: './src/global-teardown.ts',
   use: {
     baseURL,
     trace: 'on-first-retry',
