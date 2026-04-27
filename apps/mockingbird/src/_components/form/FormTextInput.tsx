@@ -29,3 +29,4 @@ export const FormTextInput = forwardRef<HTMLInputElement, Props>(
     );
   }
 );
+FormTextInput.displayName = 'FormTextInput';

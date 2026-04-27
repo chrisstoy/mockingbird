@@ -25,13 +25,12 @@ jest.mock('@/_server/logger', () => ({
   child: jest.fn().mockReturnValue({ info: jest.fn(), error: jest.fn() }),
 }));
 
-// @ts-expect-error
+// @ts-expect-error — jest.mock hoists above import but TS doesn't know the module is mocked
 import { prisma } from '@/_server/db';
-import { createGroup, getGroupById, searchGroups } from '../groupService';
+import { createGroup, searchGroups } from '../groupService';
 
 const groupCreateMock = jest.mocked(prisma.group.create);
 const groupMemberCreateMock = jest.mocked(prisma.groupMember.create);
-const groupFindUniqueMock = jest.mocked(prisma.group.findUnique);
 const groupFindManyMock = jest.mocked(prisma.group.findMany);
 
 const OWNER_ID = 'cm1750szo00001ocb5aog8ley' as any;

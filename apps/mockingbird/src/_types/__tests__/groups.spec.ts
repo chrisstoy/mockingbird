@@ -1,10 +1,7 @@
 import {
   GroupIdSchema,
-  GroupSchema,
   CreateGroupSchema,
   GroupVisibilitySchema,
-  GroupStatusSchema,
-  GroupRoleSchema,
 } from '../groups';
 
 describe('GroupIdSchema', () => {

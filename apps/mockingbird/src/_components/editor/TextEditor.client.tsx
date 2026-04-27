@@ -135,3 +135,4 @@ export const TextEditor = forwardRef<EditorAPI, Props>(
     );
   }
 );
+TextEditor.displayName = 'TextEditor';

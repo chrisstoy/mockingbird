@@ -11,7 +11,7 @@ jest.mock('@/_server/reactionService', () => ({
   groupPostReactions: jest.fn().mockReturnValue([]),
 }));
 
-// @ts-expect-error
+// @ts-expect-error — jest.mock hoists above import but TS doesn't know the module is mocked
 import { prisma } from '@/_server/db';
 import { getFeed } from '../feedService';
 

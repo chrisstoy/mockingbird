@@ -1,7 +1,6 @@
 import {
   appendGroupAuditLog,
   createGroupInvite,
-  getGroupById,
   getGroupMemberRole,
   getPendingInvitesForGroup,
 } from '@/_server/groupService';

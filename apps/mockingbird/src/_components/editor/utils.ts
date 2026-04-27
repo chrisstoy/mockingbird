@@ -17,7 +17,7 @@ export function toEditorDelta(
   if (typeof content === 'string') {
     try {
       return JSON.parse(content);
-    } catch (error) {
+    } catch {
       return quill.clipboard.convert({ html: content });
     }
   }

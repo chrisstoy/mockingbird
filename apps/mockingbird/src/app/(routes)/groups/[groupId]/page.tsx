@@ -1,6 +1,6 @@
 import { getGroupById, getGroupMemberRole, getGroupMembers } from '@/_server/groupService';
 import { sessionUser } from '@/_hooks/sessionUser';
-import { GroupIdSchema, GroupRole, UserIdSchema } from '@/_types';
+import { GroupIdSchema, UserIdSchema } from '@/_types';
 import { SkeletonSummaryPost } from '@/_components/SkeletonSummaryPost';
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
