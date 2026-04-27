@@ -34,9 +34,9 @@ async function createPostTestUser() {
 
 async function signIn(page: import('@playwright/test').Page) {
   try {
-    await page.goto(`${BASE_URL}/auth/signin`, { waitUntil: 'networkidle' });
+    await page.goto(`${BASE_URL}/auth/signin`, { waitUntil: 'load' });
   } catch {
-    await page.goto(`${BASE_URL}/auth/signin`, { waitUntil: 'networkidle' });
+    await page.goto(`${BASE_URL}/auth/signin`, { waitUntil: 'load' });
   }
   await page.getByPlaceholder('Email address').fill(postTestEmail);
   await page.getByPlaceholder('Password').fill(postTestPassword);

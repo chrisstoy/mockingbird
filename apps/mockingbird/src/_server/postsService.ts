@@ -1,7 +1,7 @@
 import { prisma } from '@/_server/db';
 import baseLogger from '@/_server/logger';
 import { groupPostReactions } from '@/_server/reactionService';
-import { Audience, ImageId, PostId, PostSchema, UserId } from '@/_types';
+import { Audience, GroupId, ImageId, PostId, PostSchema, UserId } from '@/_types';
 import { errorToString } from '@/_utils/errorToString';
 import { z } from 'zod';
 
@@ -14,21 +14,20 @@ export async function createPost(
   audience: Audience,
   content: string,
   responseToPostId?: PostId | null,
-  imageId?: ImageId
+  imageId?: ImageId,
+  groupId?: GroupId
 ) {
   try {
     const data = {
       posterId,
-      audience,
+      audience: groupId ? ('GROUP' as const) : audience,
       content,
       responseToPostId,
       imageId,
+      groupId,
     };
 
-    const rawData = await prisma.post.create({
-      data,
-    });
-
+    const rawData = await prisma.post.create({ data });
     const post = PostSchema.parse(rawData);
     return post;
   } catch (error) {

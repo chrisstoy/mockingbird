@@ -16,13 +16,17 @@ All shared components live in `src/_components/`. Route-local components live in
 
 ```
 src/app/
-├── (routes)/           # Authenticated app pages (Header + Footer layout)
-│   ├── layout.tsx      # Wraps children in Header + max-w-2xl container + Footer
+├── (routes)/           # Authenticated app pages (3-column layout with sidebars)
+│   ├── layout.tsx      # LeftSidebar + AppHeader + MobileHeader + MobileBottomNav
 │   ├── page.tsx        # Home / feed page
 │   ├── post/[postId]/  # Post detail page
 │   ├── profile/        # User profile + change password
 │   ├── friends/        # Friends management
+│   ├── privacy/        # Privacy/TOS doc viewer (+ /policy, /tos sub-routes)
 │   └── test/           # Debug/test pages
+├── (account)/          # Account state pages (no main app layout)
+│   └── account/
+│       └── suspended/  # Shown when user status = SUSPENDED
 ├── (admin)/
 │   └── admin/          # Admin panel (sidebar layout, permission-gated)
 │       ├── layout.tsx  # Admin sidebar nav layout
@@ -41,6 +45,9 @@ src/app/
 │   ├── expired-password/
 │   └── verify-email/
 ├── api/                # API route handlers
+├── maintenance/        # Maintenance mode page
+├── offline/            # Offline / PWA fallback page
+├── manifest.ts         # PWA web app manifest
 ├── layout.tsx          # Root layout (SessionProvider + AppErrorBoundary + DialogManager)
 └── global.css
 ```

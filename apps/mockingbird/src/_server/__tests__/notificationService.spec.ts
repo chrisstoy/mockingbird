@@ -14,7 +14,7 @@ jest.mock('@/_server/logger', () => ({
   child: jest.fn().mockReturnValue({ info: jest.fn(), error: jest.fn() }),
 }));
 
-// @ts-expect-error
+// @ts-expect-error — jest.mock hoists above import but TS doesn't know the module is mocked
 import { prisma } from '@/_server/db';
 import {
   createNotification,

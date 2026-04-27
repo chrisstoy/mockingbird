@@ -55,7 +55,7 @@ async function submitForgotPassword(
   page: import('@playwright/test').Page,
   email: string
 ) {
-  await page.goto(`${BASE_URL}/auth/forgot-password`, { waitUntil: 'networkidle' });
+  await page.goto(`${BASE_URL}/auth/forgot-password`, { waitUntil: 'load' });
   // Retry submit up to 3 times — dev server may be recompiling on first hit
   for (let i = 0; i < 3; i++) {
     await page.getByPlaceholder('Email address').fill(email);
@@ -67,7 +67,7 @@ async function submitForgotPassword(
       .catch(() => false);
     if (success) return;
     // Server may have been compiling — reload and retry
-    await page.reload({ waitUntil: 'networkidle' });
+    await page.reload({ waitUntil: 'load' });
   }
   throw new Error('submitForgotPassword: success message never appeared');
 }
@@ -79,9 +79,9 @@ async function signInAs(
 ) {
   // Retry once in case a prior navigation is still in flight (ERR_ABORTED race)
   try {
-    await page.goto(`${BASE_URL}/auth/signin`, { waitUntil: 'networkidle' });
+    await page.goto(`${BASE_URL}/auth/signin`, { waitUntil: 'load' });
   } catch {
-    await page.goto(`${BASE_URL}/auth/signin`, { waitUntil: 'networkidle' });
+    await page.goto(`${BASE_URL}/auth/signin`, { waitUntil: 'load' });
   }
   await page.getByPlaceholder('Email address').fill(email);
   await page.getByPlaceholder('Password').fill(password);
@@ -120,7 +120,7 @@ test.describe('password management', () => {
     await submitForgotPassword(page, pwTestEmail);
 
     const token = await getTestResetToken(pwTestEmail);
-    await page.goto(`${BASE_URL}/auth/reset-password?token=${token}`, { waitUntil: 'networkidle' });
+    await page.goto(`${BASE_URL}/auth/reset-password?token=${token}`, { waitUntil: 'load' });
 
     await page.getByPlaceholder('New password', { exact: true }).fill(pwTestNewPassword);
     await page.getByPlaceholder('Confirm new password').fill(pwTestNewPassword);
@@ -141,7 +141,7 @@ test.describe('password management', () => {
     const token = await getTestResetToken(pwTestEmail);
 
     // Use the token once (success)
-    await page.goto(`${BASE_URL}/auth/reset-password?token=${token}`, { waitUntil: 'networkidle' });
+    await page.goto(`${BASE_URL}/auth/reset-password?token=${token}`, { waitUntil: 'load' });
     // Reset back to original password so suite stays in sync
     await page.getByPlaceholder('New password', { exact: true }).fill(pwTestPassword);
     await page.getByPlaceholder('Confirm new password').fill(pwTestPassword);
@@ -154,9 +154,9 @@ test.describe('password management', () => {
 
     // Try the same token again (retry once — sign-out navigation may still be in flight)
     try {
-      await page.goto(`${BASE_URL}/auth/reset-password?token=${token}`, { waitUntil: 'networkidle' });
+      await page.goto(`${BASE_URL}/auth/reset-password?token=${token}`, { waitUntil: 'load' });
     } catch {
-      await page.goto(`${BASE_URL}/auth/reset-password?token=${token}`, { waitUntil: 'networkidle' });
+      await page.goto(`${BASE_URL}/auth/reset-password?token=${token}`, { waitUntil: 'load' });
     }
     await page.getByPlaceholder('New password', { exact: true }).fill('SomePass789');
     await page.getByPlaceholder('Confirm new password').fill('SomePass789');
@@ -170,7 +170,7 @@ test.describe('password management', () => {
     // Force-expire the token
     const token = await getTestResetToken(pwTestEmail, { forceExpire: true });
 
-    await page.goto(`${BASE_URL}/auth/reset-password?token=${token}`, { waitUntil: 'networkidle' });
+    await page.goto(`${BASE_URL}/auth/reset-password?token=${token}`, { waitUntil: 'load' });
     await page.getByPlaceholder('New password', { exact: true }).fill('SomePass789');
     await page.getByPlaceholder('Confirm new password').fill('SomePass789');
     await page.getByRole('button', { name: 'Reset Password' }).click();
@@ -194,7 +194,7 @@ test.describe('password management', () => {
   test('expired password can be changed', async ({ page }) => {
     await page.goto(
       `${BASE_URL}/auth/expired-password?email=${encodeURIComponent(pwTestEmail)}`,
-      { waitUntil: 'networkidle' }
+      { waitUntil: 'load' }
     );
 
     const changedPassword = 'Changed789';
@@ -215,7 +215,7 @@ test.describe('password management', () => {
     // Wait for home page
     await page.waitForURL(`${BASE_URL}/`);
 
-    await page.goto(`${BASE_URL}/profile/change-password`, { waitUntil: 'networkidle' });
+    await page.goto(`${BASE_URL}/profile/change-password`, { waitUntil: 'load' });
 
     const changedPassword = 'Profile789';
     await page.getByPlaceholder('Current password').fill(currentPassword);
@@ -240,8 +240,8 @@ test.describe('password management', () => {
     page,
   }) => {
     await signInAs(page, pwTestEmail, currentPassword);
-    await page.waitForURL(`${BASE_URL}/`, { waitUntil: 'networkidle' });
-    await page.goto(`${BASE_URL}/profile/change-password`, { waitUntil: 'networkidle' });
+    await page.waitForURL(`${BASE_URL}/`, { waitUntil: 'load' });
+    await page.goto(`${BASE_URL}/profile/change-password`, { waitUntil: 'load' });
 
     await page.getByPlaceholder('Current password').fill('WrongPass000');
     await page.getByPlaceholder('New password', { exact: true }).fill('NewPass999');
@@ -258,7 +258,7 @@ test.describe('password management', () => {
   test('change password - same password rejected', async ({ page }) => {
     await signInAs(page, pwTestEmail, currentPassword);
     await page.waitForURL(`${BASE_URL}/`);
-    await page.goto(`${BASE_URL}/profile/change-password`, { waitUntil: 'networkidle' });
+    await page.goto(`${BASE_URL}/profile/change-password`, { waitUntil: 'load' });
 
     await page.getByPlaceholder('Current password').fill(currentPassword);
     await page.getByPlaceholder('New password', { exact: true }).fill(currentPassword);

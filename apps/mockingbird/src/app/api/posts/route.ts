@@ -1,6 +1,7 @@
 import baseLogger from '@/_server/logger';
+import { getGroupById, getGroupMemberRole } from '@/_server/groupService';
 import { createPost } from '@/_server/postsService';
-import { CreatePostDataSchema, ImageIdSchema } from '@/_types';
+import { CreatePostDataSchema, GroupIdSchema, ImageIdSchema } from '@/_types';
 import { NextRequest, NextResponse } from 'next/server';
 import { respondWithError, ResponseError } from '../errors';
 import { validateAuthentication } from '../validateAuthentication';
@@ -11,6 +12,7 @@ const logger = baseLogger.child({
 
 const NewPostFormDataSchema = CreatePostDataSchema.extend({
   imageId: ImageIdSchema.optional(),
+  groupId: GroupIdSchema.optional(),
 });
 
 /**
@@ -21,7 +23,7 @@ export async function POST(req: NextRequest) {
     const session = await validateAuthentication();
 
     const body = await req.json();
-    const { posterId, content, imageId, audience } =
+    const { posterId, content, imageId, audience, groupId } =
       NewPostFormDataSchema.parse(body);
 
     if (session.user?.id !== posterId) {
@@ -31,7 +33,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const post = await createPost(posterId, audience, content, null, imageId);
+    if (groupId) {
+      const group = await getGroupById(groupId);
+      if (!group) throw new ResponseError(404, 'Group not found');
+      if (group.status === 'DISABLED') throw new ResponseError(403, 'Group is disabled');
+      const role = await getGroupMemberRole(groupId, posterId);
+      if (!role || role === 'LURKER') throw new ResponseError(403, 'Insufficient group permissions');
+    }
+
+    const post = await createPost(posterId, audience, content, null, imageId, groupId);
 
     logger.info(
       `Created a new post: {${{ postId: post.id, posterId: post.posterId }}}`

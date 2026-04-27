@@ -63,6 +63,13 @@ export function MobileBottomNav() {
         active={pathname.startsWith('/notifications')}
       />
       <NavItem
+        href="/groups"
+        label="Flocks"
+        icon={UserGroupIcon}
+        activeIcon={UserGroupIconSolid}
+        active={pathname.startsWith('/groups')}
+      />
+      <NavItem
         href="/friends"
         label="Friends"
         icon={UserGroupIcon}

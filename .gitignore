@@ -5,6 +5,7 @@ dist
 tmp
 /out-tsc
 test-results
+playwright-report
 
 # dependencies
 node_modules
@@ -56,3 +57,9 @@ logs
 .cursor/rules/nx-rules.mdc
 .github/instructions/nx.instructions.md
 .env*.local
+/**/test-version.json
+/**/tsconfig.tsbuildinfo
+
+
+# claude
+.claude/settings.local.json

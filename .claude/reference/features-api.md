@@ -8,6 +8,7 @@ The API is a Next.js App Router API layer at `src/app/api/`. All business logic 
 
 | Feature | Status | Endpoint(s) | Notes |
 |---|---|---|---|
+| Health check | Complete | `GET /api/health` | No auth; returns `{ ok: true }` |
 | Account registration | Complete | `POST /api/users` | Turnstile CAPTCHA required (bypassed localhost); creates user with `PENDING_EMAIL_VERIFICATION` status |
 | Email verification | Complete | `GET /api/auth/verify-email?token=` | Token consumed → status set to `ACTIVE` |
 | Resend email verification | Complete | `POST /api/auth/resend-verification` | Only for `PENDING_EMAIL_VERIFICATION` users |

@@ -1,4 +1,4 @@
-import { Audience, ImageId, Post, PostId, PostSchema, UserId } from '@/_types';
+import { Audience, GroupId, ImageId, Post, PostId, PostSchema, UserId } from '@/_types';
 import { z } from 'zod';
 import { fetchFromServer } from './fetchFromServer';
 
@@ -6,7 +6,8 @@ export async function createPost(
   userId: UserId,
   content: string,
   audience: Audience,
-  imageId?: ImageId
+  imageId?: ImageId,
+  groupId?: GroupId
 ): Promise<Post> {
   const response = await fetchFromServer(`/posts`, {
     method: 'POST',
@@ -18,6 +19,7 @@ export async function createPost(
       audience,
       content,
       imageId,
+      groupId,
     }),
   });
 

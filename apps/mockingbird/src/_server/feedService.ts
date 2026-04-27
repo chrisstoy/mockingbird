@@ -33,8 +33,32 @@ export async function getFeed({ userId, feedSource, cursor }: FeedOptions) {
     case 'private':
       return getPrivateFeedForUser(userId);
     default:
-      throw new Error(`Unknown feed source: ${feedSource}`);
+      return getGroupFeed(userId, feedSource, cursor);
   }
+}
+
+async function getGroupFeed(userId: UserId, groupId: string, cursor?: string) {
+  const membership = await prisma.groupMember.findUnique({
+    where: { groupId_userId: { groupId, userId } },
+  });
+
+  if (!membership) {
+    throw new Error(`User ${userId} is not a member of group ${groupId}`);
+  }
+
+  const rawData = await prisma.post.findMany({
+    where: { groupId, responseToPostId: null },
+    orderBy: { createdAt: 'desc' },
+    take: 50,
+    ...(cursor ? { skip: 1, cursor: { id: cursor } } : {}),
+    include: {
+      reactions: {
+        include: { user: { select: { id: true, name: true, image: true } } },
+      },
+    },
+  });
+
+  return parsePostsWithReactions(rawData);
 }
 
 /**
