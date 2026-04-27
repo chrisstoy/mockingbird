@@ -41,6 +41,7 @@ export function GroupSettingsForm({ group, myRole }: Props) {
 
   const handleDelete = async () => {
     await fetch(`/api/groups/${group.id}`, { method: 'DELETE' });
+    router.refresh();
     router.push('/groups');
   };
 

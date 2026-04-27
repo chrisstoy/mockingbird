@@ -13,6 +13,7 @@ process.env['RESEND_API_KEY'] = 're_test_mockingbird_playwright';
 export default defineConfig({
   ...nxE2EPreset(__filename, { testDir: './src' }),
   workers: 1,
+  reporter: [['list'], ['html', { open: 'never' }]],
   use: {
     baseURL,
     trace: 'on-first-retry',
@@ -27,6 +28,7 @@ export default defineConfig({
         url: 'http://localhost:3000/api/health',
         reuseExistingServer: true,
         cwd: workspaceRoot,
+        env: { RESEND_API_KEY: 're_test_mockingbird_playwright' },
       },
   projects: [
     {

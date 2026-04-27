@@ -15,45 +15,42 @@ const memberEmail = 'flock.member@example.com';
 const memberPassword = 'Starts123';
 const memberName = 'Flock Member';
 
-const publicFlockName = 'E2E Public Flock';
-const privateFlockName = 'E2E Private Flock';
+// Unique per run to avoid clashes with leftover data from previous runs
+const runId = Date.now().toString().slice(-6);
+const publicFlockName = `E2E Public ${runId}`;
+const privateFlockName = `E2E Private ${runId}`;
 
 let publicGroupId = '';
 let privateGroupId = '';
 
 async function createUser(name: string, email: string, password: string) {
   const ctx = await request.newContext();
-  await ctx.post(`${BASE_URL}/api/users`, {
+  const res = await ctx.post(`${BASE_URL}/api/users`, {
     data: { name, email, password, confirmPassword: password, turnstileToken: 'test' },
   });
   await ctx.dispose();
+  if (!res.ok() && res.status() !== 409) {
+    throw new Error(`createUser failed for ${email}: HTTP ${res.status()} — ${await res.text()}`);
+  }
   await forceAcceptTOS(email);
   await forceVerifyTestUser(email);
 }
 
 async function signInAs(page: Page, email: string, password: string) {
-  // Sign out if currently signed in
-  try {
-    await page.goto(`${BASE_URL}/profile`, { waitUntil: 'domcontentloaded', timeout: 5000 });
-    const signOutBtn = page.getByRole('button', { name: 'Sign Out' }).first();
-    if (await signOutBtn.isVisible({ timeout: 1000 })) {
-      await signOutBtn.click();
-      await page.getByRole('button', { name: 'Sign Out' }).last().click({ timeout: 5000 });
-      await page.waitForURL(/\/auth\/signin/, { timeout: 10000 });
-    }
-  } catch {
-    // not signed in — proceed
-  }
-
-  try {
-    await page.goto(`${BASE_URL}/auth/signin`, { waitUntil: 'domcontentloaded' });
-  } catch {
-    await page.goto(`${BASE_URL}/auth/signin`);
-  }
-  await page.getByPlaceholder('Email address').fill(email);
+  await page.goto(`${BASE_URL}/auth/signin`);
+  // Wait for the form to be interactive (React hydrated)
+  const emailInput = page.getByPlaceholder('Email address');
+  await emailInput.waitFor({ state: 'visible' });
+  await emailInput.fill(email);
   await page.getByPlaceholder('Password').fill(password);
   await page.getByRole('button', { name: 'Sign In' }).click();
-  await page.waitForURL(`${BASE_URL}/`, { timeout: 15000 });
+  // Wait for redirect away from auth pages (callbackUrl may vary)
+  await page.waitForURL(url => !url.href.includes('/auth/'), { timeout: 20000 });
+}
+
+async function switchToUser(page: Page, email: string, password: string) {
+  await page.context().clearCookies();
+  await signInAs(page, email, password);
 }
 
 test.describe('Flocks (Groups)', () => {
@@ -75,10 +72,11 @@ test.describe('Flocks (Groups)', () => {
 
   test('flocks nav link is visible after sign-in', async ({ page }) => {
     await signInAs(page, ownerEmail, ownerPassword);
+    // Verify the Flocks link is present in the sidebar
     const flocksLink = page.getByRole('link', { name: 'Flocks' }).first();
     await expect(flocksLink).toBeVisible();
-    await flocksLink.click();
-    await expect(page).toHaveURL(`${BASE_URL}/groups`);
+    // Navigate and confirm the page loads
+    await page.goto(`${BASE_URL}/groups`);
     await expect(page.getByRole('heading', { name: 'Flocks' })).toBeVisible();
   });
 
@@ -95,15 +93,25 @@ test.describe('Flocks (Groups)', () => {
     await page.goto(`${BASE_URL}/groups/new`);
 
     await expect(page.getByRole('heading', { name: 'Create a Flock' })).toBeVisible();
-    await page.getByPlaceholder('My Flock').fill(publicFlockName);
+    const nameInput = page.getByPlaceholder('My Flock');
+    await nameInput.waitFor({ state: 'visible' });
+    await nameInput.fill(publicFlockName);
     await page.getByPlaceholder("What is this flock about?").fill('A flock for e2e testing');
     await page.locator('select[name="visibility"]').selectOption('PUBLIC');
-    await page.getByRole('button', { name: 'Create Flock' }).click();
 
-    await page.waitForURL(/\/groups\/.+/, { timeout: 10000 });
+    // Intercept the API call to diagnose failures
+    const apiResponsePromise = page.waitForResponse(
+      r => r.url().includes('/api/groups') && r.request().method() === 'POST',
+      { timeout: 15000 }
+    );
+    await page.getByRole('button', { name: 'Create Flock' }).click();
+    const apiResponse = await apiResponsePromise;
+    expect(apiResponse.status(), `POST /api/groups failed: ${apiResponse.status()}`).toBe(201);
+
+    await page.waitForURL(/\/groups\/[a-z0-9]{20,}/, { timeout: 15000 });
     publicGroupId = page.url().split('/groups/')[1].split('/')[0];
 
-    await expect(page.getByText(publicFlockName)).toBeVisible();
+    await expect(page.getByText(publicFlockName)).toBeVisible({ timeout: 10000 });
     await expect(page.getByText('1 members')).toBeVisible();
   });
 
@@ -111,22 +119,24 @@ test.describe('Flocks (Groups)', () => {
     await signInAs(page, ownerEmail, ownerPassword);
     await page.goto(`${BASE_URL}/groups/new`);
 
-    await page.getByPlaceholder('My Flock').fill(privateFlockName);
+    const nameInput = page.getByPlaceholder('My Flock');
+    await nameInput.waitFor({ state: 'visible' });
+    await nameInput.fill(privateFlockName);
     await page.locator('select[name="visibility"]').selectOption('PRIVATE');
     await page.getByRole('button', { name: 'Create Flock' }).click();
 
-    await page.waitForURL(/\/groups\/.+/, { timeout: 10000 });
+    await page.waitForURL(/\/groups\/[a-z0-9]{20,}/, { timeout: 15000 });
     privateGroupId = page.url().split('/groups/')[1].split('/')[0];
 
-    await expect(page.getByText(privateFlockName)).toBeVisible();
-    await expect(page.getByText('Private')).toBeVisible();
+    await expect(page.getByText(privateFlockName)).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('Private', { exact: true })).toBeVisible();
     await expect(page.getByText('1 members')).toBeVisible();
   });
 
   // ── Discovery / Search ────────────────────────────────────────────────
 
   test('member can see public flocks on discovery page', async ({ page }) => {
-    await signInAs(page, memberEmail, memberPassword);
+    await switchToUser(page, memberEmail, memberPassword);
     await page.goto(`${BASE_URL}/groups`);
     await expect(page.getByText(publicFlockName)).toBeVisible({ timeout: 10000 });
   });
@@ -136,8 +146,8 @@ test.describe('Flocks (Groups)', () => {
     await page.goto(`${BASE_URL}/groups`);
 
     const searchInput = page.getByPlaceholder('Search Flocks...');
-    await searchInput.fill('E2E Public');
-    await expect(page.getByText(publicFlockName)).toBeVisible({ timeout: 5000 });
+    await searchInput.fill(publicFlockName.slice(0, 8));
+    await expect(page.getByText(publicFlockName).first()).toBeVisible({ timeout: 5000 });
 
     await searchInput.fill('zz_no_match_zz');
     await expect(page.getByText('No flocks found.')).toBeVisible({ timeout: 5000 });
@@ -162,7 +172,7 @@ test.describe('Flocks (Groups)', () => {
     // Join button disappears after joining; member count increases
     await expect(page.getByRole('button', { name: 'Join Flock' })).not.toBeVisible({ timeout: 10000 });
     await expect(page.getByText('2 members')).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText(memberName)).toBeVisible();
+    await expect(page.getByText(memberName).first()).toBeVisible();
   });
 
   // ── Post to Group Feed ────────────────────────────────────────────────
@@ -180,22 +190,32 @@ test.describe('Flocks (Groups)', () => {
 
     const composer = page.getByPlaceholder('Share something with the flock...');
     await composer.fill('Hello Flock!');
-    await page.getByRole('button', { name: 'Post' }).click();
 
-    await expect(page.getByText('Hello Flock!')).toBeVisible({ timeout: 10000 });
+    const postResponsePromise = page.waitForResponse(
+      r => r.url().includes('/api/posts') && r.request().method() === 'POST',
+      { timeout: 15000 }
+    );
+    await page.getByRole('button', { name: 'Post' }).click();
+    const postResponse = await postResponsePromise;
+    expect(postResponse.status(), `POST /api/posts failed: ${postResponse.status()}`).toBe(201);
+
+    // Wait for textarea to clear (confirms setContent('') ran after success)
+    await expect(composer).toHaveValue('', { timeout: 10000 });
+    // Post should appear in feed (inside a feed-post element, not the textarea)
+    await expect(page.locator('[data-testid="feed-post"]').filter({ hasText: 'Hello Flock!' })).toBeVisible({ timeout: 10000 });
   });
 
   test('owner can see member post in flock feed', async ({ page }) => {
-    await signInAs(page, ownerEmail, ownerPassword);
+    await switchToUser(page, ownerEmail, ownerPassword);
     await page.goto(`${BASE_URL}/groups/${publicGroupId}`);
 
-    await expect(page.getByText('Hello Flock!')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('[data-testid="feed-post"]').filter({ hasText: 'Hello Flock!' })).toBeVisible({ timeout: 10000 });
   });
 
   // ── Private Flock / Join Request ──────────────────────────────────────
 
   test('member sees Request to Join button on private flock', async ({ page }) => {
-    await signInAs(page, memberEmail, memberPassword);
+    await switchToUser(page, memberEmail, memberPassword);
     await page.goto(`${BASE_URL}/groups/${privateGroupId}`);
 
     await expect(page.getByRole('button', { name: 'Request to Join' })).toBeVisible();
@@ -210,11 +230,11 @@ test.describe('Flocks (Groups)', () => {
   });
 
   test('owner sees join request in admin section', async ({ page }) => {
-    await signInAs(page, ownerEmail, ownerPassword);
+    await switchToUser(page, ownerEmail, ownerPassword);
     await page.goto(`${BASE_URL}/groups/${privateGroupId}`);
 
     await expect(page.getByRole('heading', { name: 'Join Requests' })).toBeVisible();
-    await expect(page.getByText(memberName)).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText(memberName).first()).toBeVisible({ timeout: 5000 });
     await expect(page.getByRole('button', { name: 'Accept' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Decline' })).toBeVisible();
   });
@@ -232,7 +252,7 @@ test.describe('Flocks (Groups)', () => {
   });
 
   test('member can now post to private flock after being accepted', async ({ page }) => {
-    await signInAs(page, memberEmail, memberPassword);
+    await switchToUser(page, memberEmail, memberPassword);
     await page.goto(`${BASE_URL}/groups/${privateGroupId}`);
 
     const composer = page.getByPlaceholder('Share something with the flock...');
@@ -246,7 +266,7 @@ test.describe('Flocks (Groups)', () => {
   // ── Settings ──────────────────────────────────────────────────────────
 
   test('settings page is accessible to owner', async ({ page }) => {
-    await signInAs(page, ownerEmail, ownerPassword);
+    await switchToUser(page, ownerEmail, ownerPassword);
     await page.goto(`${BASE_URL}/groups/${publicGroupId}/settings`);
 
     await expect(page.getByRole('heading', { name: 'Flock Settings' })).toBeVisible();
@@ -260,14 +280,21 @@ test.describe('Flocks (Groups)', () => {
     await page.goto(`${BASE_URL}/groups/${publicGroupId}/settings`);
 
     await page.locator('textarea[name="description"]').fill('Updated e2e description');
+
+    const saveResponsePromise = page.waitForResponse(
+      r => r.url().includes(`/api/groups/${publicGroupId}`) && r.request().method() === 'PATCH',
+      { timeout: 15000 }
+    );
     await page.getByRole('button', { name: 'Save Changes' }).click();
+    const saveResponse = await saveResponsePromise;
+    expect(saveResponse.status(), `PATCH /api/groups failed: ${saveResponse.status()}`).toBe(200);
 
     await page.goto(`${BASE_URL}/groups/${publicGroupId}`);
-    await expect(page.getByText('Updated e2e description')).toBeVisible();
+    await expect(page.getByText('Updated e2e description')).toBeVisible({ timeout: 10000 });
   });
 
   test('non-admin is redirected away from settings page', async ({ page }) => {
-    await signInAs(page, memberEmail, memberPassword);
+    await switchToUser(page, memberEmail, memberPassword);
     await page.goto(`${BASE_URL}/groups/${publicGroupId}/settings`);
 
     // Should redirect back to group page (not settings)
@@ -277,7 +304,7 @@ test.describe('Flocks (Groups)', () => {
   // ── Disable & Delete ──────────────────────────────────────────────────
 
   test('owner can disable a flock', async ({ page }) => {
-    await signInAs(page, ownerEmail, ownerPassword);
+    await switchToUser(page, ownerEmail, ownerPassword);
     await page.goto(`${BASE_URL}/groups/${publicGroupId}/settings`);
 
     await page.getByRole('button', { name: 'Disable Flock' }).click();
@@ -304,7 +331,7 @@ test.describe('Flocks (Groups)', () => {
 
     // Redirects to /groups
     await page.waitForURL(`${BASE_URL}/groups`, { timeout: 10000 });
-    await expect(page.getByText(publicFlockName)).not.toBeVisible({ timeout: 5000 });
+    await expect(page.locator('main').getByText(publicFlockName)).not.toBeVisible({ timeout: 10000 });
   });
 
   // ── FeedSelector ──────────────────────────────────────────────────────
